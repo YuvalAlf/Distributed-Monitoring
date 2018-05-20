@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using Utils.MathUtils;
 using Utils.TypeUtils;
@@ -45,7 +47,9 @@ namespace Entropy
             if (desiredEntropy >= maxEntropy)
                 return maxEntropyVector;
 
-            Predicate<double> l1DistanceOk = l1 => EntropyFunction.ComputeEntropy(EntropyMathematics.Entropy.increaseEntropy(l1, point.Clone())) <= desiredEntropy;
+            Func<Vector<double>, double> entropyFunction = EntropyFunction.LowerBoundConvexBoundEntropy;
+            Debug.Assert(point.Sum().AlmostEqual(1.0));
+            Predicate<double> l1DistanceOk = l1 => entropyFunction(EntropyMathematics.Entropy.increaseEntropy(l1, point.Clone())) <= desiredEntropy;
             var minL1Distance = 0.0;
             var maxL1Distance = (point - maxEntropyVector).L1Norm();
             var distanceL1 = BinarySearch.FindWhere(minL1Distance, maxL1Distance, l1DistanceOk, Approximation);

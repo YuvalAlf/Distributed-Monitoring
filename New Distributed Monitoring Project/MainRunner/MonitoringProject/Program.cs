@@ -1,4 +1,5 @@
 ﻿using System;
+using Entropy;
 using InnerProduct;
 
 namespace MonitoringProject
@@ -9,6 +10,7 @@ namespace MonitoringProject
         {
             var random = new Random(12313424);
             InnerProductRunner.Run(random);
+          //  EntropyRunner.Run(random);
         }
     }
 }
