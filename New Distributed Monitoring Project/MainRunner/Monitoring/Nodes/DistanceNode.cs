@@ -58,7 +58,8 @@ namespace Monitoring.Nodes
                 }
             }
 
-            return (server.ReCreate(server.NodesVectors), server.FullResolutionBandwidthResult());
+            var fullyResolvedServer = server.ReCreate(server.NodesVectors);
+            return (fullyResolvedServer, fullyResolvedServer.FullResolutionBandwidthResult());
         }
     }
 }

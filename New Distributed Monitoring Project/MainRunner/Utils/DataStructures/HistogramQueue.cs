@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
 using Utils.TypeUtils;
@@ -11,10 +10,10 @@ namespace Utils.DataStructures
     public sealed class HistogramQueue<T>
     {
         public SortedSet<T> OptionalItems { get; }
-        public Dictionary<T, int> Counter { get; }
+        public SortedDictionary<T, int> Counter { get; }
         public Queue<T> Queue { get; }
 
-        private HistogramQueue(SortedSet<T> optionalItems, Dictionary<T, int> counter, Queue<T> queue)
+        private HistogramQueue(SortedSet<T> optionalItems, SortedDictionary<T, int> counter, Queue<T> queue)
         {
             OptionalItems = optionalItems;
             Counter = counter;
@@ -23,7 +22,7 @@ namespace Utils.DataStructures
 
         public static HistogramQueue<T> Create(SortedSet<T> optionalItems)
         {
-            var dictionary = new Dictionary<T, int>(optionalItems.Count);
+            var dictionary = new SortedDictionary<T, int>(optionalItems.Comparer);
             optionalItems.ForEach(i => dictionary[i] = 0);
             return new HistogramQueue<T>(optionalItems, dictionary, new Queue<T>());
         }

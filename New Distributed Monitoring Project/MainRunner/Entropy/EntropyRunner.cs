@@ -16,10 +16,10 @@ namespace Entropy
 {
     public static class EntropyRunner
     {
-        public static void Run(Random rnd)
+        public static void RunChars(Random rnd)
         {
-            var optionalChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var vectorLength = optionalChars.Distinct().Count();
+            var optionalChars = new SortedSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+            var vectorLength = optionalChars.Count;
             var globalVectorType = GlobalVectorType.Average;
             var epsilon = new AdditiveEpsilon(0.05);
             int windowSize = 2000;
@@ -31,10 +31,10 @@ namespace Entropy
             int numOfNodes = 4;
             var resultPath = @"C:\Users\Yuval\Desktop\ResultCSV.csv";
 
-            using (var charDataParser = CharDataParser.Init(windowSize, optionalChars, path1, path2, path3, path4))
+            using (var charDataParser = DataParser<char>.Init(StreamReaderUtils.EnumarateChars, windowSize, optionalChars, path1, path2, path3, path4))
             using (var resultCsvFile = File.CreateText(resultPath))
             {
-                var initVectors = charDataParser.CharHistograms.Map(h => h.CountVector().Multiply(1.0 / windowSize));
+                var initVectors = charDataParser.Histograms.Map(h => h.CountVector().Multiply(1.0 / windowSize));
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                     epsilon, EntropyFunction.MonitoredFunction, 1);
 
@@ -42,12 +42,12 @@ namespace Entropy
                 int i = 0;
                 while (charDataParser.Next(stepSize))
                 {
-                    var changes = charDataParser.CharHistograms.Map(h => h.ChangedCountVector().Multiply(1.0 / windowSize));
+                    var changes = charDataParser.Histograms.Map(h => h.ChangedCountVector().Multiply(1.0 / windowSize));
                     multiRunner.Run(changes, rnd).Select(result => result.AsCsvString())
                         .ForEach((Action<string>) resultCsvFile.WriteLine);
-                    if (i++ % 20 == 0)
+                    if (i++ % 50 == 0)
                         Console.WriteLine(i-1);
-                    if (i == 200)
+                    if (i == 5000)
                         break;
                 }
             }

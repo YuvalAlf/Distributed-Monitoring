@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
+    <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
     <Compile Include="TypeUtils\VectorUtils.cs" />
   </ItemGroup>
