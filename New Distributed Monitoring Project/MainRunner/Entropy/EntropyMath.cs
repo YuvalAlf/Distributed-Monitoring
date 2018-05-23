@@ -49,7 +49,7 @@ namespace Entropy
                 return maxEntropyVector;
 
             Func<Vector<double>, double> entropyFunction = EntropyFunction.LowerBoundConvexBoundEntropy;
-            Debug.Assert(point.Sum().AlmostEqual(1.0));
+            Debug.Assert(point.Sum().AlmostEqual(1.0, 6));
             Predicate<Vector<double>> pointOk = vec => entropyFunction(vec) <= desiredEntropy;
             var minL1Distance = 0.0;
             var maxL1Distance = (point - maxEntropyVector).L1Norm();

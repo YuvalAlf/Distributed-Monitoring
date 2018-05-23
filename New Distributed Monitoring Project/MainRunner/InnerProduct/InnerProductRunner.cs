@@ -64,17 +64,17 @@ namespace InnerProduct
             var resultPath = @"C:\Users\Yuval\Desktop\BOWResultCSV.csv";
 
             var i = 0;
-            using (var charDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, path1, path2, path3, path4, path5))
+            using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, path1, path2, path3, path4, path5))
             using (var resultCsvFile = File.CreateText(resultPath))
             {
-                var initVectors = charDataParser.Histograms.Map(h => h.CountVector());
+                var initVectors = stringDataParser.Histograms.Map(h => h.CountVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                     epsilon, InnerProductFunction.MonitoredFunction, 2);
 
                 resultCsvFile.WriteLine(multiRunner.HeaderCsv);
-                while (charDataParser.Next(stepSize))
+                while (stringDataParser.Next(stepSize))
                 {
-                    var changes = charDataParser.Histograms.Map(h => h.ChangedCountVector());
+                    var changes = stringDataParser.Histograms.Map(h => h.ChangedCountVector());
                     multiRunner.Run(changes, rnd).Select(result => result.AsCsvString()).ForEach((Action<string>)resultCsvFile.WriteLine);
                     if (i++ == 4000)
                         break;
