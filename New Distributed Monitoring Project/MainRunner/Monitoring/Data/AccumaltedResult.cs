@@ -45,7 +45,7 @@ namespace Monitoring.Data
             MonitoringScheme = monitoringScheme;
         }
 
-        public string HeaderCsv() =>
+        public static string Header(int numOfNodes) =>
             "LoopIndex"
                 .ConcatCsv("MonitoringScheme")
                 .ConcatCsv("VectorLength")
@@ -58,7 +58,9 @@ namespace Monitoring.Data
                 .ConcatCsv("LowerBound")
                 .ConcatCsv("FunctionValue")
                 .ConcatCsv("UpperBound")
-                .ConcatCsv(Enumerable.Range(1, NumOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Node " + numNode)));
+                .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Node " + numNode)));
+
+        public string HeaderCsv() => Header(NumOfNodes);
 
         public string AsCsvString() =>
             LoopIndex.ToString()

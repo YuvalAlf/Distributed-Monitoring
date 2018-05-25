@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
+using Monitoring.Data;
 using Monitoring.GeometricMonitoring.MonitoringType;
-using Monitoring.GeometricMonitoring.Running;
 using Monitoring.Servers;
 
-namespace Monitoring.Data
+namespace Monitoring.GeometricMonitoring.Running
 {
     public sealed class MonitoringRunner<ServerType> : Runner
         where ServerType : AbstractServer<ServerType>

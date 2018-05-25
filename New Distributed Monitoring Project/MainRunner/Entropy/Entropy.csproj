@@ -73,6 +73,10 @@
       <Project>{67BF272F-A613-49BF-9CEE-EF7F9DFCEC32}</Project>
       <Name>Monitoring</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PCA\PCA.csproj">
+      <Project>{027C9842-7598-4CB7-9A5C-487E79F87599}</Project>
+      <Name>PCA</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{EF4A65C0-B74C-4BC7-B47D-FB59297FFA9E}</Project>
       <Name>Utils</Name>

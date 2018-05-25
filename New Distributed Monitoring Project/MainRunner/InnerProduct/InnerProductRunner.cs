@@ -4,10 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DataParsing;
+using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
+using Monitoring.Nodes;
+using Monitoring.Servers;
 using MoreLinq;
+using PCA;
 using Utils.TypeUtils;
 
 namespace InnerProduct
@@ -49,11 +54,9 @@ namespace InnerProduct
         public static void RunBagOfWords(Random rnd)
         {
             var wordsPath = @"C:\Users\Yuval\Desktop\Distributed Data Sets\MostCommonEnglishWords.txt";
-            var vectorLength = 200;
-            var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(), StringComparer.OrdinalIgnoreCase);
             var globalVectorType = GlobalVectorType.Sum;
-            var epsilon = new MultiplicativeEpsilon(0.1);
-            int windowSize = 2000;
+            var epsilon = new MultiplicativeEpsilon(0.15);
+            int windowSize = 5000;
             var stepSize = 40;
             var path1 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Books\All Books Combined.txt";
             var path2 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\blogs\blogs.txt";
@@ -61,25 +64,32 @@ namespace InnerProduct
             var path4 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Jepordy\JEOPARDY_QUESTIONS1.txt";
             var path5 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\News Headlines\examiner-date-tokens.txt";
             int numOfNodes = 5;
-            var resultPath = @"C:\Users\Yuval\Desktop\BOWResultCSV.csv";
+            var resultPath = @"C:\Users\Yuval\Desktop\InnerBOWResultCSVResults.csv";
 
             var i = 0;
-            using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, path1, path2, path3, path4, path5))
+            var amountOfIterations = 10000;
             using (var resultCsvFile = File.CreateText(resultPath))
             {
-                var initVectors = stringDataParser.Histograms.Map(h => h.CountVector());
-                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                    epsilon, InnerProductFunction.MonitoredFunction, 2);
-
-                resultCsvFile.WriteLine(multiRunner.HeaderCsv);
-                while (stringDataParser.Next(stepSize))
+                resultCsvFile.AutoFlush = true;
+                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+                for (int vectorLength = 100; vectorLength <= 10000; vectorLength = (int)(vectorLength * 1.8))
                 {
-                    var changes = stringDataParser.Histograms.Map(h => h.ChangedCountVector());
-                    multiRunner.Run(changes, rnd).Select(result => result.AsCsvString()).ForEach((Action<string>)resultCsvFile.WriteLine);
-                    if (i++ == 4000)
-                        break;
-                    if (i%100 == 0)
-                        Console.WriteLine(i);
+                    if (vectorLength % 2 == 1)
+                        vectorLength += 1;
+                    Console.WriteLine("Vector Length " + vectorLength);
+                    var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(),
+                        StringComparer.OrdinalIgnoreCase);
+                    using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize,
+                        optionalStrings, path1, path2, path3, path4, path5))
+                    {
+                        var initVectors = stringDataParser.Histograms.Map(h => h.CountVector());
+                        var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                            epsilon, InnerProductFunction.MonitoredFunction, 2);
+                        var changes = stringDataParser.AllCountVectors(stepSize).Take(amountOfIterations);
+                        var results = multiRunner.RunToEnd(changes, rnd);
+                        results.ForEach(r => resultCsvFile.WriteLine(r.AsCsvString()));
+                    }
+
                 }
             }
 

@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
 using Utils.DataStructures;
+using Utils.TypeUtils;
 
 namespace DataParsing
 {
@@ -52,6 +54,12 @@ namespace DataParsing
             }
 
             return didntFinish;
+        }
+
+        public IEnumerable<Vector<double>[]> AllCountVectors(int stepSize)
+        {
+            while (this.Next(stepSize))
+                yield return Histograms.Map(h => h.ChangedCountVector());
         }
 
         private static IEnumerable<T> Read(IEnumerator<T> dataEnumarator, int amountToRead, SortedSet<T> optionalValues)

@@ -46,7 +46,7 @@ namespace Monitoring.Nodes
                         nodes[nodeIndex].ChangeVector = averageChangeVector.Clone();
                     var numOfChannels = violatedNodesIndices.Count;
                     var numOfMessages = violatedNodesIndices.Count * 3 - initiallyViolated;
-                    var bandwidth = 2 * violatedNodesIndices.Count * server.VectorLength + violatedNodesIndices.Count;
+                    var bandwidth = 2 * violatedNodesIndices.Count * server.VectorLength + (violatedNodesIndices.Count - initiallyViolated);
                     var result = new SingleResult(bandwidth, numOfMessages, numOfChannels, false, server.FunctionValue, server.UpperBound, server.LowerBound, server.NodesFunctionValues);
                     return (server, result);
                 }

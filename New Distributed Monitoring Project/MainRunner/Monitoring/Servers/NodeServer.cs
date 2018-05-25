@@ -42,8 +42,8 @@ namespace Monitoring.Servers
         public override SingleResult FullResolutionBandwidthResult()
         {
             var numberOfChannels = NumOfNodes;
-            var numerOfMessages = NumOfNodes * 3;
-            var bandwidth = NumOfNodes * (1 + 2 * VectorLength);
+            var numerOfMessages = NumOfNodes * 5 - 1;
+            var bandwidth = numerOfMessages + 2 * NumOfNodes * VectorLength;
             return new SingleResult(bandwidth, numerOfMessages, numberOfChannels, true, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
         }
 
