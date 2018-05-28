@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
-using Utils.TypeUtils;
 
 namespace Utils.DataStructures
 {

@@ -20,14 +20,14 @@ namespace Monitoring.GeometricMonitoring.Running
 
         public void RemoveScheme(MonitoringScheme scheme) => Runners.Remove(scheme);
 
-        public IEnumerable<AccumaltedResult> Run(Vector<double>[] change, Random rnd) 
-            => Runners.Values.Select(runner => runner.Run(change, rnd));
+        public IEnumerable<AccumaltedResult> Run(Vector<double>[] change, Random rnd, bool parrallel) 
+            => Runners.Values.AsParallel().Select(runner => runner.Run(change, rnd));
 
-        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd) 
-            => changes.SelectMany(change => this.Run(change, rnd));
+        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd, bool parrallel) 
+            => changes.SelectMany(change => this.Run(change, rnd, parrallel));
 
-        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd)
-            => RunAll(changes, rnd).TakeLast(Runners.Count);
+        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd, bool parrallel)
+            => RunAll(changes, rnd, parrallel).TakeLast(Runners.Count);
 
         public string HeaderCsv => Runners.Values.First().AccumalatedResult.HeaderCsv();
 

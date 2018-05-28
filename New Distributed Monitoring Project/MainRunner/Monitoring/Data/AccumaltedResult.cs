@@ -81,7 +81,7 @@ namespace Monitoring.Data
             new AccumaltedResult(
                 this.Bandwidth + singleResult.Bandwidth,
                 this.NumberOfMessages + singleResult.NumberOfMessages,
-                this.NumberOfMessages + singleResult.NumberOfMessages,
+                this.NumberOfChannels + singleResult.NumberOfChannels,
                 this.NumberOfFullSyncs + (singleResult.IsFullSync ? 1 : 0),
                 singleResult.FunctionValue,
                 singleResult.UpperBound,

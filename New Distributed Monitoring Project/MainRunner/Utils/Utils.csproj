@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStructures\ChunckedHistogram.cs" />
+    <Compile Include="DataStructures\DataChunck.cs" />
     <Compile Include="MathUtils\BinarySearch.cs" />
     <Compile Include="MathUtils\ComplexUtils.cs" />
     <Compile Include="DataStructures\HistogramQueue.cs" />

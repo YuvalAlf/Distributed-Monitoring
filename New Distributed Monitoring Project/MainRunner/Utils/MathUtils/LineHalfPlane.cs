@@ -25,7 +25,6 @@ namespace Utils.MathUtils
 
         public double Compute(Vector<double> input) => Parameters * input + ConstantPart;
         
-        //TODO: Check thoroughly
         public Vector<double> ClosestPointL1(Vector<double> point)
         {
             var sigma = Parameters * point;
@@ -48,9 +47,7 @@ namespace Utils.MathUtils
             closestPoint[minIndex] += (Threshold - ConstantPart - sigma) / Parameters[minIndex];
             return closestPoint;
         }
-
-
-        //TODO: Check thoroughly
+        
         public Vector<double> ClosestPointL2(Vector<double> point)
         {
             var sigmaParameterSquared = Parameters * Parameters;

@@ -48,7 +48,7 @@ namespace Entropy
                 while (charDataParser.Next(stepSize))
                 {
                     var changes = charDataParser.Histograms.Map(h => h.ChangedCountVector().Multiply(1.0 / windowSize));
-                    multiRunner.Run(changes, rnd).Select(result => result.AsCsvString())
+                    multiRunner.Run(changes, rnd, false).Select(result => result.AsCsvString())
                         .ForEach((Action<string>) resultCsvFile.WriteLine);
                     if (i++ % 50 == 0)
                         Console.WriteLine(i-1);
@@ -91,7 +91,7 @@ namespace Entropy
                             epsilon, EntropyFunction.MonitoredFunction, 1);
                         var changes = stringDataParser.AllCountVectors(stepSize)
                             .Select(vectors => vectors.Map(v => v.Multiply(1.0 / windowSize))).Take(amountOfIterations);
-                        var results = multiRunner.RunAll(changes, rnd);
+                        var results = multiRunner.RunAll(changes, rnd, true);
                         results.ForEach(r => resultCsvFile.WriteLine(r.AsCsvString()));
                         resultCsvFile.Flush();
                     }

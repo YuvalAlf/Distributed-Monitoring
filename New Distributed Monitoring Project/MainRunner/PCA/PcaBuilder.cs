@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Accord.Statistics.Analysis;
-using Accord.Statistics.Models.Regression.Linear;
 
 namespace PCA
 {

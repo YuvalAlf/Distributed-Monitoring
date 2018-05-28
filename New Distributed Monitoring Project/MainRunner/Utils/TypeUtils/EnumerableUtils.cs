@@ -29,24 +29,5 @@ namespace Utils.TypeUtils
             }
             return set;
         }
-
-        public static IEnumerable<T[]> Inverse<T>(this IEnumerable<IEnumerable<T>> @this)
-        {
-            var enumerators = @this.Select(list => list.GetEnumerator()).ToArray();
-            while (true)
-            {
-                var array = new T[enumerators.Length];
-                for (int i = 0; i < enumerators.Length; i++)
-                {
-                    var enumerator = enumerators[i];
-                    if (enumerator.MoveNext())
-                        array[i] = enumerator.Current;
-                    else
-                        yield break;
-                }
-
-                yield return array;
-            }
-        }
     }
 }
