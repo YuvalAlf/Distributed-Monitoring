@@ -6,9 +6,13 @@ using System.Linq;
 using DataParsing;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
+using Monitoring.Nodes;
+using Monitoring.Servers;
 using MoreLinq;
+using PCA;
 using Utils.TypeUtils;
 
 namespace InnerProduct
@@ -127,6 +131,59 @@ namespace InnerProduct
               //  catch (Exception e)
                 {
              //       Console.WriteLine(e);
+                }
+            }
+
+            Process.Start(resultPath);
+        }
+        public static void RunBagOfWordsPCA(Random rnd)
+        {
+            var wordsPath = @"C:\Users\Yuval\Desktop\Distributed Data Sets\MostCommonEnglishWords.txt";
+            var globalVectorType = GlobalVectorType.Sum;
+            var epsilon = new MultiplicativeEpsilon(0.12);
+            int windowSize = 50000;
+            var stepSize = 100;
+            var path1 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Books\All Books Combined.txt";
+            var path2 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\blogs\blogs.txt";
+            var path3 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\India News\india-news-headlines.txt";
+            var path4 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Jepordy\JEOPARDY_QUESTIONS1.txt";
+            var path5 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\News Headlines\examiner-date-tokens.txt";
+            int numOfNodes = 5;
+            var resultPath = @"C:\Users\Yuval\Desktop\PCA_InnerBOWResultCSVResults.csv";
+            var vectorLength = 1000;
+            var amountOfIterations = 10000;
+            using (var resultCsvFile = File.CreateText(resultPath))
+            {
+                resultCsvFile.AutoFlush = true;
+                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+                var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(),
+                    StringComparer.OrdinalIgnoreCase);
+                var pca = PcaBuilder.Create();
+                using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize,
+                    optionalStrings, path1, path2, path3, path4, path5))
+                {
+                    var initVectors = stringDataParser.Histograms.Map(h => h.CountVector());
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                        epsilon, InnerProductFunction.MonitoredFunction, 2);
+                    multiRunner.RemoveScheme(new MonitoringScheme.Value());
+                    multiRunner.RemoveScheme(new MonitoringScheme.Oracle());
+                    multiRunner.RemoveScheme(new MonitoringScheme.Vector());
+                    var distanceServer = ((MonitoringRunner<NodeServer<DistanceNode>>) multiRunner.Runners.Values.First()).Server;
+                    var alltogetherPCA = PcaBuilder.Create();
+                    var changes = stringDataParser.AllCountVectors(stepSize).Take(amountOfIterations);
+                    var i = 0;
+                    foreach (var change in changes)
+                    {
+                        if (++i % 100 == 0)
+                            Console.WriteLine("{0}%", (100.0 * i / amountOfIterations));
+                        multiRunner.Run(change, rnd, false).ForEach(a => resultCsvFile.WriteLine(a.AsCsvString()));
+                        foreach (var node in distanceServer.LowerNodes)
+                            alltogetherPCA.Add(node.ResidualVector.ToArray());
+                    }
+
+                    Console.WriteLine("Eigenvalues:");
+                    alltogetherPCA.Eigenvalues().ForEach(Console.WriteLine);
+                    Console.ReadKey(false);
                 }
             }
 
