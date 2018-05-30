@@ -101,5 +101,76 @@ namespace Entropy
 
             Process.Start(resultPath);
         }
+        public static void RunBagOfWordsPca(Random rnd)
+        {
+            var wordsPath = @"C:\Users\Yuval\Desktop\Distributed Data Sets\MostCommonEnglishWords.txt";
+            var globalVectorType = GlobalVectorType.Average;
+            var epsilon = new MultiplicativeEpsilon(0.02);
+            int windowSize = 10000;
+            var stepSize = 100;
+            var path1 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Books\All Books Combined.txt";
+            var path2 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\blogs\blogs.txt";
+            var path3 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\India News\india-news-headlines.txt";
+            var path4 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Jepordy\JEOPARDY_QUESTIONS1.txt";
+            var path5 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\News Headlines\examiner-date-tokens.txt";
+            int numOfNodes = 5;
+            var resultPath = @"C:\Users\Yuval\Desktop\PCA_EntropyBOWResultCSV.csv";
+            var amountOfIterations = 5000;
+            var vectorLength = 1000;
+            using (var resultCsvFile = File.CreateText(resultPath))
+            {
+                resultCsvFile.AutoFlush = true;
+                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+                Console.WriteLine("Vector Length " + vectorLength);
+                var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(),
+                    StringComparer.OrdinalIgnoreCase);
+                using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize,
+                    optionalStrings, path1, path2, path3, path4, path5))
+                {
+                    var initVectors =
+                        stringDataParser.Histograms.Map(h => h.CountVector().Multiply(1.0 / windowSize));
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                        epsilon, EntropyFunction.MonitoredFunction, 1);
+                    multiRunner.RemoveScheme(new MonitoringScheme.Value());
+                    multiRunner.RemoveScheme(new MonitoringScheme.Oracle());
+                    multiRunner.RemoveScheme(new MonitoringScheme.Vector());
+                    var distanceServer =
+                        ((MonitoringRunner<NodeServer<DistanceNode>>) multiRunner.Runners.Values.First()).Server;
+                    var upperPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
+                    var lowerPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
+                    var changes = stringDataParser.AllCountVectors(stepSize)
+                        .Select(vectors => vectors.Map(v => v.Multiply(1.0 / windowSize))).Take(amountOfIterations);
+                    var i = 0;
+                    foreach (var change in changes)
+                    {
+                        if (++i % 100 == 0)
+                            Console.WriteLine("{0}%", (100.0 * i / amountOfIterations));
+                        multiRunner.Run(change, rnd, false).ForEach(a => resultCsvFile.WriteLine(a.AsCsvString()));
+                        for (int node = 0; node < numOfNodes; node++)
+                        {
+                            lowerPCAs[node].Add(distanceServer.LowerNodes[node].ResidualVector.Select(r => r * 100).ToArray());
+                            upperPCAs[node].Add(distanceServer.UpperNodes[node].ResidualVector.Select(r => r * 100).ToArray());
+                        }
+                    }
+
+                    Console.WriteLine("Eigenvalues:");
+                    for (int node = 0; node < numOfNodes; node++)
+                    {
+                        Console.WriteLine("Node {0} Lower", node);
+                        lowerPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                        Console.WriteLine("Node {0} Upper", node);
+                        upperPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                    }
+
+                    Console.WriteLine("Combined Lower");
+                    PcaBuilder.Combine(lowerPCAs).Eigenvalues().ForEach(Console.WriteLine);
+                    Console.WriteLine("Combined Upper");
+                    PcaBuilder.Combine(upperPCAs).Eigenvalues().ForEach(Console.WriteLine);
+                    Console.ReadKey(false);
+                }
+            }
+
+            Process.Start(resultPath);
+        }
     }
 }

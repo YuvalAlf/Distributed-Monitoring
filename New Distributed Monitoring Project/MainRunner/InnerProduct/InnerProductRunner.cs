@@ -140,7 +140,7 @@ namespace InnerProduct
         {
             var wordsPath = @"C:\Users\Yuval\Desktop\Distributed Data Sets\MostCommonEnglishWords.txt";
             var globalVectorType = GlobalVectorType.Sum;
-            var epsilon = new MultiplicativeEpsilon(0.12);
+            var epsilon = new MultiplicativeEpsilon(0.15);
             int windowSize = 50000;
             var stepSize = 100;
             var path1 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Books\All Books Combined.txt";
@@ -150,7 +150,7 @@ namespace InnerProduct
             var path5 = @"C:\Users\Yuval\Desktop\Distributed Data Sets\News Headlines\examiner-date-tokens.txt";
             int numOfNodes = 5;
             var resultPath = @"C:\Users\Yuval\Desktop\PCA_InnerBOWResultCSVResults.csv";
-            var vectorLength = 1000;
+            var vectorLength = 100;
             var amountOfIterations = 10000;
             using (var resultCsvFile = File.CreateText(resultPath))
             {
@@ -158,7 +158,6 @@ namespace InnerProduct
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(),
                     StringComparer.OrdinalIgnoreCase);
-                var pca = PcaBuilder.Create();
                 using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize,
                     optionalStrings, path1, path2, path3, path4, path5))
                 {
@@ -169,20 +168,47 @@ namespace InnerProduct
                     multiRunner.RemoveScheme(new MonitoringScheme.Oracle());
                     multiRunner.RemoveScheme(new MonitoringScheme.Vector());
                     var distanceServer = ((MonitoringRunner<NodeServer<DistanceNode>>) multiRunner.Runners.Values.First()).Server;
-                    var alltogetherPCA = PcaBuilder.Create();
+                    var upperXPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
+                    var lowerXPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
+                    var upperYPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
+                    var lowerYPCAs = ArrayUtils.Init(numOfNodes, _ => PcaBuilder.Create());
                     var changes = stringDataParser.AllCountVectors(stepSize).Take(amountOfIterations);
                     var i = 0;
+                    var halfVectorLength = vectorLength / 2;
                     foreach (var change in changes)
                     {
                         if (++i % 100 == 0)
                             Console.WriteLine("{0}%", (100.0 * i / amountOfIterations));
                         multiRunner.Run(change, rnd, false).ForEach(a => resultCsvFile.WriteLine(a.AsCsvString()));
-                        foreach (var node in distanceServer.LowerNodes)
-                            alltogetherPCA.Add(node.ResidualVector.ToArray());
+                        for (int node = 0; node < numOfNodes; node++)                        
+                        {
+                            lowerXPCAs[node].Add(distanceServer.LowerNodes[node].ResidualVector.Take(halfVectorLength).ToArray());
+                            lowerYPCAs[node].Add(distanceServer.LowerNodes[node].ResidualVector.Skip(halfVectorLength).ToArray());
+                            upperXPCAs[node].Add(distanceServer.UpperNodes[node].ResidualVector.Take(halfVectorLength).ToArray());
+                            upperYPCAs[node].Add(distanceServer.UpperNodes[node].ResidualVector.Skip(halfVectorLength).ToArray());
+                        }
                     }
 
                     Console.WriteLine("Eigenvalues:");
-                    alltogetherPCA.Eigenvalues().ForEach(Console.WriteLine);
+                    /*for (int node = 0; node < numOfNodes; node++)
+                    {
+                        Console.WriteLine("Node {0} Lower X:", node);
+                        lowerXPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                        Console.WriteLine("Node {0} Lower Y", node);
+                        lowerYPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                        Console.WriteLine("Node {0} Upper X:", node);
+                        upperXPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                        Console.WriteLine("Node {0} Upper Y:", node);
+                        upperYPCAs[node].Eigenvalues().ForEach(Console.WriteLine);
+                    }*/
+                    Console.WriteLine("Lower X");
+                    PcaBuilder.Combine(lowerXPCAs).Eigenvalues().ForEach(Console.WriteLine);
+                    Console.WriteLine("Lower Y");
+                    PcaBuilder.Combine(lowerYPCAs).Eigenvalues().ForEach(Console.WriteLine);
+                    Console.WriteLine("Upper X");
+                    PcaBuilder.Combine(upperXPCAs).Eigenvalues().ForEach(Console.WriteLine);
+                    Console.WriteLine("Upper Y");
+                    PcaBuilder.Combine(upperYPCAs).Eigenvalues().ForEach(Console.WriteLine);
                     Console.ReadKey(false);
                 }
             }
