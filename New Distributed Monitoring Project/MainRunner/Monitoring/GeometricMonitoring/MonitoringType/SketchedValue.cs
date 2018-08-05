@@ -10,19 +10,30 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
     {
         public sealed class SketchedValue : MonitoringScheme, IEquatable<SketchedValue>
         {
-            public override string AsString() => "Sketched Value Scheme";
+            public SketchedValue(string sketchName) => SketchName = sketchName;
 
-            public bool Equals(SketchedValue other) => true;
+            public string SketchName { get; }
 
-            public override int GetHashCode() => typeof(SketchedValue).GetHashCode();
+            public override string AsString() => SketchName + " Sketched Value Scheme";
+
+            public bool Equals(SketchedValue other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return string.Equals(SketchName, other.SketchName);
+            }
 
             public override bool Equals(object obj)
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                return obj is SketchedValue && Equals((SketchedValue)obj);
+                return obj is SketchedValue && Equals((SketchedValue) obj);
             }
 
+            public override int GetHashCode()
+            {
+                return (SketchName != null ? SketchName.GetHashCode() : 0);
+            }
         }
     }
 }

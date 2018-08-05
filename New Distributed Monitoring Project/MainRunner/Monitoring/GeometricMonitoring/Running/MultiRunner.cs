@@ -9,6 +9,8 @@ using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Monitoring.Servers;
 using MoreLinq;
+using Utils.MathUtils;
+using SketchFunction = Utils.MathUtils.Sketches.SketchFunction;
 
 namespace Monitoring.GeometricMonitoring.Running
 {
@@ -59,18 +61,18 @@ namespace Monitoring.GeometricMonitoring.Running
             var oracleServer = OracleServer.Create(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                    epsilon, monitoredFunction);
             var naiveServer = NaiveServer.Create(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                   epsilon, monitoredFunction);
-            var sketchedValueServer = NodeServer<SketchValueNode>.Create(initVectors, numOfNodes, vectorLength,
-                                                                         globalVectorType,
-                                                                         epsilon, monitoredFunction,
-                                                                         SketchValueNode.ResolveNodes,
-                                                                         SketchValueNode.Create);
+                                                 epsilon, monitoredFunction);
+            var dctSketchedValueServer = NodeServer<SketchValueNode>.Create(initVectors, numOfNodes, vectorLength,
+                                                                            globalVectorType,
+                                                                            epsilon, monitoredFunction,
+                                                                            SketchValueNode.ResolveNodes,
+                                                                            SketchValueNode.Create(SketchFunction.DCTSketch));
 
-            AddRunner(new MonitoringScheme.Value(),         valueServer);
-            AddRunner(new MonitoringScheme.Vector(),        vectorServer);
-            AddRunner(new MonitoringScheme.Oracle(),        oracleServer);
-            AddRunner(new MonitoringScheme.Naive(),         naiveServer);
-            AddRunner(new MonitoringScheme.SketchedValue(), sketchedValueServer);
+            AddRunner(new MonitoringScheme.Value(),  valueServer);
+            AddRunner(new MonitoringScheme.Vector(), vectorServer);
+            AddRunner(new MonitoringScheme.Oracle(), oracleServer);
+            //  AddRunner(new MonitoringScheme.Naive(),         naiveServer);
+            AddRunner(new MonitoringScheme.SketchedValue("DCT"), dctSketchedValueServer);
             foreach (var distanceNorm in distanceNorms)
             {
                 var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength,

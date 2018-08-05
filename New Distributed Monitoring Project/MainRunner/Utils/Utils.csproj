@@ -60,7 +60,8 @@
     <Compile Include="DataStructures\HistogramQueue.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
-    <Compile Include="MathUtils\SketchFunction.cs" />
+    <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
+    <Compile Include="MathUtils\Sketches\SketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />

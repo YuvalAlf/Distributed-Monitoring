@@ -10,19 +10,23 @@ using Monitoring.Servers;
 using MoreLinq;
 using Utils.MathUtils;
 using Utils.TypeUtils;
+using SketchFunction = Utils.MathUtils.Sketches.SketchFunction;
 
 namespace Monitoring.Nodes
 {
     public sealed class SketchValueNode : ValueNode
     {
-        public SketchFunction Sketch = SketchFunction.DCTSketch;
+        public SketchFunction Sketch { get; }
 
-        public SketchValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue) :
+        public SketchValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue,
+                               SketchFunction sketchFunction) :
             base(referencePoint, convexBound, slackValue)
-        {}
+        {
+            Sketch = sketchFunction;
+        }
 
-        public new static SketchValueNode Create(Vector<double> initialVector, ConvexBound convexBound)
-            => new SketchValueNode(initialVector, convexBound, 0.0);
+        public new static Func<Vector<double>, ConvexBound, SketchValueNode> Create(SketchFunction sketchFunction)
+            => (initialVector, convexBound) => new SketchValueNode(initialVector, convexBound, 0.0, sketchFunction);
 
         public static Either<(NodeServer<SketchValueNode>, CommunicationPrice), CommunicationPrice> ResolveNodes
             (NodeServer<SketchValueNode> server, SketchValueNode[] nodes, Random rnd)
@@ -32,7 +36,7 @@ namespace Monitoring.Nodes
             var sketchFunction = nodes[0].Sketch;
             var convexBound    = nodes[0].ConvexBound;
 
-            for (int dimension = 2; dimension <= nodes[0].ReferencePoint.Count / 3; dimension *= 2)
+            for (int dimension = 3; dimension <= nodes[0].ReferencePoint.Count / 3.0; dimension *= 2)
             {
                 var valueSchemeResolution = ValueNode.ResolveNodes(server, nodes, rnd);
                 if (valueSchemeResolution.IsChoice1)

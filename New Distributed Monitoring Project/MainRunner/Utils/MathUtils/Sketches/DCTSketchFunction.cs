@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Utils.TypeUtils;
 
-namespace Utils.MathUtils
+namespace Utils.MathUtils.Sketches
 {
-    public abstract class SketchFunction
-    {
-        public abstract (Vector<double> sketch, Vector<double> epsilon) Sketch(Vector<double> vector, int dimension);
-
-        public static SketchFunction DCTSketch => dct;
-        private static DCTSketchFunction dct = new DCTSketchFunction();
-
-        private sealed class DCTSketchFunction : SketchFunction
+        internal sealed class DCTSketchFunction : SketchFunction
         {
             public DCTSketchFunction()
             {}
-
 
             private static Vector<double> DCT(Vector<double> @this)
             {
@@ -44,5 +33,4 @@ namespace Utils.MathUtils
                 return (sketch, epsilon);
             }
         }
-    }
 }
