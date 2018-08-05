@@ -4,7 +4,10 @@ namespace Utils.MathUtils
 {
     public static class BinarySearch
     {
-        public static double FindWhere(double minValue, double maxValue, Predicate<double> pointOk, double approximation)
+        public static double FindWhere(double            minValue,
+                                       double            maxValue,
+                                       Predicate<double> pointOk,
+                                       double            approximation)
         {
             while (true)
             {
@@ -24,22 +27,28 @@ namespace Utils.MathUtils
                 return middle;
             }
         }
-        public static void GoUpIncreasing<T>(double minValue, double maxValue, Predicate<T> pointOk, double approximation, Action<T, double> move, T result, T nextResult, Func<T, T> deepCopy, Action<T, T> copyInPlace)
+
+        public static void GoUpIncreasing<T>(double            minValue,
+                                             double            maxValue,
+                                             Predicate<T>      pointOk,
+                                             double            approximation,
+                                             Action<T, double> move,
+                                             T                 result,
+                                             T                 nextResult,
+                                             Func<T, T>        deepCopy,
+                                             Action<T, T>      copyInPlace)
         {
-            var totalMove = 0.0;
             while (true)
             {
                 var step = approximation;
                 nextResult = deepCopy(result);
                 move(nextResult, step);
-                totalMove += step;
                 if (!pointOk(nextResult))
                     return;
                 while (true)
                 {
                     copyInPlace(nextResult, result);
                     step *= 2;
-                    totalMove += step;
                     move(nextResult, step);
                     if (!pointOk(nextResult))
                         break;

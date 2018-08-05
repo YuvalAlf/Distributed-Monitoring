@@ -34,8 +34,8 @@
     <Reference Include="MathNet.Numerics, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.4.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
+    <Reference Include="MoreLinq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.3.0.0\lib\net451\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,11 +60,14 @@
     <Compile Include="DataStructures\HistogramQueue.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
+    <Compile Include="MathUtils\SketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
+    <Compile Include="TypeUtils\Either.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
+    <Compile Include="TypeUtils\ValueTupleUtils.cs" />
     <Compile Include="TypeUtils\VectorUtils.cs" />
   </ItemGroup>
   <ItemGroup>

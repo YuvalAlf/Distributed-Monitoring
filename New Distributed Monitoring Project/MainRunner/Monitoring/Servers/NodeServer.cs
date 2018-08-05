@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
@@ -10,20 +11,33 @@ using Utils.TypeUtils;
 
 namespace Monitoring.Servers
 {
+    public delegate Either<(NodeServer<TNode>, CommunicationPrice), CommunicationPrice> ResolveNodesFunction<TNode>(NodeServer<TNode> server, TNode[] nodes, Random rnd)
+        where TNode: AbstractNode;
+
+
     public sealed class NodeServer<NodeType> : AbstractServer<NodeServer<NodeType>>
         where NodeType : AbstractNode
     {
         public NodeType[] UpperNodes { get; }
         public NodeType[] LowerNodes { get; }
-        public Func<NodeServer<NodeType>, NodeType[], Random, (NodeServer<NodeType>, SingleResult)> ResolveNodes { get; }
+        public ResolveNodesFunction<NodeType> ResolveNodes { get; }
         public Func<Vector<double>[], NodeServer<NodeType>> ReCreate { get; }
 
-        public NodeServer(Vector<double>[] nodesVectors, int numOfNodes, int vectorLength, GlobalVectorType globalVectorType, double upperBound, double lowerBound, Func<Vector<double>, double> function, EpsilonType epsilon, NodeType[] upperNodes, NodeType[] lowerNodes, Func<NodeServer<NodeType>, NodeType[], Random, (NodeServer<NodeType>, SingleResult)> resolveNodes, Func<Vector<double>[], NodeServer<NodeType>> reCreate) : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilon)
+        public NodeServer(Vector<double>[]                             nodesVectors,
+                          int                                          numOfNodes, int vectorLength,
+                          GlobalVectorType                             globalVectorType,
+                          double                                       upperBound, double lowerBound,
+                          Func<Vector<double>, double>                 function,
+                          EpsilonType                                  epsilon, NodeType[] upperNodes,
+                          NodeType[]                                   lowerNodes,
+                          ResolveNodesFunction<NodeType>               resolveNodes,
+                          Func<Vector<double>[], NodeServer<NodeType>> reCreate)
+            : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilon)
         {
-            UpperNodes = upperNodes;
-            LowerNodes = lowerNodes;
+            UpperNodes   = upperNodes;
+            LowerNodes   = lowerNodes;
             ResolveNodes = resolveNodes;
-            ReCreate = reCreate;
+            ReCreate     = reCreate;
         }
 
         public override (NodeServer<NodeType>, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd)
@@ -34,17 +48,19 @@ namespace Monitoring.Servers
                 this.UpperNodes[nodeNum].Change(changeMatrix[nodeNum] * mulBy);
                 this.LowerNodes[nodeNum].Change(changeMatrix[nodeNum] * mulBy);
             }
-            var (newServerLowerResolved, lowerResults) = ResolveNodes(this, this.LowerNodes, rnd);
-            var (newServerAllResolved, upperResults) = ResolveNodes(newServerLowerResolved, newServerLowerResolved.UpperNodes, rnd);
-            return (newServerAllResolved, lowerResults.CombineWith(upperResults));
+            var (newServerLowerResolved, lowerCommunication, isFullSync1) = this.Resolve(this.LowerNodes, rnd);
+            var (newServerAllResolved, upperCommunication, isFullSync2) = newServerLowerResolved.Resolve(newServerLowerResolved.UpperNodes, rnd);
+            return (newServerAllResolved, newServerAllResolved.CreateResult(lowerCommunication.Add(upperCommunication), isFullSync1 || isFullSync2));
         }
 
-        public override SingleResult FullResolutionBandwidthResult()
+        public (NodeServer<NodeType>, CommunicationPrice, bool isFullSync) Resolve(NodeType[] nodes, Random rnd)
         {
-            var numberOfChannels = NumOfNodes;
-            var numerOfMessages = NumOfNodes * 5 - 1;
-            var bandwidth = numerOfMessages + 2 * NumOfNodes * VectorLength;
-            return new SingleResult(bandwidth, numerOfMessages, numberOfChannels, true, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
+            var result = this.ResolveNodes(this, nodes, rnd);
+            if (result.IsChoice2)
+                return (this.ReCreate(this.NodesVectors), nodes[0].FullSyncAdditionalCost(NumOfNodes, VectorLength).Add(result.GetChoice2), true);
+
+            var server = result.GetChoice1.Item1;
+            return result.GetChoice1.AddLast(false);
         }
 
         public static NodeServer<NodeType> Create(
@@ -54,7 +70,7 @@ namespace Monitoring.Servers
             GlobalVectorType globalVectorType,
             EpsilonType epsilon, 
             MonitoredFunction monitoredFunction,
-            Func<NodeServer<NodeType>, NodeType[], Random, (NodeServer<NodeType>, SingleResult)> resolveNodes, 
+            ResolveNodesFunction<NodeType> resolveNodes, 
             Func<Vector<double>, ConvexBound, NodeType> createNode)
         {
             initVectors = initVectors.Map(v => v.Clone());

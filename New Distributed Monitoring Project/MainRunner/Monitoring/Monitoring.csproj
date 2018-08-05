@@ -31,19 +31,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.4.4.0\lib\net461\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.5.1\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="MoreLinq, Version=2.10.21623.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\packages\morelinq.2.10.0\lib\net40\MoreLinq.dll</HintPath>
+    <Reference Include="MoreLinq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.3.0.0\lib\net451\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\AccumaltedResult.cs" />
+    <Compile Include="Data\CommunicationPrice.cs" />
+    <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
+    <Compile Include="GeometricMonitoring\MonitoringType\SketchedValue.cs" />
     <Compile Include="GeometricMonitoring\Running\MonitoringRunner.cs" />
     <Compile Include="Data\SingleResult.cs" />
     <Compile Include="GeometricMonitoring\ConvexBound.cs" />
@@ -75,16 +77,19 @@
     <Compile Include="GeometricMonitoring\VectorType\SumVectorType.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\DistanceNode.cs" />
+    <Compile Include="Nodes\SketchValueNode.cs" />
     <Compile Include="Nodes\ValueNode.cs" />
     <Compile Include="Nodes\VectorNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servers\AbstractServer.cs" />
+    <Compile Include="Servers\NaiveServer.cs" />
     <Compile Include="Servers\NodeServer.cs" />
     <Compile Include="Servers\OracleServer.cs" />
     <Compile Include="Utils\LineHalfPlaneConvexBoundUtils.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

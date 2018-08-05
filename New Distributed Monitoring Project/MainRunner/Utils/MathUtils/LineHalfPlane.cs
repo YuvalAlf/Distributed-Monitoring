@@ -7,28 +7,26 @@ namespace Utils.MathUtils
 {
     public sealed class LineHalfPlane
     {
-        public Vector<double> Parameters { get; }
-        public double ConstantPart { get; }
-        public double Threshold { get; }
+        public Vector<double> Parameters   { get; }
+        public double         ConstantPart { get; }
+        public double         Threshold    { get; }
 
         private LineHalfPlane(Vector<double> parameters, double constantPart, double threshold)
         {
-            Parameters = parameters;
+            Parameters   = parameters;
             ConstantPart = constantPart;
-            Threshold = threshold;
+            Threshold    = threshold;
         }
 
         public static LineHalfPlane Create(Vector<double> paramters, double constantPart, double threshold)
-        {
-            return new LineHalfPlane(paramters, constantPart, threshold);
-        }
+            => new LineHalfPlane(paramters, constantPart, threshold);
 
         public double Compute(Vector<double> input) => Parameters * input + ConstantPart;
-        
+
         public Vector<double> ClosestPointL1(Vector<double> point)
         {
-            var sigma = Parameters * point;
-            var minDiff = double.MaxValue;
+            var sigma    = Parameters * point;
+            var minDiff  = double.MaxValue;
             int minIndex = 0;
             for (int i = 0; i < point.Count; i++)
             {
@@ -38,7 +36,7 @@ namespace Utils.MathUtils
                 diff = Math.Abs(diff);
                 if (diff < minDiff)
                 {
-                    minDiff = diff;
+                    minDiff  = diff;
                     minIndex = i;
                 }
             }
@@ -47,12 +45,13 @@ namespace Utils.MathUtils
             closestPoint[minIndex] += (Threshold - ConstantPart - sigma) / Parameters[minIndex];
             return closestPoint;
         }
-        
+
         public Vector<double> ClosestPointL2(Vector<double> point)
         {
             var sigmaParameterSquared = Parameters * Parameters;
-            var sigma = Parameters * point;
-            var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared).ToVector();
+            var sigma                 = Parameters * point;
+            var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared)
+                                       .ToVector();
             return point - diffVector;
         }
     }

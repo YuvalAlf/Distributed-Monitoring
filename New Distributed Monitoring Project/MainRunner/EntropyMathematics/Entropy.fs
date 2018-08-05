@@ -58,31 +58,3 @@ module Entropy =
         for (i, newValue) in indexedPVector do
             pVector.[i] <- newValue
         pVector
-
-        (*
-    let decreaseEntropy (l1Distance : double, pVector : double Vector) =
-        let indexedPVector = pVector.ToArray() |> Array.indexed |> Array.sortBy snd
-        let changeAtIndex i change =
-            let (index, value) = indexedPVector.[i]
-            indexedPVector.[i] <- (index, value + change)
-        let maxIndex = indexedPVector.Length - 1
-
-        let rec decrease minIndex l1Distance =
-            if minIndex <> maxIndex then
-                let minVal = snd indexedPVector.[minIndex]
-                let distanceChangeAmount = minVal * 2.0
-                if distanceChangeAmount >= l1Distance then
-                    let changeAmount = l1Distance / 2.0
-                    changeAtIndex minIndex (-changeAmount)
-                    changeAtIndex maxIndex (+changeAmount)
-                else
-                    let changeAmount = minVal
-                    changeAtIndex minIndex (-changeAmount)
-                    changeAtIndex maxIndex (+changeAmount)
-                    decrease (minIndex + 1) (l1Distance - distanceChangeAmount)
-
-        decrease 0 l1Distance
-        for (i, newValue) in indexedPVector do
-            pVector.[i] <- newValue
-    *)
-

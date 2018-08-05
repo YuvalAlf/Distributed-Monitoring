@@ -9,11 +9,11 @@ using Utils.TypeUtils;
 
 namespace Monitoring.Nodes
 {
-    public sealed class ValueNode : AbstractNode
+    public class ValueNode : AbstractNode
     {
         public ConvexBound ConvexBound { get; }
-        public double RealValue { get; private set; }
-        public double SlackValue { get; private set; }
+        public double RealValue { get; protected set; }
+        public double SlackValue { get; protected set; }
         public double ConvexValue => RealValue + SlackValue;
 
         public ValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue) : base(
@@ -31,33 +31,43 @@ namespace Monitoring.Nodes
         {
             RealValue = ConvexBound.Compute(LocalVector);
         }
-        public static (NodeServer<ValueNode>, SingleResult) ResolveNodes(NodeServer<ValueNode> server, ValueNode[] nodes, Random rnd)
+
+        public static Either<(NodeServer<TValueNode>, CommunicationPrice), CommunicationPrice> ResolveNodes<TValueNode>
+            (NodeServer<TValueNode> server, TValueNode[] nodes, Random rnd)
+        where TValueNode : ValueNode
         {
             var convexBound = nodes[0].ConvexBound;
             var violatedNodesIndices = nodes.IndicesWhere(n => !convexBound.IsInBound(n.ConvexValue));
             if (violatedNodesIndices.Count == 0)
-                return (server, server.NoBandwidthResult());
+                return (server, CommunicationPrice.Zero);
+
 
             var initiallyViolated = violatedNodesIndices.Count;
-            var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().Shuffle(rnd));
+            var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
+
+
+            var bandwidth = violatedNodesIndices.Count;
+            var messages  = violatedNodesIndices.Count;
             while (nodesIndicesToPollNext.Count > 0)
             {
+                bandwidth += 1;
+                messages  += 2;
                 violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
                 var averageValue = violatedNodesIndices.Average(i => nodes[i].ConvexValue);
                 if (convexBound.IsInBound(averageValue))
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].SlackValue = averageValue - nodes[nodeIndex].RealValue;
-                    var numOfChannels = violatedNodesIndices.Count;
-                    var numOfMessages = violatedNodesIndices.Count * 3 - initiallyViolated;
-                    var bandwidth = numOfMessages;
-                    var result = new SingleResult(bandwidth, numOfMessages, numOfChannels, false, server.FunctionValue, server.UpperBound, server.LowerBound, server.NodesFunctionValues);
-                    return (server, result);
+                    messages  += violatedNodesIndices.Count;
+                    bandwidth += violatedNodesIndices.Count;
+                    return (server, new CommunicationPrice(bandwidth, messages));
                 }
             }
 
-            var fullyResolvedServer = server.ReCreate(server.NodesVectors);
-            return (fullyResolvedServer, fullyResolvedServer.FullResolutionBandwidthResult());
+            return new CommunicationPrice(bandwidth, messages);
         }
+
+        public override CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+            => new CommunicationPrice(numOfNodes * vectorLength, numOfNodes * 3);
     }
 }

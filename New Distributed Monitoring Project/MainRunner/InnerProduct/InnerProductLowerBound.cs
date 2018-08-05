@@ -50,7 +50,7 @@ namespace InnerProduct
                 if (a == 0.0)
                     ts = FindRoots.Quadratic(d, c, b).ToArray();
                 return ts.Where(t => t.IsNearReal()).Select(t => t.Real)
-                    .Select(GetXY).MinBy(vector.DistL2FromVector());
+                    .Select(GetXY).MinBy(vector.DistL2FromVector()).First();
             }
 
             return ConvexBoundBuilder.Create(ConvexFunc, val => val >= threshold).WithDistanceNorm(2, ClosestPointFromVector).ToConvexBound();

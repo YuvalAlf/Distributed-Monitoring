@@ -10,7 +10,7 @@ namespace Utils.TypeUtils
 
         public static IEnumerator<char> EnumarateChars(this StreamReader @this)
         {
-            var charArray = new char[BlockSize];
+            var charArray  = new char[BlockSize];
             var amountRead = 0;
             do
             {
@@ -19,6 +19,7 @@ namespace Utils.TypeUtils
                     yield return charArray[i];
             } while (amountRead == BlockSize);
         }
+
         public static IEnumerator<string> EnumarateWords(this StreamReader @this)
         {
             StringBuilder currentWord = new StringBuilder();
@@ -29,7 +30,7 @@ namespace Utils.TypeUtils
                     case '\t':
                     case '\r':
                     case '\n':
-                        yield return currentWord.ToString();
+                        yield return currentWord.ToString().CleanWord();
                         currentWord.Clear();
                         break;
                     default:

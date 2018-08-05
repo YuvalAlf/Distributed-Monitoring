@@ -42,11 +42,9 @@ namespace Monitoring.Servers
             return LocalChange(changeMatrix, rnd);
         }
 
-
-
         public abstract (InheritedType, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd);
 
-        public SingleResult NoBandwidthResult() => SingleResult.Nothing(FunctionValue, LowerBound, UpperBound, NodesFunctionValues);
-        public abstract SingleResult FullResolutionBandwidthResult();
+        public SingleResult NoCommunicationResult() => CreateResult(CommunicationPrice.Zero, false);
+        protected SingleResult CreateResult(CommunicationPrice communication, bool isFullSync) => new SingleResult(communication.Bandwidth, communication.Messages, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
     }
 }

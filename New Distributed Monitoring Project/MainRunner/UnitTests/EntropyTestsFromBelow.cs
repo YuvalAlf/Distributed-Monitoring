@@ -45,15 +45,5 @@ namespace UnitTests
             var distance = 0.190701889;
             TestDistanceFromOutside(vec, entropy, threshold, distance);
         }
-        [TestMethod]
-        public void DistanceOutsideTest3()
-        {
-            var vec = CreateVec(1, 0,0,0, 0,0,0,0, 0,0,0,0);
-            var entropy = 0.0;
-            var threshold = 0.5;
-            var distance = 0.17225069;
-            TestDistanceFromOutside(vec, entropy, threshold, distance);
-        }
-        
     }
 }

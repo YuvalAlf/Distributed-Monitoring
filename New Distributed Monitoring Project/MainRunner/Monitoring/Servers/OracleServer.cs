@@ -17,20 +17,14 @@ namespace Monitoring.Servers
         public override (OracleServer, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             if (FunctionValue <= UpperBound && FunctionValue >= LowerBound)
-                return (this, base.NoBandwidthResult());
+                return (this, base.NoCommunicationResult());
 
             var (lowerBound, upperBound) = base.Epsilon.Calc(FunctionValue);
             var newOracleServer = new OracleServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
 
-            return (newOracleServer, newOracleServer.FullResolutionBandwidthResult());
-        }
-
-        public override SingleResult FullResolutionBandwidthResult()
-        {
-            var numberOfChannels = NumOfNodes;
-            var numberOfMessages = numberOfChannels * 2;
-            var bandwidth = numberOfMessages * this.VectorLength;
-            return new SingleResult(bandwidth, numberOfMessages, numberOfChannels, true, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
+            var messages  = NumOfNodes * 2;
+            var bandwidth = messages   * this.VectorLength;
+            return (newOracleServer, newOracleServer.CreateResult(new CommunicationPrice(bandwidth, messages), true));
         }
 
         public static OracleServer Create(

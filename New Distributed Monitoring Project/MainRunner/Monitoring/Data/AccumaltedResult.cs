@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
@@ -11,7 +12,6 @@ namespace Monitoring.Data
     {
         public int Bandwidth { get; }
         public int NumberOfMessages { get; }
-        public int NumberOfChannels { get; }
         public int NumberOfFullSyncs { get; }
         public double FunctionValue { get; }
         public double UpperBound { get; }
@@ -26,13 +26,12 @@ namespace Monitoring.Data
         public MonitoringScheme MonitoringScheme { get; }
 
         public static AccumaltedResult Init(EpsilonType epsilon, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme) 
-            => new AccumaltedResult(0, 0, 0, 0, 0, 0, 0, new[]{0.0}, 0, epsilon, numOfNodes, vectorLength, monitoringScheme);
+            => new AccumaltedResult(0, 0, 0, 0, 0, 0, new[]{0.0}, 0, epsilon, numOfNodes, vectorLength, monitoringScheme);
 
-        public AccumaltedResult(int bandwidth, int numberOfMessages, int numberOfChannels, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, EpsilonType epsilon, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
+        public AccumaltedResult(int bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, EpsilonType epsilon, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
         {
             Bandwidth = bandwidth;
             NumberOfMessages = numberOfMessages;
-            NumberOfChannels = numberOfChannels;
             NumberOfFullSyncs = numberOfFullSyncs;
             FunctionValue = functionValue;
             UpperBound = upperBound;
@@ -53,7 +52,6 @@ namespace Monitoring.Data
                 .ConcatCsv("Epsilon")
                 .ConcatCsv("Bandwidth")
                 .ConcatCsv("NumberOfMessages")
-                .ConcatCsv("NumberOfChannels")
                 .ConcatCsv("NumberOfFullSyncs")
                 .ConcatCsv("LowerBound")
                 .ConcatCsv("FunctionValue")
@@ -70,7 +68,6 @@ namespace Monitoring.Data
                 .ConcatCsv(Epsilon.AsString())
                 .ConcatCsv(Bandwidth.ToString())
                 .ConcatCsv(NumberOfMessages.ToString())
-                .ConcatCsv(NumberOfChannels.ToString())
                 .ConcatCsv(NumberOfFullSyncs.ToString())
                 .ConcatCsv(LowerBound.AsCsvString())
                 .ConcatCsv(FunctionValue.ToString(CultureInfo.InvariantCulture))
@@ -81,7 +78,6 @@ namespace Monitoring.Data
             new AccumaltedResult(
                 this.Bandwidth + singleResult.Bandwidth,
                 this.NumberOfMessages + singleResult.NumberOfMessages,
-                this.NumberOfChannels + singleResult.NumberOfChannels,
                 this.NumberOfFullSyncs + (singleResult.IsFullSync ? 1 : 0),
                 singleResult.FunctionValue,
                 singleResult.UpperBound,

@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
+using Monitoring.Data;
 using Utils.TypeUtils;
 
 namespace Monitoring.Nodes
 {
     public abstract class AbstractNode
     {
-        public Vector<double> ReferencePoint { get; protected set; }
-        public Vector<double> ChangeVector { get; protected set; }
+        public Vector<double> ReferencePoint { get; private set; }
+        public Vector<double> ChangeVector { get; private set; }
         public Vector<double> LocalVector => ReferencePoint + ChangeVector;
 
         protected AbstractNode(Vector<double> referencePoint)
@@ -23,6 +24,21 @@ namespace Monitoring.Nodes
             ThingsChangedUpdateState();
         }
 
+        protected void ChangeChangeVector(Vector<double> newChangeVector)
+        {
+            ChangeVector = newChangeVector;
+            ThingsChangedUpdateState();
+        }
+
+        protected void Reset(Vector<double> referencePoint, Vector<double> changeVector)
+        {
+            ReferencePoint = referencePoint;
+            ChangeVector = changeVector;
+            ThingsChangedUpdateState();
+        }
+
         protected abstract void ThingsChangedUpdateState();
+
+        public abstract CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength);
     }
 }

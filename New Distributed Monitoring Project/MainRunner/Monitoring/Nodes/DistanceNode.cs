@@ -9,7 +9,7 @@ using Utils.TypeUtils;
 
 namespace Monitoring.Nodes
 {
-    public sealed class DistanceNode : AbstractNode
+    public class DistanceNode : AbstractNode
     {
         public ConvexBound ConvexBound { get; }
         public int Norm { get; }
@@ -34,32 +34,36 @@ namespace Monitoring.Nodes
             (RealDistance, ResidualVector) = ConvexBound.ComputeDistance(Norm, LocalVector);
         }
         
-        public static (NodeServer<DistanceNode>, SingleResult) ResolveNodes(NodeServer<DistanceNode> server, DistanceNode[] nodes, Random rnd)
+        public static Either<(NodeServer<DistanceNode>, CommunicationPrice), CommunicationPrice> ResolveNodes
+            (NodeServer<DistanceNode> server, DistanceNode[] nodes, Random rnd)
         {
             var violatedNodesIndices = nodes.IndicesWhere(n => n.UsedDistance > 0);
             if (violatedNodesIndices.Count == 0)
-                return (server, server.NoBandwidthResult());
+                return (server, CommunicationPrice.Zero);
 
-            var initiallyViolated = violatedNodesIndices.Count;
-            var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().Shuffle(rnd));
+            var bandwidth = violatedNodesIndices.Count;
+            var messages = violatedNodesIndices.Count;
+            var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
             while (nodesIndicesToPollNext.Count > 0)
             {
+                bandwidth += 1;
+                messages += 2;
                 violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
                 var averageDistance = violatedNodesIndices.Average(i => nodes[i].UsedDistance);
                 if (averageDistance <= 0.0)
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].SlackDistance = averageDistance - nodes[nodeIndex].RealDistance;
-                    var numOfChannels = violatedNodesIndices.Count;
-                    var numOfMessages = violatedNodesIndices.Count * 3 - initiallyViolated;
-                    var bandwidth = numOfMessages;
-                    var result = new SingleResult(bandwidth, numOfMessages, numOfChannels, false, server.FunctionValue, server.UpperBound, server.LowerBound, server.NodesFunctionValues);
-                    return (server, result);
+                    bandwidth += nodesIndicesToPollNext.Count;
+                    messages += nodesIndicesToPollNext.Count;
+                    return (server, new CommunicationPrice(bandwidth, messages));
                 }
             }
-
-            var fullyResolvedServer = server.ReCreate(server.NodesVectors);
-            return (fullyResolvedServer, fullyResolvedServer.FullResolutionBandwidthResult());
+            
+            return new CommunicationPrice(bandwidth, messages);
         }
+
+        public override CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+            => new CommunicationPrice(numOfNodes * vectorLength, numOfNodes * 3);
     }
 }
