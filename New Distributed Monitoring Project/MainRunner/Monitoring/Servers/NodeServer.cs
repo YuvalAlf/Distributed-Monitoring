@@ -11,7 +11,8 @@ using Utils.TypeUtils;
 
 namespace Monitoring.Servers
 {
-    public delegate Either<(NodeServer<TNode>, CommunicationPrice), CommunicationPrice> ResolveNodesFunction<TNode>(NodeServer<TNode> server, TNode[] nodes, Random rnd)
+    public delegate Either<(NodeServer<TNode>, Communication), Communication> ResolveNodesFunction<TNode>
+        (NodeServer<TNode> server, TNode[] nodes, Random rnd)
         where TNode: AbstractNode;
 
 
@@ -40,7 +41,7 @@ namespace Monitoring.Servers
             ReCreate     = reCreate;
         }
 
-        public override (NodeServer<NodeType>, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        public override (NodeServer<NodeType>, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             double mulBy = GlobalVectorType.MulBy(NumOfNodes);
             for (int nodeNum = 0; nodeNum < NumOfNodes; nodeNum++)
@@ -50,10 +51,10 @@ namespace Monitoring.Servers
             }
             var (newServerLowerResolved, lowerCommunication, isFullSync1) = this.Resolve(this.LowerNodes, rnd);
             var (newServerAllResolved, upperCommunication, isFullSync2) = newServerLowerResolved.Resolve(newServerLowerResolved.UpperNodes, rnd);
-            return (newServerAllResolved, newServerAllResolved.CreateResult(lowerCommunication.Add(upperCommunication), isFullSync1 || isFullSync2));
+            return (newServerAllResolved, lowerCommunication.Add(upperCommunication), isFullSync1 || isFullSync2);
         }
 
-        public (NodeServer<NodeType>, CommunicationPrice, bool isFullSync) Resolve(NodeType[] nodes, Random rnd)
+        public (NodeServer<NodeType>, Communication, bool isFullSync) Resolve(NodeType[] nodes, Random rnd)
         {
             var result = this.ResolveNodes(this, nodes, rnd);
             if (result.IsChoice2)

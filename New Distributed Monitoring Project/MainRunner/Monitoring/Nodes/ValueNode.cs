@@ -32,14 +32,14 @@ namespace Monitoring.Nodes
             RealValue = ConvexBound.Compute(LocalVector);
         }
 
-        public static Either<(NodeServer<TValueNode>, CommunicationPrice), CommunicationPrice> ResolveNodes<TValueNode>
+        public static Either<(NodeServer<TValueNode>, Communication), Communication> ResolveNodes<TValueNode>
             (NodeServer<TValueNode> server, TValueNode[] nodes, Random rnd)
         where TValueNode : ValueNode
         {
             var convexBound = nodes[0].ConvexBound;
             var violatedNodesIndices = nodes.IndicesWhere(n => !convexBound.IsInBound(n.ConvexValue));
             if (violatedNodesIndices.Count == 0)
-                return (server, CommunicationPrice.Zero);
+                return (server, Communication.Zero);
 
 
             var initiallyViolated = violatedNodesIndices.Count;
@@ -60,14 +60,14 @@ namespace Monitoring.Nodes
                         nodes[nodeIndex].SlackValue = averageValue - nodes[nodeIndex].RealValue;
                     messages  += violatedNodesIndices.Count;
                     bandwidth += violatedNodesIndices.Count;
-                    return (server, new CommunicationPrice(bandwidth, messages));
+                    return (server, new Communication(bandwidth, messages));
                 }
             }
 
-            return new CommunicationPrice(bandwidth, messages);
+            return new Communication(bandwidth, messages);
         }
 
-        public override CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength)
-            => new CommunicationPrice(numOfNodes * vectorLength, numOfNodes * 3);
+        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+            => new Communication(2 * numOfNodes * vectorLength, numOfNodes * 3);
     }
 }

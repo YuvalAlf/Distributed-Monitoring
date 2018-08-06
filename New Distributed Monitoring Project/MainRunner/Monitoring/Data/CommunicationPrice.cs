@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Monitoring.Data
 {
-    public sealed class CommunicationPrice
+    public sealed class Communication
     {
         public int Bandwidth { get; }
         public int Messages { get; }
 
-        public CommunicationPrice(int bandwidth, int messages)
+        public Communication(int bandwidth, int messages)
         {
             Bandwidth = bandwidth;
             Messages = messages;
         }
 
-        public static CommunicationPrice Zero => new CommunicationPrice(0, 0);
+        public static Communication Zero => new Communication(0, 0);
 
-        public CommunicationPrice Add(CommunicationPrice priceToAdd)
-            => new CommunicationPrice(Bandwidth + priceToAdd.Bandwidth, Messages + priceToAdd.Messages);
+        public Communication Add(Communication priceToAdd)
+            => new Communication(Bandwidth + priceToAdd.Bandwidth, Messages + priceToAdd.Messages);
     }
 }

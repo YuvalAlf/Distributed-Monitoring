@@ -8,6 +8,7 @@ using Utils.TypeUtils;
 namespace Monitoring.Servers
 {
     public abstract class AbstractServer<InheritedType>
+        where InheritedType : AbstractServer<InheritedType>
     {
         public Vector<double> GlobalVector => GlobalVectorType.GetValue(NodesVectors);
         public double FunctionValue => Function(GlobalVector);
@@ -38,13 +39,12 @@ namespace Monitoring.Servers
         {
             for (int i = 0; i < NodesVectors.Length; i++)
                 NodesVectors[i].AddInPlace(changeMatrix[i]);
-
-            return LocalChange(changeMatrix, rnd);
+            var (newServer, communication, fullSync) = LocalChange(changeMatrix, rnd);
+            return (newServer, newServer.CreateResult(communication, fullSync));
         }
 
-        public abstract (InheritedType, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd);
+        public abstract (InheritedType, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd);
 
-        public SingleResult NoCommunicationResult() => CreateResult(CommunicationPrice.Zero, false);
-        protected SingleResult CreateResult(CommunicationPrice communication, bool isFullSync) => new SingleResult(communication.Bandwidth, communication.Messages, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
+        private SingleResult CreateResult(Communication communication, bool isFullSync) => new SingleResult(communication.Bandwidth, communication.Messages, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
     }
 }

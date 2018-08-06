@@ -26,13 +26,14 @@ namespace Monitoring.Nodes
         {
             ConvexValue = ConvexBound.Compute(LocalVector);
         }
-        public static Either<(NodeServer<VectorNode>, CommunicationPrice), CommunicationPrice> ResolveNodes
+
+        public static Either<(NodeServer<VectorNode>, Communication), Communication> ResolveNodes
             (NodeServer<VectorNode> server, VectorNode[] nodes, Random rnd)
         {
             var convexFunction = nodes[0].ConvexBound;
             var violatedNodesIndices = nodes.IndicesWhere(n => !convexFunction.IsInBound(n.ConvexValue));
             if (violatedNodesIndices.Count == 0)
-                return (server, CommunicationPrice.Zero);
+                return (server, Communication.Zero);
 
             var referenceVector = nodes[0].ReferencePoint;
             var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
@@ -50,15 +51,15 @@ namespace Monitoring.Nodes
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
                     messages  += violatedNodesIndices.Count;
                     bandwidth += violatedNodesIndices.Count * server.VectorLength;
-                    return (server, new CommunicationPrice(bandwidth, messages));
+                    return (server, new Communication(bandwidth, messages));
                 }
             }
 
-            return new CommunicationPrice(bandwidth, messages);
+            return new Communication(bandwidth, messages);
         }
 
 
-        public override CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength)
-            => new CommunicationPrice(numOfNodes * vectorLength, numOfNodes);
+        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+            => new Communication(0, numOfNodes);
     }
 }

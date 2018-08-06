@@ -18,15 +18,15 @@ namespace Monitoring.Servers
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilonType)
         { }
 
-        public override (NaiveServer, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        public override (NaiveServer, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             var (lowerBound, upperBound) = base.Epsilon.Calc(FunctionValue);
             var newNaiveServer = new NaiveServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
 
             var numberOfMessages = NumOfNodes       * 2;
-            var bandwidth        = changeMatrix.Sum(v => v.CountNonZero()) + changeMatrix.AverageVector().CountNonZero();
+            var bandwidth        = changeMatrix.Sum(v => v.CountNonZero()) + changeMatrix.AverageVector().CountNonZero() * NumOfNodes;
 
-            return (newNaiveServer, newNaiveServer.CreateResult(new CommunicationPrice(bandwidth, numberOfMessages), true));
+            return (newNaiveServer, new Communication(bandwidth, numberOfMessages), true);
         }
 
         public static NaiveServer Create(

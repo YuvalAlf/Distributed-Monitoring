@@ -1,4 +1,6 @@
-﻿namespace Monitoring.Data
+﻿using Utils.TypeUtils;
+
+namespace Monitoring.Data
 {
     public sealed class SingleResult
     {
@@ -18,7 +20,7 @@
             FunctionValue = functionValue;
             UpperBound = upperBound;
             LowerBound = lowerBound;
-            NodesFunctionValues = nodesFunctionValues;
+            NodesFunctionValues = nodesFunctionValues.Copy();
         }
 
 

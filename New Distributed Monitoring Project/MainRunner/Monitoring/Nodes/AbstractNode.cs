@@ -39,6 +39,6 @@ namespace Monitoring.Nodes
 
         protected abstract void ThingsChangedUpdateState();
 
-        public abstract CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength);
+        public abstract Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength);
     }
 }

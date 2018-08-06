@@ -20,7 +20,7 @@ namespace Utils.TypeUtils
             return sumArray.ToVector();
         }
 
-        public static int CountNonZero(this Vector<double> @this) => @this.Count(num => num.AlmostEqual(0.0));
+        public static int CountNonZero(this Vector<double> @this) => @this.Count(num => !num.AlmostEqual(0.0));
 
 
         public static Vector<double> AverageVector(this Vector<double>[] @this)

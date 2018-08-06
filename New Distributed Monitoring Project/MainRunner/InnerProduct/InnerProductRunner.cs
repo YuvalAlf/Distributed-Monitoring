@@ -21,11 +21,11 @@ namespace InnerProduct
         public static void RunBagOfWords(Random rnd, string wordsPath, string resultPath, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new MultiplicativeEpsilon(0.09);
+            var epsilon            = new MultiplicativeEpsilon(0.08);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 50000;
-            var amountOfIterations = 2500;
-            var vectorLength       = 256;
+            var amountOfIterations = 1000;
+            var vectorLength       = 1000;
             var stepSize           = 100;
 
             using (var resultCsvFile = File.CreateText(resultPath))

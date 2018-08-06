@@ -14,17 +14,17 @@ namespace Monitoring.Servers
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilonType)
         {}
 
-        public override (OracleServer, SingleResult) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        public override (OracleServer, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             if (FunctionValue <= UpperBound && FunctionValue >= LowerBound)
-                return (this, base.NoCommunicationResult());
+                return (this, Communication.Zero, false);
 
             var (lowerBound, upperBound) = base.Epsilon.Calc(FunctionValue);
             var newOracleServer = new OracleServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
 
-            var messages  = NumOfNodes * 2;
-            var bandwidth = messages   * this.VectorLength;
-            return (newOracleServer, newOracleServer.CreateResult(new CommunicationPrice(bandwidth, messages), true));
+            var messages  = 2 * NumOfNodes;
+            var bandwidth = 2 * NumOfNodes * this.VectorLength;
+            return (newOracleServer, new Communication(bandwidth, messages), true);
         }
 
         public static OracleServer Create(

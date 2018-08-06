@@ -22,14 +22,19 @@ namespace Monitoring.GeometricMonitoring.Running
 
         public void RemoveScheme(MonitoringScheme scheme) => Runners.Remove(scheme);
 
-        public IEnumerable<AccumaltedResult> Run(Vector<double>[] change, Random rnd, bool parrallel) 
-            => Runners.Values.AsParallel().Select(runner => runner.Run(change, rnd));
+        public IEnumerable<AccumaltedResult> Run(Vector<double>[] change, Random rnd, bool parallel)
+        {
+            if (parallel)
+                return Runners.Values.AsParallel().Select(runner => runner.Run(change, rnd));
+            else
+                return Runners.Values.Select(runner => runner.Run(change, rnd));
+        }
 
-        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd, bool parrallel) 
-            => changes.SelectMany(change => this.Run(change, rnd, parrallel));
+        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd, bool parallel) 
+            => changes.SelectMany(change => this.Run(change, rnd, parallel));
 
-        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd, bool parrallel)
-            => RunAll(changes, rnd, parrallel).TakeLast(Runners.Count);
+        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd, bool parallel)
+            => RunAll(changes, rnd, parallel).TakeLast(Runners.Count);
 
         public string HeaderCsv => Runners.Values.First().AccumalatedResult.HeaderCsv();
 
@@ -67,12 +72,18 @@ namespace Monitoring.GeometricMonitoring.Running
                                                                             epsilon, monitoredFunction,
                                                                             SketchValueNode.ResolveNodes,
                                                                             SketchValueNode.Create(SketchFunction.DCTSketch));
+            var standardBaseSketchedValueServer = NodeServer<SketchValueNode>.Create(initVectors, numOfNodes, vectorLength,
+                                                                            globalVectorType,
+                                                                            epsilon, monitoredFunction,
+                                                                            SketchValueNode.ResolveNodes,
+                                                                            SketchValueNode.Create(SketchFunction.StandardBaseSketch));
 
             AddRunner(new MonitoringScheme.Value(),  valueServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
             AddRunner(new MonitoringScheme.Oracle(), oracleServer);
             //  AddRunner(new MonitoringScheme.Naive(),         naiveServer);
             AddRunner(new MonitoringScheme.SketchedValue("DCT"), dctSketchedValueServer);
+            AddRunner(new MonitoringScheme.SketchedValue("Standard Base"), standardBaseSketchedValueServer);
             foreach (var distanceNorm in distanceNorms)
             {
                 var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength,
@@ -80,7 +91,7 @@ namespace Monitoring.GeometricMonitoring.Running
                                                                      epsilon, monitoredFunction,
                                                                      DistanceNode.ResolveNodes,
                                                                      DistanceNode.CreateNorm(distanceNorm));
-                AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
+         //       AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
             }
 
             return new MultiRunner(runners);

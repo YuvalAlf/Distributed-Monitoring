@@ -10,7 +10,7 @@ namespace Utils.TypeUtils
 
         public static T[] ShuffleInPlace<T>(this T[] @this, Random rnd)
         {
-            for (int i = 2; i < @this.Length; i++)
+            for (int i = 1; i < @this.Length; i++)
             {
                 var other = rnd.Next(i + 1);
                 var temp  = @this[i];

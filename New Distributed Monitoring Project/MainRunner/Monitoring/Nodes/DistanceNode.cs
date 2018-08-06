@@ -34,12 +34,12 @@ namespace Monitoring.Nodes
             (RealDistance, ResidualVector) = ConvexBound.ComputeDistance(Norm, LocalVector);
         }
         
-        public static Either<(NodeServer<DistanceNode>, CommunicationPrice), CommunicationPrice> ResolveNodes
+        public static Either<(NodeServer<DistanceNode>, Communication), Communication> ResolveNodes
             (NodeServer<DistanceNode> server, DistanceNode[] nodes, Random rnd)
         {
             var violatedNodesIndices = nodes.IndicesWhere(n => n.UsedDistance > 0);
             if (violatedNodesIndices.Count == 0)
-                return (server, CommunicationPrice.Zero);
+                return (server, Communication.Zero);
 
             var bandwidth = violatedNodesIndices.Count;
             var messages = violatedNodesIndices.Count;
@@ -56,14 +56,14 @@ namespace Monitoring.Nodes
                         nodes[nodeIndex].SlackDistance = averageDistance - nodes[nodeIndex].RealDistance;
                     bandwidth += nodesIndicesToPollNext.Count;
                     messages += nodesIndicesToPollNext.Count;
-                    return (server, new CommunicationPrice(bandwidth, messages));
+                    return (server, new Communication(bandwidth, messages));
                 }
             }
             
-            return new CommunicationPrice(bandwidth, messages);
+            return new Communication(bandwidth, messages);
         }
 
-        public override CommunicationPrice FullSyncAdditionalCost(int numOfNodes, int vectorLength)
-            => new CommunicationPrice(numOfNodes * vectorLength, numOfNodes * 3);
+        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+            => new Communication(2 * numOfNodes * vectorLength, numOfNodes * 3);
     }
 }

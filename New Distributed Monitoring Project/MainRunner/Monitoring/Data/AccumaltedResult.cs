@@ -46,16 +46,16 @@ namespace Monitoring.Data
 
         public static string Header(int numOfNodes) =>
             "LoopIndex"
-                .ConcatCsv("MonitoringScheme")
-                .ConcatCsv("VectorLength")
-                .ConcatCsv("NumOfNodes")
+                .ConcatCsv("Monitoring Scheme")
+                .ConcatCsv("Vector Length")
+                .ConcatCsv("# Nodes")
                 .ConcatCsv("Epsilon")
                 .ConcatCsv("Bandwidth")
-                .ConcatCsv("NumberOfMessages")
-                .ConcatCsv("NumberOfFullSyncs")
-                .ConcatCsv("LowerBound")
-                .ConcatCsv("FunctionValue")
-                .ConcatCsv("UpperBound")
+                .ConcatCsv("# Messages")
+                .ConcatCsv("# Full Syncs")
+                .ConcatCsv("Lower-Bound")
+                .ConcatCsv("Function's Value")
+                .ConcatCsv("Upper-Bound")
                 .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Node " + numNode)));
 
         public string HeaderCsv() => Header(NumOfNodes);

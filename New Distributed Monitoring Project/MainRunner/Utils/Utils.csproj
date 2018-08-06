@@ -62,10 +62,12 @@
     <Compile Include="DataStructures\WindowedHistogram.cs" />
     <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
     <Compile Include="MathUtils\Sketches\SketchFunction.cs" />
+    <Compile Include="MathUtils\Sketches\StandardBasisSketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
+    <Compile Include="TypeUtils\IntUtils.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
     <Compile Include="TypeUtils\ValueTupleUtils.cs" />
