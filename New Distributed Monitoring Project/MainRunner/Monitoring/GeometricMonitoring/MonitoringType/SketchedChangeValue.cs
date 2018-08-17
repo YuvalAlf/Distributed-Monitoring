@@ -8,15 +8,15 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
 {
     public abstract partial class MonitoringScheme
     {
-        public sealed class SketchedValue : MonitoringScheme, IEquatable<SketchedValue>
+        public sealed class SketchedChangeValue : MonitoringScheme, IEquatable<SketchedChangeValue>
         {
-            public SketchedValue(string sketchName) => SketchName = sketchName;
+            public SketchedChangeValue(string sketchName) => SketchName = sketchName;
 
             public string SketchName { get; }
 
-            public override string AsString() => SketchName + " Sketched Value Scheme";
+            public override string AsString() => SketchName + " Sketched Change Value Scheme";
 
-            public bool Equals(SketchedValue other)
+            public bool Equals(SketchedChangeValue other)
             {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
@@ -27,7 +27,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                return obj is SketchedValue && Equals((SketchedValue) obj);
+                return obj is SketchedChangeValue && Equals((SketchedChangeValue) obj);
             }
 
             public override int GetHashCode()
