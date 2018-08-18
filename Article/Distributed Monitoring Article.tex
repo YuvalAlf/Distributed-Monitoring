@@ -11,6 +11,12 @@
 \usepackage[none]{hyphenat}
 \usepackage{multicol}
 
+%%%%%%%%%%%%%%%%% Macros %%%%%%%%%%%%%%%%%
+
+\newcommand{\vecScheme}{\textit{Vector Scheme}}
+
+%%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
+
 \begin{document}
 \onehalfspacing
 \sloppy
@@ -31,6 +37,16 @@
 
 %%%%%%%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%
 \section{Introduction}
+Monitoring the a function over an aggregation of large amount of data which changes \\
+
+Given convex f \label{fConvexity}
+
+The monitoring objective is to determine whether:
+\begin{equation}
+\label{monitoringConstraint}
+f(v) <= T
+\end{equation}
+
 
 %%%%%%%%%%%%%%%%% Previous Work %%%%%%%%%%%%%%%%%
 \section{Previous Work}
@@ -38,16 +54,36 @@
 %%%%%%%%%%%%%%%%% Vector Scheme %%%%%%%%%%%%%%%%%
 \section{Vector Scheme}
 
+The \vecScheme 's idea is to balance the data vectors of the servers. when a server's local data vector gets out of the function's bound, this scheme would like to balance it with other data vector. It would be done by incorporating \textit{slack vectors}, namely, $server_i$ would maintain a slack $\overrightarrow{s_i}$. It's important to note that the \vecScheme \  makes sure that (\label{vectorSchemSlackSumZero}\ref{vectorSchemSlackSumZero}) $sum{\overrightarrow{s_i}} = \textstyle \overrightarrow{0}$
+In order to take into consideration these \textit{slacks}, a server raises a violation and initiates a communication channel with the coordinator if $f(v_i+s_i)$ exceeds the threshold; specifically, for a lower bound threshold, when $f(v_i+s_i) <= T$. This ensures that whenever all the local constraint hold, the global constraint mentioned in section [\ref{monitoringConstraint}]. proof due to (\ref{fConvexity}), (\ref{vectorSchemSlackSumZero}):
+\begin{equation}
+\label{vectorSchemeProof}
+\begin{aligned}
+ f(v)  \
+	   ={} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
+        =   \frac{1}{n} f\left(\sum\limits_{i=0}^{n}{(v_i + s_i)}\right) \\
+     & <=   \frac{1}{n} \sum\limits_{i=0}^{n}{f(v_i + s_i)}
+       <=   \frac{1}{n}(n \cdot T)
+       = T
+\end{aligned}
+\end{equation}
+
+When a violation occurs, i.e. $f(v_i+s_i)>T$ at a certain server, (\ref{vectorSchemeProof}) cannot longer be proven so a \textit{violation resolution} has to occur. In the \textit{violation resolution} phase, the slack vectors are balanced so $f(v_i+s_i)$ would get inside the convex zone. When a server detects a local violation, it sends its local vector $(v_i + s_i)$ to the coordinator, which polls other servers for their local vector as well. When the average of those vectors is inside the convex zone, i.g. $f(E(v_i + s_i)) <= T$. after that, the coordinator sends the average vector (k - number of polled nodes plus violated node) -- $\frac{1}{k}\sum{(v_i + s_i)}$ to the polled nodes as well as the violated node, which update their slack to be $s_i \leftarrow -v_i + \frac{1}{k}\sum{(v_i + s_i)} $. Note that condition (\ref{vectorSchemSlackSumZero}) still holds. \\
+When all the nodes are polled and the average vector still isn't inside the convex zone, a \textit{full sync} has to be done, the real value of $f(v)$ is known, so the upper bound and lower bound reset to $(1 \pm \varepsilon )f(v)$ and the monitoring continues.
+
 %%%%%%%%%%%%%%%%% Value Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme}
 
 %%%%%%%%%%%%%%%%% Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Distance Scheme}
+
 \subsection{Distance Lemma}
-\subsection{Monitoring Scheme}
 
 %%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
 \section{Sketched Data Resolution}
+
+%%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
+\section{Sketched Change Resolution}
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
