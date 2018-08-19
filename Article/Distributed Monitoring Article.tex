@@ -1,15 +1,13 @@
-\documentclass[10pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
+\documentclass[10pt, conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
 \usepackage{graphicx}
-\usepackage{fullpage}
-\usepackage{mathptmx}
-\usepackage{setspace}
-\usepackage[none]{hyphenat}
-\usepackage{multicol}
+\usepackage{textcomp}
+
+\usepackage[T1]{fontenc}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 %%%%%%%%%%%%%%%%% Macros %%%%%%%%%%%%%%%%%
 
@@ -20,35 +18,49 @@
 %%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
 
 \begin{document}
-\onehalfspacing
-\sloppy
-\setlength{\parindent}{0pt}
 
 
 %%%%%%%%%%%%%%%%% Title %%%%%%%%%%%%%%%%%
 \title{Bandwidth Efficient Distributed Monitoring Schemes}
-\date{}
+\author{\IEEEauthorblockN{Yuval Alfassi}\
+\textit{Computer Science Department}\\
+\textit{University of Haifa}\\
+Haifa, Israel \\
+yuvalalfassi@gmail.com
+\and
+\IEEEauthorblockN{Dani Keren}\
+\textit{Computer Science Department}\\
+\textit{University of Haifa}\\
+Haifa, Israel \\
+dkeren@cs.haifa.ac.il}
 \maketitle
 
 
 %%%%%%%%%%%%%%%%% Abstract %%%%%%%%%%%%%%%%%
-\begin{multicols*}{2}
-\begin{center}
-\section*{Abstract}
-\end{center}
-The distributed monitoring problem which tracks changes of a function over dynamic data in a distributed setting is a challenging problem in numerous real-world modern applications. Several monitoring schemes were proposed as an approach to this problem. \\
-Here, we propose new distributed monitoring schemes which monitor the distributed function using much less communication bandwidth. Existing schemes send high dimensional vectors between the servers while we propose two methods for reducing the communication into one scalar and also two sketch-based methods which are a tradeoff.
+\begin{small}
+\textbf{
+\textit{Abstract}--- The distributed monitoring problem which tracks changes of a function over dynamic data in a distributed setting is a challenging problem in numerous real-world modern applications. Several monitoring schemes were proposed as an approach to this problem. \\
+Here, we propose new distributed monitoring schemes which monitor the distributed function using much less communication bandwidth. Existing schemes send high dimensional vectors between the servers while we propose two methods for reducing the communication into one scalar and also two sketch-based methods which are a trade-off(...)}
+\end{small}
 
 %%%%%%%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%
 \section{Introduction}
-Monitoring the a function over an aggregation of large amount of data which changes \\
+Monitoring a function over large amount of dynamically changes data which changes in a distributed fashion is a common computer science challenge. Whether its monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to cope with the difficulties. \\
+The need of minimizing both the bandwidth and the processing power is expressed in [*]; good examples are internet of things objects which require communication with one another [**], or air pollution sensors which distributively have to determine whether there's air pollution [***]. \\
+Previous works were made on monitoring the entropy of distributed streams [*], monitoring inner product, the number of triangles of distributed dynamic graphs.. \\
+The distributed monitoring problem is defined as follows:
+\begin{enumerate}
+\item There are n servers and a coordinator, server $server_i$ has vector $v_i$. the global vector is $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
+\item A function f is monitored so its $\varepsilon$-approximated: for a threshold T, $$(1-\varepsilon )f(v) \leq f(v) \leq (1+\varepsilon )f(v)$$
+\end{enumerate}
+The monitoring is done by bounding the function f by a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and is used for the upper (lower) threshold monitoring.
 
 Given convex f \label{fConvexity}
 
 The monitoring objective is to determine whether:
 \begin{equation}
 \label{monitoringConstraint}
-f(v) <= T
+f(v) \leq T
 \end{equation}
 
 
@@ -59,20 +71,20 @@ f(v) <= T
 \section{Vector Scheme}
 
 The \vecScheme 's idea is to balance the data vectors of the servers. when a server's local data vector gets out of the function's bound, this scheme would like to balance it with other data vector. It would be done by incorporating \textit{slack vectors}, namely, $server_i$ would maintain a slack $\overrightarrow{s_i}$. It's important to note that the \vecScheme \  makes sure that (\label{vectorSchemSlackSumZero}\ref{vectorSchemSlackSumZero}) $\sum{\overrightarrow{s_i}} = \textstyle \overrightarrow{0}$
-In order to take into consideration these \textit{slacks}, a server raises a violation and initiates a communication channel with the coordinator if $f(v_i+s_i)$ exceeds the threshold; specifically, for a lower bound threshold, when $f(v_i+s_i) <= T$. This ensures that whenever all the local constraint hold, the global constraint mentioned in section [\ref{monitoringConstraint}]. proof due to (\ref{fConvexity}), (\ref{vectorSchemSlackSumZero}):
+In order to take into consideration these \textit{slacks}, a server raises a violation and initiates a communication channel with the coordinator if $f(v_i+s_i)$ exceeds the threshold; specifically, for a lower bound threshold, when $f(v_i+s_i) \leqslant T$. This ensures that whenever all the local constraint hold, the global constraint mentioned in section [\ref{monitoringConstraint}]. proof due to (\ref{fConvexity}), (\ref{vectorSchemSlackSumZero}):
 \begin{equation}
 \label{vectorSchemeProof}
 \begin{aligned}
  f(v)  \
-	   ={} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
+	    = {} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
         =   \frac{1}{n} f\left(\sum\limits_{i=0}^{n}{(v_i + s_i)}\right) \\
-     & <=   \frac{1}{n} \sum\limits_{i=0}^{n}{f(v_i + s_i)}
-       <=   \frac{1}{n}(n \cdot T)
+     & \leq   \frac{1}{n} \sum\limits_{i=0}^{n}{f(v_i + s_i)}
+       \leq   \frac{1}{n}(n \cdot T)
        = T
 \end{aligned}
 \end{equation}
 
-When a violation occurs, i.e. $f(v_i+s_i)>T$ at a certain server, (\ref{vectorSchemeProof}) cannot longer be proven so a \textit{violation resolution} has to occur. In the \textit{violation resolution} phase, the slack vectors are balanced so $f(v_i+s_i)$ would get inside the convex zone. When a server detects a local violation, it sends its local vector $(v_i + s_i)$ to the coordinator, which polls other servers for their local vector as well. When the average of those vectors is inside the convex zone, i.g. $f(E(v_i + s_i)) <= T$. after that, the coordinator sends the average vector (k - number of polled nodes plus violated node) -- $\frac{1}{k}\sum{(v_i + s_i)}$ to the polled nodes as well as the violated node, which update their slack to be $s_i \leftarrow -v_i + \frac{1}{k}\sum{(v_i + s_i)} $. Note that condition (\ref{vectorSchemSlackSumZero}) still holds. \\
+When a violation occurs, i.e. $f(v_i+s_i) > T$ at a certain server, (\ref{vectorSchemeProof}) cannot longer be proven so a \textit{violation resolution} has to occur. In the \textit{violation resolution} phase, the slack vectors are balanced so $f(v_i+s_i)$ would get inside the convex zone. When a server detects a local violation, it sends its local vector $(v_i + s_i)$ to the coordinator, which polls other servers for their local vector as well. When the average of those vectors is inside the convex zone, i.g. $f(E(v_i + s_i)) <= T$. after that, the coordinator sends the average vector (k - number of polled nodes plus violated node) -- $\frac{1}{k}\sum{(v_i + s_i)}$ to the polled nodes as well as the violated node, which update their slack to be $s_i \leftarrow -v_i + \frac{1}{k}\sum{(v_i + s_i)} $. Note that condition (\ref{vectorSchemSlackSumZero}) still holds. \\
 When all the nodes are polled and the average vector still isn't inside the convex zone, a \textit{full sync} has to be done, the real value of $f(v)$ is known, so the upper bound and lower bound reset to $(1 \pm \varepsilon )f(v)$ and the monitoring continues. \\
 The \vecScheme is extremely wasteful in communication bandwidth. Considaring that the data vectors are of very high dimension, this scheme sends the whole vectors.
 
@@ -85,9 +97,9 @@ The \valueScheme \  maintains local scalar slack values; $server_i$ maintains th
 \begin{aligned}
  f(v)  \
 	    ={} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
-       <=   \frac{1}{n} \sum\limits_{i=0}^{n}f(v_i) \\
+       \leq   \frac{1}{n} \sum\limits_{i=0}^{n}f(v_i) \\
      &  =   \frac{1}{n} \sum\limits_{i=0}^{n}{(f(v_i) + \lambda _i)}
-       <=   \frac{1}{n}(n \cdot T)
+       \leq   \frac{1}{n}(n \cdot T)
         = T
 \end{aligned}
 \end{equation}
@@ -112,9 +124,8 @@ The violation resolution protocol goes as follows: the violated server $server_i
 \ 
 
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
-\begin{center}
-\section*{References}
-\end{center}
+\begin{thebibliography}{00}
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\end{thebibliography}
 
-\end{multicols*}
 \end{document}
