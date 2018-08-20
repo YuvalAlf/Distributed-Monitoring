@@ -90,7 +90,7 @@ The \vecScheme is extremely wasteful in communication bandwidth. Considaring tha
 
 %%%%%%%%%%%%%%%%% Value Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme}
-The \valueScheme \ is distributed monitoring scheme done by reducing the bandwidth from sending a whole vector to one scalar. The whole monitoring scheme is being reduced to one scalar passed. Though, it might have more false alarms than the \vecScheme , and thus require more \textit{full syncs}. \\
+The \valueScheme \ is distributed monitoring scheme done by reducing the bandwidth from sending a whole vector to one scalar. The whole monitoring scheme is being reduced to one scalar passed. Though, it might have more false alarms than the \vecScheme , and thus require more \textit{full syncs}. The scalar that will be passed will represent the \textit{value} of the convex bound function.\\
 The \valueScheme \  maintains local scalar slack values; $server_i$ maintains the scalar $\lambda _i$. like \vecScheme 's (\ref{vectorSchemSlackSumZero}), $\sum{\lambda _i} = 0$. Here, the local server's constraint is whether $f(v_i) + \lambda _i <= T$; hence, if all the local constraints are being held, the global constraint (\ref{monitoringConstraint}) will be held as well:
 \begin{equation}
 \label{valueSchemeProof}
@@ -109,8 +109,20 @@ The violation resolution protocol goes as follows: the violated server $server_i
 
 %%%%%%%%%%%%%%%%% Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Distance Scheme}
+The \distanceScheme is one more \textit{distributed monitoring scheme} that relies on passing a single when communicating. The scalar that will be passed will represent the \textit{distance} of the local vector at the server to the boundary of convex bound.\\
+This scheme is based on the \textit{Distance Lemma} which is proved below.
 
-\subsection{Distance Lemma}
+\subsection{The Distance Lemma}
+Let $v_i$ be vectors and let $C$ be a convex body. If the sum of the distances of the vectors inside C is greater than the sum of the distances to the boundary of the vectors from outside, that the average vector $\frac{1}{n}\sum {v_i}$ is also inside the convex set. \\
+proof: \\
+\begin{enumerate}
+\item Let $p_1 ,..., p_k$ be points inside the convex body $C$ and $l_1 ,..., l_k$ their distances to the boundary.
+\item Let $q_1 ,..., q_m$ be points outside the convex body $C$ and $d_1 ,..., d_m$ the distance vectors from the boundary to the points while $c_1 ,..., c_m$ are the points on the boundary which are the source of the distance vectors $d_i$.
+\item due to...
+\end{enumerate}
+\subsection{Monitoring}
+
+\subsection{Violation Resolution}
 
 %%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
 \section{Sketched Data Resolution}
@@ -121,7 +133,9 @@ The violation resolution protocol goes as follows: the violated server $server_i
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
 
-\ 
+\section{Conclusions}
+
+\section{Summary}
 
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
 \begin{thebibliography}{00}
