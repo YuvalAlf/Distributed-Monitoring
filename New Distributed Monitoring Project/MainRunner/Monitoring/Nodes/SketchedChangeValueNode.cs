@@ -10,6 +10,7 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.Servers;
 using MoreLinq;
 using Utils.MathUtils;
+using Utils.MathUtils.Sketches;
 using Utils.TypeUtils;
 using SketchFunction = Utils.MathUtils.Sketches.SketchFunction;
 
@@ -52,9 +53,10 @@ namespace Monitoring.Nodes
                 messages                 += valueSchemeResolution.GetChoice2.Messages;
                 bandwidth                += valueSchemeResolution.GetChoice2.Bandwidth;
                 messages                 += 2             * nodes.Length;
-                bandwidth                += 2 * dimension * nodes.Length;
-                var (sketches, epsilons) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, dimension, n.SketchIndex)).UnZip();
+                bandwidth                += dimension * nodes.Length;
+                var (sketches, epsilons, invokedIndices) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, dimension, n.SketchIndex)).UnZip();
                 var averageChangeSketch = sketches.AverageVector();
+                bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * nodes.Length;
                 for (int i = 0; i < nodes.Length; i++)
                 {
                     nodes[i].Reset(nodes[i].ReferencePoint + averageChangeSketch, epsilons[i]);

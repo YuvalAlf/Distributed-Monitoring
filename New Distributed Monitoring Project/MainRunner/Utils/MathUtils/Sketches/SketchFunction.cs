@@ -5,7 +5,7 @@ namespace Utils.MathUtils.Sketches
 {
     public abstract class SketchFunction
     {
-        public abstract (Vector<double> sketch, Vector<double> epsilon) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex);
+        public abstract (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex);
 
         public static SketchFunction DCTSketch => dct;
         private static readonly DCTSketchFunction dct = new DCTSketchFunction();

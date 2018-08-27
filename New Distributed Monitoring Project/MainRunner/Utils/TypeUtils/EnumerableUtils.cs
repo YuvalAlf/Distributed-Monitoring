@@ -24,6 +24,20 @@ namespace Utils.TypeUtils
 
             return (t1.ToArray(), t2.ToArray());
         }
+        public static (T1[], T2[], T3[]) UnZip<T1, T2, T3>(this IEnumerable<ValueTuple<T1, T2, T3>> @this)
+        {
+            var t1 = new List<T1>();
+            var t2 = new List<T2>();
+            var t3 = new List<T3>();
+            foreach (var tuple in @this)
+            {
+                t1.Add(tuple.Item1);
+                t2.Add(tuple.Item2);
+                t3.Add(tuple.Item3);
+            }
+
+            return (t1.ToArray(), t2.ToArray(), t3.ToArray());
+        }
 
         public static IEnumerable<T> ToIEnumerable<T>(this IEnumerator<T> enumerator)
         {

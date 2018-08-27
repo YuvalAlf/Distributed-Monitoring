@@ -51,9 +51,10 @@ namespace Monitoring.Nodes
                 messages  += valueSchemeResolution.GetChoice2.Messages;
                 bandwidth += valueSchemeResolution.GetChoice2.Bandwidth;
                 messages  += 2             * nodes.Length;
-                bandwidth += 2 * dimension * nodes.Length;
-                var (sketches, epsilons) =
+                bandwidth += dimension * nodes.Length;
+                var (sketches, epsilons, invokedIndices) =
                     nodes.Select(n => sketchFunction.Sketch(n.LocalVector, dimension, n.SketchIndex)).UnZip();
+                bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * nodes.Length;
                 var averageDataSketch = sketches.AverageVector();
                 for (int i = 0; i < nodes.Length; i++)
                 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using MathNet.Numerics.LinearAlgebra;
@@ -24,19 +25,21 @@ namespace Utils.MathUtils.Sketches
             return idct.ToVector();
         }
 
-        public override (Vector<double> sketch, Vector<double> epsilon) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex)
+        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex)
         {
+            var indices = new HashSet<int>();
             var dct = DCT(vector);
             var sketchedDct = Enumerable.Repeat(0.0, vector.Count).ToVector();
             for (int i = 0; i < dimension; i++)
             {
+                indices.Add(startIndex.Value);
                 sketchedDct[startIndex.Value] = dct[startIndex.Value];
                 startIndex.Value = (startIndex.Value + 1) % vector.Count;
             }
                 
             var sketch  = IDCT(sketchedDct);
             var epsilon = vector - sketch;
-            return (sketch, epsilon);
+            return (sketch, epsilon, new InvokedIndices(indices));
         }
     }
 }

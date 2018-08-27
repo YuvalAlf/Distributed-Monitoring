@@ -42,6 +42,9 @@
     <Reference Include="Accord.Math.Core, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Math.3.8.0\lib\net462\Accord.Math.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Accord.Statistics, Version=3.8.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Statistics.3.8.0\lib\net462\Accord.Statistics.dll</HintPath>
+    </Reference>
     <Reference Include="MathNet.Numerics, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.5.1\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
@@ -71,6 +74,9 @@
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
     <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
+    <Compile Include="MathUtils\Sketches\PcaBuilder.cs" />
+    <Compile Include="MathUtils\Sketches\PcaSketchFunction.cs" />
+    <Compile Include="MathUtils\Sketches\InvokedIndices.cs" />
     <Compile Include="MathUtils\Sketches\SketchFunction.cs" />
     <Compile Include="MathUtils\Sketches\StandardBasisSketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
