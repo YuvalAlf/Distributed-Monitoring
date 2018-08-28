@@ -12,7 +12,7 @@ namespace Utils.MathUtils.Sketches
     {
         private LinkedList<double[]> Data { get; set; } = new LinkedList<double[]>();
 
-        public void AddData(double[] vector) => Data.AddLast(vector);
+        public void AddData(double[] dataArray) => Data.AddLast(dataArray);
 
         public SketchFunction GetPcaSketchFunction()
         {

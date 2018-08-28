@@ -26,9 +26,8 @@ namespace Utils.TypeUtils
         public static Vector<double> AverageVector(this Vector<double>[] @this)
         {
             var sumVector = @this.SumVector();
-            var vecLength = @this[0].Count;
 
-            for (int i = 0; i < vecLength; i++)
+            for (int i = 0; i < sumVector.Count; i++)
                 sumVector[i] /= @this.Length;
 
             return sumVector;

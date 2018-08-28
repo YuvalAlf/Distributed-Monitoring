@@ -31,5 +31,13 @@ namespace Monitoring.GeometricMonitoring.Running
             return AccumalatedResult;
         }
 
+        public (AccumaltedResult, Vector<double>[]) RunWithDataPca(Vector<double>[] change, Random rnd)
+        {
+            var (newServer, singleResult) = Server.Change(change, rnd);
+            Server = newServer;
+            AccumalatedResult = AccumalatedResult.AddSingleRsult(singleResult);
+            return (AccumalatedResult, Server.NodesVectors);
+        }
+
     }
 }

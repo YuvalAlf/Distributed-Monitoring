@@ -21,8 +21,7 @@ namespace Utils.MathUtils.Sketches
         public static InvokedIndices Combine(InvokedIndices[] indices)
         {
             return indices.Aggregate(Empty(), (acc, item) => {acc.Add(item);
-                                                  return acc;
-                                              });
+                                                  return acc;});
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Utils.MathUtils.Sketches
             var indices = new HashSet<int>();
             var pcaVector = Pca.Transform(vector.ToArray());
             var sketchArray = new double[vector.Count];
-            var sketchData = pcaVector.Index().OrderByDescending(pair => Math.Abs(pair.Value)).Take(dimension / 2);
+            var sketchData = pcaVector.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
             foreach (var indexValuePair in sketchData)
             {
                 indices.Add(indexValuePair.Key);
@@ -37,7 +37,9 @@ namespace Utils.MathUtils.Sketches
                 
 
             var sketchVector = InversePca.Transform(sketchArray).ToVector();
-            return (sketchVector, vector - sketchVector, new InvokedIndices(indices));
+            var epsilon = vector - sketchVector;
+            var mse = epsilon.Sum(x => x * x);
+            return (sketchVector, epsilon, new InvokedIndices(indices));
         }
     }
 }

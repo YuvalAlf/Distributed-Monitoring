@@ -12,21 +12,61 @@ using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Monitoring.Servers;
 using MoreLinq;
+using Utils.MathUtils.Sketches;
 using Utils.TypeUtils;
 
 namespace InnerProduct
 {
     public static class InnerProductRunner
     {
+        public static void CalculatePca(Random rnd, string wordsPath, string dataPcaPath, string[] textFilesPathes)
+        {
+
+            var globalVectorType = GlobalVectorType.Sum;
+            var epsilon          = new MultiplicativeEpsilon(0.08);
+            var numOfNodes       = textFilesPathes.Length;
+            var windowSize       = 30000;
+            var vectorLength     = 500;
+            var stepSize         = 200;
+            var sampleRate       = 0.05;
+            var optionalStrings = new SortedSet<string>(File.ReadLines(wordsPath).Take(vectorLength).ToArray(),
+                                                        StringComparer.OrdinalIgnoreCase);
+            using (var stringDataParser =
+                DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings,
+                                        textFilesPathes))
+            {
+                var initVectors = stringDataParser.Histograms.Map(h => h.CountVector());
+                var changes     = stringDataParser.AllCountVectors(stepSize);
+                using (var dataPca = new PcaBuilder())
+                {
+                    var oracleServer = OracleServer.Create(initVectors, numOfNodes, vectorLength, globalVectorType,
+                                                           epsilon, InnerProductFunction.MonitoredFunction);
+                    var runner = new MonitoringRunner<OracleServer>(oracleServer,
+                                                                    AccumaltedResult.Init(epsilon, numOfNodes,
+                                                                                          vectorLength,
+                                                                                          new MonitoringScheme.
+                                                                                              Oracle()));
+                    foreach (var change in changes)
+                    {
+                        var (_, data) = runner.RunWithDataPca(change, rnd);
+                        if (rnd.NextDouble() <= sampleRate)
+                            data.ForEach(d => dataPca.AddData(d.ToArray()));
+                    }
+
+                    dataPca.GetPcaSketchFunction().SerializeTo(dataPcaPath);
+                }
+            }
+        }
+
         public static void RunBagOfWords(Random rnd, string wordsPath, string resultPath, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new MultiplicativeEpsilon(0.1);
+            var epsilon            = new MultiplicativeEpsilon(0.08);
             var numOfNodes         = textFilesPathes.Length;
-            var windowSize         = 50000;
+            var windowSize         = 30000;
             var amountOfIterations = 1000;
             var vectorLength       = 500;
-            var stepSize           = 500;
+            var stepSize           = 200;
 
             using (var resultCsvFile = File.CreateText(resultPath))
             {
