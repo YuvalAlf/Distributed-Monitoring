@@ -11,9 +11,10 @@
 
 %%%%%%%%%%%%%%%%% Macros %%%%%%%%%%%%%%%%%
 
-\newcommand{\vecScheme}{\textit{Vector Scheme}}
+\newcommand{\vectorScheme}{\textit{Vector Scheme}}
 \newcommand{\valueScheme}{\textit{Value Scheme}}
 \newcommand{\distanceScheme}{\textit{Distance Scheme}}
+\newcommand{\distanceLemma}{\textit{Distance Lemma}}
 
 %%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
 
@@ -39,91 +40,134 @@ dkeren@cs.haifa.ac.il}
 %%%%%%%%%%%%%%%%% Abstract %%%%%%%%%%%%%%%%%
 \begin{small}
 \textbf{
-\textit{Abstract}--- The distributed monitoring problem which tracks changes of a function over dynamic data in a distributed setting is a challenging problem in numerous real-world modern applications. Several monitoring schemes were proposed as an approach to this problem. \\
-Here, we propose new distributed monitoring schemes which monitor the distributed function using much less communication bandwidth. Existing schemes send high dimensional vectors between the servers while we propose two methods for reducing the communication into one scalar and also two sketch-based methods which are a trade-off(...)}
+\textit{Abstract}--- Distributed monitoring is a problem that arises when trying to monitor properties of dynamic data which are spread distributively. Tracking the value of a function over dynamic data in a distributed setting is a challenging problem in numerous real-world modern applications. Several monitoring schemes were proposed as an approach to coping with this problem in order to reduce the amount of communication messages between servers, as well as the communication bandwidth. \\
+Here, we propose several new distributed monitoring schemes using much less communication bandwidth. Existing schemes send high dimensional vectors from server to server while we propose some innovative methods for reducing the communication bandwidth.\\
+One scheme we propose is the \valueScheme \ which exploits some traits of convex functions, and another is the \distanceScheme \ which treats the function monitoring problem as a geometric monitoring problem, thereby utilizing geometric distances for distributed monitoring. \\
+Moreover, incorporating data-sketches into the schemes can be used to influence the bandwidth as well, allowing for some monitoring trade-offs to be made, depending on the sketch size.  }
 \end{small}
 
 %%%%%%%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%
 \section{Introduction}
-Monitoring a function over large amount of dynamically changes data which changes in a distributed fashion is a common computer science challenge. Whether its monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to cope with the difficulties. \\
-The need of minimizing both the bandwidth and the processing power is expressed in [*]; good examples are internet of things objects which require communication with one another [**], or air pollution sensors which distributively have to determine whether there's air pollution [***]. \\
-Previous works were made on monitoring the entropy of distributed streams [*], monitoring inner product, the number of triangles of distributed dynamic graphs.. \\
+Monitoring a function over large amount of dynamically changed data distributed fashion is a common computer-science challenge. Whether its monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to deal with the difficulties of both the data being dynamic and distributed. \\
+The need of minimizing both the bandwidth and the processing power is expressed in [*]; good examples are internet of things objects which are operated on batteries, hence sending data via a communication channel is very expensive. Furthermore, in the \textit{Big Data} era, when data is of very high dimensionality, sending the whole data is not only impractical, but also extremely time consuming. \\
+For instance, air pollution sensors which distributively have to determine the air pollution level may benefit from an economical communication approach [***]. \\
+Previous works were made on distributively monitoring the entropy of distributed streams [*], monitoring the inner-product value of distributed dynamic vectors [**], and monitoring the number of triangles of dynamic graphs held in distributed servers [***]. \\
+It should be noted that the classic approach to monitor distributed dynamic data is to update at a certain frequency a central server, called \textit{the coordinator}. This method may miss peaks of critical global data-changes, and also may be more expensive communication-wise -- not only data will be sent even when little changes are made, but whole big dimensional data will be sent which might be very expensive. \\
+
 The distributed monitoring problem is defined as follows:
 \begin{enumerate}
-\item There are n servers and a coordinator, server $server_i$ has vector $v_i$. the global vector is $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
+\item There are $n$ servers and a coordinator. \\ $server_i$ maintains dynamic vector $v_i$. \\ The global vector is: $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
 \item A function f is monitored so its $\varepsilon$-approximated: for a threshold T, $$(1-\varepsilon )f(v) \leq f(v) \leq (1+\varepsilon )f(v)$$
 \end{enumerate}
-The monitoring is done by bounding the function f by a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and is used for the upper (lower) threshold monitoring.
+The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and is used for the upper (lower) threshold monitoring.
 
-Given convex f \label{fConvexity}
+Given a fucntion $f$ to monitor and a starting $v_0$ vector, it was proposed to approach the problem by find a convex function $c$ \label{fConvexity} [*] which bounds the $f$ function e.g. for all $v$, $f(v) \leq c(v)$ and $f(v_0)=c(v_0)$
 
-The monitoring objective is to determine whether:
+The general upper-bound monitoring objective is to determine whether:
 \begin{equation}
-\label{monitoringConstraint}
+\label{functionMonitoringConstraint}
 f(v) \leq T
 \end{equation}
+and since $f(v) \leq c(v)$ for all $v$, we'd monitor 
+\begin{equation}
+\label{monitoringConstraint}
+c(v) \leq T
+\end{equation}
+
+The monitoring starts with (...)
+
+\subsection{Contributions}
 
 
 %%%%%%%%%%%%%%%%% Previous Work %%%%%%%%%%%%%%%%%
 \section{Previous Work}
-
+ \ \ \  \\
+(1) Linear Functions \\
+(2) Covering Spheres \\
+(3) Convex Decomposition
 %%%%%%%%%%%%%%%%% Vector Scheme %%%%%%%%%%%%%%%%%
 \section{Vector Scheme}
 
-The \vecScheme 's idea is to balance the data vectors of the servers. when a server's local data vector gets out of the function's bound, this scheme would like to balance it with other data vector. It would be done by incorporating \textit{slack vectors}, namely, $server_i$ would maintain a slack $\overrightarrow{s_i}$. It's important to note that the \vecScheme \  makes sure that (\label{vectorSchemSlackSumZero}\ref{vectorSchemSlackSumZero}) $\sum{\overrightarrow{s_i}} = \textstyle \overrightarrow{0}$
-In order to take into consideration these \textit{slacks}, a server raises a violation and initiates a communication channel with the coordinator if $f(v_i+s_i)$ exceeds the threshold; specifically, for a lower bound threshold, when $f(v_i+s_i) \leqslant T$. This ensures that whenever all the local constraint hold, the global constraint mentioned in section [\ref{monitoringConstraint}]. proof due to (\ref{fConvexity}), (\ref{vectorSchemSlackSumZero}):
+The \vectorScheme 's idea is to balance the data vectors of the servers whenever a local vector gets out of the covex function's bound. The \vectorScheme would try to balance the \textit{violated nodes} with other node's data vectors. It is done by incorporating \textit{slack vectors}, namely, $server_i$ would maintain a slack $\overrightarrow{s_i}$. It's important to note that the \vectorScheme \  makes sure that at all times the sum of the slacks is zero: $\sum{\overrightarrow{s_i}} = \textstyle \overrightarrow{0}$.
+In order to take into consideration these \textit{slacks}, a server raises a violation and initiates a communication channel with the coordinator if $c(v_i+s_i)$ exceeds the threshold; specifically, for a upper bound threshold, when $c(v_i+s_i) \leq T$. This ensures that whenever all the local constraint hold, the global constraint (\ref{monitoringConstraint}) holds. proof due to convexity of $c$ and sum of slacks is zero:
 \begin{equation}
 \label{vectorSchemeProof}
 \begin{aligned}
- f(v)  \
-	    = {} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
-        =   \frac{1}{n} f\left(\sum\limits_{i=0}^{n}{(v_i + s_i)}\right) \\
-     & \leq   \frac{1}{n} \sum\limits_{i=0}^{n}{f(v_i + s_i)}
+ c(v)  \
+	   &=  c\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
+        =  \frac{1}{n} c\left(\sum\limits_{i=0}^{n}{(v_i + s_i)}\right) \\
+      &\leq   \frac{1}{n} \sum\limits_{i=0}^{n}{c(v_i + s_i)}
        \leq   \frac{1}{n}(n \cdot T)
        = T
 \end{aligned}
 \end{equation}
 
-When a violation occurs, i.e. $f(v_i+s_i) > T$ at a certain server, (\ref{vectorSchemeProof}) cannot longer be proven so a \textit{violation resolution} has to occur. In the \textit{violation resolution} phase, the slack vectors are balanced so $f(v_i+s_i)$ would get inside the convex zone. When a server detects a local violation, it sends its local vector $(v_i + s_i)$ to the coordinator, which polls other servers for their local vector as well. When the average of those vectors is inside the convex zone, i.g. $f(E(v_i + s_i)) <= T$. after that, the coordinator sends the average vector (k - number of polled nodes plus violated node) -- $\frac{1}{k}\sum{(v_i + s_i)}$ to the polled nodes as well as the violated node, which update their slack to be $s_i \leftarrow -v_i + \frac{1}{k}\sum{(v_i + s_i)} $. Note that condition (\ref{vectorSchemSlackSumZero}) still holds. \\
-When all the nodes are polled and the average vector still isn't inside the convex zone, a \textit{full sync} has to be done, the real value of $f(v)$ is known, so the upper bound and lower bound reset to $(1 \pm \varepsilon )f(v)$ and the monitoring continues. \\
-The \vecScheme is extremely wasteful in communication bandwidth. Considaring that the data vectors are of very high dimension, this scheme sends the whole vectors.
+When a violation occurs, i.e. $c(v_i+s_i) > T$ at a certain server, (\ref{vectorSchemeProof}) cannot longer be proven so a \textit{violation resolution protocol} has to occur. In the \textit{violation resolution} phase, the slack vectors are balanced so $c(v_i+s_i)$ would get inside the convex zone. When a server detects a local violation, it sends its local vector $(v_i + s_i)$ to the coordinator, which polls other servers for their local vector as well. When the average of those vectors is inside the convex zone, i.e. $c(E(v_i + s_i)) <= T$ a resolution can be done. Let $(k-1)$ be the number of polled nodes, then coordinator sends the average vector -- $\frac{1}{k}\sum{(v_i + s_i)}$ to the polled nodes as well as the violated node, which update their slack to be $s_i \leftarrow -v_i + \frac{1}{k}\sum{(v_i + s_i)} $. Note that the sum of the slack vectors is still zero. \\
+When all the nodes are polled and the average vector still isn't inside the convex zone, a \textit{full sync} has to be done; Since the coordinator knows each node's $(v_i + s_i)$, the coordinator can calculate the global vector $v$, and hence $f(v)$. Then, the upper bound and lower bound are reset to $(1 \pm \varepsilon )f(v)$ and the monitoring continues with the coordinator notifying the nodes of the new bounds and their local vector -- $v$ and their new slack -- the zero vector. \\
+Considering the data vectors are of very high dimension, this scheme sends the whole vectors whenever even the slightest violation occurs. Therefore, even though the \vectorScheme \  is better than the naive monitoring scheme, its still wasteful in communication bandwidth.
 
 %%%%%%%%%%%%%%%%% Value Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme}
-The \valueScheme \ is distributed monitoring scheme done by reducing the bandwidth from sending a whole vector to one scalar. The whole monitoring scheme is being reduced to one scalar passed. Though, it might have more false alarms than the \vecScheme , and thus require more \textit{full syncs}. The scalar that will be passed will represent the \textit{value} of the convex bound function.\\
-The \valueScheme \  maintains local scalar slack values; $server_i$ maintains the scalar $\lambda _i$. like \vecScheme 's (\ref{vectorSchemSlackSumZero}), $\sum{\lambda _i} = 0$. Here, the local server's constraint is whether $f(v_i) + \lambda _i <= T$; hence, if all the local constraints are being held, the global constraint (\ref{monitoringConstraint}) will be held as well:
+The \valueScheme \ is a distributed monitoring scheme done by reducing the bandwidth from sending a whole vector to sending just one scalar.  Though, due to the dimensional reduction, we'd expect false alarms to occur than at the \vectorScheme , and thus require more \textit{full syncs}. The scalar that will be passed will represent the \textit{value} of the convex bound function.\\
+The \valueScheme \  maintains local scalar slack values; $server_i$ maintains the scalar $\lambda _i$. Also, at all times we'd enforce that the sum of the slacks is zero: $\sum{\lambda _i} = 0$. Here, the local server's constraint is whether $c(v_i) + \lambda _i \leq T$; hence, if all the local constraints are being held, the global constraint (\ref{monitoringConstraint}) will be held as well:
 \begin{equation}
 \label{valueSchemeProof}
 \begin{aligned}
- f(v)  \
-	    ={} & f\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
-       \leq   \frac{1}{n} \sum\limits_{i=0}^{n}f(v_i) \\
-     &  =   \frac{1}{n} \sum\limits_{i=0}^{n}{(f(v_i) + \lambda _i)}
+ c(v)  \
+	    &=   c\left(\frac{1}{n} \sum\limits_{i=0}^{n}{v_i}\right)  \
+       \leq   \frac{1}{n} \sum\limits_{i=0}^{n}c(v_i) \\
+        &=    \frac{1}{n} \sum\limits_{i=0}^{n}{(c(v_i) + \lambda _i)}
        \leq   \frac{1}{n}(n \cdot T)
         = T
 \end{aligned}
 \end{equation}
-When a violation occurs, i.e. $f(v_i) + \lambda _i > T$, proof \ref{valueSchemeProof} cannot longer hold, thus a violation resolution protocol has to be initiated.
+When a violation occurs, i.e. $c(v_i) + \lambda _i > T$, proof (\ref{valueSchemeProof}) cannot longer hold, thus a violation resolution protocol has to be initiated.
 \subsection{Violation Resolution}
-The violation resolution protocol goes as follows: the violated server $server_i$ sends its local value $f(v_i) + \lambda _i$ which exceeds the threshold. The coordinators tries to 'balance' this scalar value by gradually polling other servers for their $f(v_j) + \lambda _j$ value. Let k be the number of polled servers plus the violated server, then, when $\frac{1}{k}\sum{(f(v_i) + \lambda ) _i} <= T$ the violation will be resolved by sending $\frac{1}{k}\sum{(f(v_i) + \lambda _i)}$ to the polled servers and the violated server, which in turn, will set their local scalar slack to $\lambda _i \leftarrow -v_i + \frac{1}{k}\sum{(f(v_i) + \lambda _i)}$. Its important to note that (*) and (**) are still holding and (***) holds as well.
+The violation resolution protocol goes as follows: the violated server $server_i$ sends its local value $c(v_i) + \lambda _i$ which exceeds the threshold. The coordinators tries to 'balance' this scalar value by gradually polling other servers for their $c(v_j) + \lambda _j$ value. Let $(k-1)$ be the number of polled servers plus the violated server, then, when $\frac{1}{k}\sum{(c(v_i) + \lambda _i)} <= T$ the violation will be resolved by sending $\frac{1}{k}\sum{(c(v_i) + \lambda _i )}$ to the polled servers and the violated server, which in turn, will set their local scalar slack to $\lambda _i \leftarrow -c(v_i) + \frac{1}{k}\sum{(c(v_i) + \lambda _i)}$. Its important to note that the sum of the slacks is zero after the resolution, and $c(v_i) + \lambda _i \leq T$ as well. \\
+I fall the nodes are being polled without being able to 'balance' the slack, a \textit{full sync} has to be done, which is very expensive regrading the communication bandwidth.
 
 %%%%%%%%%%%%%%%%% Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Distance Scheme}
-The \distanceScheme is one more \textit{distributed monitoring scheme} that relies on passing a single when communicating. The scalar that will be passed will represent the \textit{distance} of the local vector at the server to the boundary of convex bound.\\
+**** Note that the convex body is \{v | c(v) <= T\} ****\\
+The \distanceScheme \ is one more \textit{distributed monitoring scheme} that relies on passing a single scalar when communicating. The scalar that will be passed represents the \textit{distance} of the local vector at the server to the boundary of the convex bound.\\
 This scheme is based on the \textit{Distance Lemma} which is proved below.
 
 \subsection{The Distance Lemma}
-Let $v_i$ be vectors and let $C$ be a convex body. If the sum of the distances of the vectors inside C is greater than the sum of the distances to the boundary of the vectors from outside, that the average vector $\frac{1}{n}\sum {v_i}$ is also inside the convex set. \\
+The \textit{Distance Lemma} states the average of points is inside a convex body, if the sum of distances to the surface of the points inside the convex body is greater than the sum of distances to the boundary of the points which are outside of the convex body. This \textit{Distance Lemma} will be the basis of the \distanceScheme . \\
+Let ${v_1 ... v_n}$ be vectors and let $C$ be a convex body. If the sum of the distances of the vectors inside $C$ is greater than the sum of the distances to the boundary of the vectors from outside, than the average vector $\frac{1}{n}\sum {v_i}$ is also inside the convex set. \\
 proof: \\
 \begin{enumerate}
 \item Let $p_1 ,..., p_k$ be points inside the convex body $C$ and $l_1 ,..., l_k$ their distances to the boundary.
-\item Let $q_1 ,..., q_m$ be points outside the convex body $C$ and $d_1 ,..., d_m$ the distance vectors from the boundary to the points while $c_1 ,..., c_m$ are the points on the boundary which are the source of the distance vectors $d_i$.
-\item due to...
+\item Let $q_1 ,..., q_m$ be points outside the convex body $C$ and $d_1 ,..., d_m$ the distance vectors from the boundary to the points. Let $c_1 ,..., c_m$ be the points on the boundary which are the source of the distance vectors $d_i$.
+\item Let $d = \sum {d_i}$ and $l = \sum {l_i}$
+\item Assume $d \geq l$
+\item We need to show that $\frac{1}{k+m}(\sum{p_i} + \sum{q_i}) \in C$ 
+\end{enumerate}
+
+\begin{equation}
+\begin{aligned}
+&( p_1+...+p_k) + (q_1+...+q_m)) = \\
+&( p_1+...+p_k) + (c_1+d_1) + ... + (c_m + d_m) = \\
+&( p_1+...+p_k) + d + (c_1 + ... + c_m) = \\
+&\left( p_1 + \frac{l_1 d}{l}\right) + ... + \left(p_k + \frac{l_k d}{l}\right) + (c_1 + ... + c_m)
+\end{aligned}
+\end{equation}
+\begin{enumerate}
+\item[\ ] $c_i  \in C$ by definition - $c_i$ is on the boundary. also, $p_i + \frac{l_i d}{l} \in C$ because $d \geq l$ and $l_i$ is the distance of $p_i$ to the boundary.
 \end{enumerate}
 \subsection{Monitoring}
-
+The \distanceScheme \ is based on the distance value of the local vectors at the servers. The \distanceScheme \ would monitor distributively whether the sum of the distances from inside to the boundary is greater than the sum of the distances to the boundary from the outside. For convenience, denote the distance to the boundary from inside the convex body as negative, and the distance from outside as positive. \\
+Like the \valueScheme , the \distanceScheme maintains slack scalars that would help 'balance' the distances from the boundary between servers as data changes. Let $server_i$ maintain the scalar $\lambda _i$. As in \valueScheme , at all times the sum of the slacks would be zero: $\sum {\lambda _i} = 0$. \\
+Denote $d_i$ the distance of $server_i$'s vector to the boundary, then the local server's monitoring constraint is whether $d_i + \lambda_i \leq 0$. Therefore, if all the local constraints hold, the global vector's distance is negative and by the \textit{Distance Lemma}, the global constraint (\ref{monitoringConstraint}) holds:
+\begin{equation}
+\sum{d_i} = \sum{(d_i + \lambda _i)} \leq n \cdot 0 = 0
+\end{equation}
+The sum of the distances is negative, thus the average vector is inside the convex set. \\
+Whenever $d_i + \lambda _i > 0$ at a certain server, a violation occurs and a  \textit{violation resolution protocol} has to occur. 
 \subsection{Violation Resolution}
-
+When the local vector at a server changes so $d_i + \lambda _i > 0$, a violation occurs. In order to resolve the violation, the $\lambda _i$ slacks has to be balanced so $d_i + \lambda _i \leq 0$ at the violated server as well as other nodes where some slack would be 'borrowed'. \\
+Firstly, in order to resolve the violation, the violated server sends its $d_i + \lambda _i$ value to the coordinator; afterwards, the coordinator gradually polls others servers for their $d_j + \lambda _j$ value. Let $(k-1)$ be the number of polled nodes, than when $\frac{1}{k}(d_i + \lambda _i) \leq 0$ the violation can be resolved, and the coordinator sends the single value $\frac{1}{k}(d_i + \lambda _i)$ to the polled nodes and the violated node. Then, the slacks are updated so $\lambda _i 
+\leftarrow -d_i + \frac{1}{k}(d_i + \lambda _i)$. Note that the sum of slacks is still zero after the update, and at each server the local constraint holds, $d_i + \lambda _i \leq 0$.
 %%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
 \section{Sketched Data Resolution}
 
