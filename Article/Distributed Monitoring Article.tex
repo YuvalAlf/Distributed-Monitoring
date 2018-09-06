@@ -48,36 +48,35 @@ Moreover, incorporating data-sketches into the schemes can be used to influence 
 
 %%%%%%%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%
 \section{Introduction}
-Monitoring a function over large amount of dynamically changed data distributed fashion is a common computer-science challenge. Whether its monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to deal with the difficulties of both the data being dynamic and distributed. \\
-The need of minimizing both the bandwidth and the processing power is expressed in [*]; good examples are internet of things objects which are operated on batteries, hence sending data via a communication channel is very expensive. Furthermore, in the \textit{Big Data} era, when data is of very high dimensionality, sending the whole data is not only impractical, but also extremely time consuming. \\
-For instance, air pollution sensors which distributively have to determine the air pollution level may benefit from an economical communication approach [***]. \\
-Previous works were made on distributively monitoring the entropy of distributed streams [*], monitoring the inner-product value of distributed dynamic vectors [**], and monitoring the number of triangles of dynamic graphs held in distributed servers [***]. \\
-It should be noted that the classic approach to monitor distributed dynamic data is to update at a certain frequency a central server, called \textit{the coordinator}. This method may miss peaks of critical global data-changes, and also may be more expensive communication-wise -- not only data will be sent even when little changes are made, but whole big dimensional data will be sent which might be very expensive. \\
+Monitoring a function over large amount of dynamically changed data in a distributed fashion is a common computer-science challenge. Whether its monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to deal with the difficulties of both the data being dynamic and distributed. \\
+The need of minimizing both the bandwidth and the processing power is expressed in [*]; good examples are internet of things objects which are operated on batteries, hence sending data via a communication channel is very costly and thus should be minimized. Furthermore, in the \textit{Big Data} era, when data is of very high dimensionality and changes rapidly, sending the whole data is not only impractical, but also extremely time consuming; for instance, air pollution sensors which distributively have to determine the air pollution level may benefit from an economical communication approach [***]. \\
+Previous works were made on linear functions [*], where the linear properties make the distributed monitoring much easier; though in order to monitor non-linear functions a handful of difficulties arise. Works were done on distributively monitoring the entropy of distributed streams [*], monitoring the inner-product value of distributed dynamic vectors [**], and monitoring the number of triangles of dynamic graphs held in distributed servers [***]. \\
+It should be noted that the classic approach to monitor distributed dynamic data is to update at a certain frequency a central server, called \textit{the coordinator}. This method may miss peaks of critical global data-changes, and also may be more expensive communication-wise -- not only data will be sent even when little changes are made, but the whole big dimensional data will be sent which might be very expensive. \\
 
 The distributed monitoring problem is defined as follows:
 \begin{enumerate}
-\item There are $n$ servers and a coordinator. \\ $server_i$ maintains dynamic vector $v_i$. \\ The global vector is: $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
-\item A function f is monitored so its $\varepsilon$-approximated: for a threshold T, $$(1-\varepsilon )f(v) \leq f(v) \leq (1+\varepsilon )f(v)$$
+\item There are $n$ servers and a coordinator. \\ $server_i$ maintains its dynamic \textit{local vector} $v_i$. \\ The \textit{global vector} is the average of the local vectors: $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
+\item A function $f$ is monitored over the \textit{global vector} $v$ so it is $\varepsilon$-approximated with 100\% accuracy. \\ Let the estimation  be the value $\mu$ and $f(v) \geq 0$, than: $$(1-\varepsilon )f(v) \leq \mu \leq (1+\varepsilon )f(v)$$
 \end{enumerate}
-The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and is used for the upper (lower) threshold monitoring.
-
-Given a fucntion $f$ to monitor and a starting $v_0$ vector, it was proposed to approach the problem by find a convex function $c$ \label{fConvexity} [*] which bounds the $f$ function e.g. for all $v$, $f(v) \leq c(v)$ and $f(v_0)=c(v_0)$
-
-The general upper-bound monitoring objective is to determine whether:
+The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and used for the upper (lower) threshold monitoring.
+Given a fucntion $f$ to monitor and a starting $v_0$ vector, it was proposed to approach the problem by find a convex function $c$ \label{fConvexity} [*] which bounds the $f$ function e.g. for all $v$, $f(v) \leq c(v)$ and $f(v_0)=c(v_0)$. The approximation problem is reduced to $threshold monitoring problem$ [*] where one monitors whether the function's value crosses a certain threshold. specifically, let $T$ be the threshold's value, than the general upper-bound monitoring objective is to determine whether:
 \begin{equation}
 \label{functionMonitoringConstraint}
 f(v) \leq T
 \end{equation}
-and since $f(v) \leq c(v)$ for all $v$, we'd monitor 
+and since $f(v) \leq c(v)$ for all $v$, we'd monitor whether:
 \begin{equation}
 \label{monitoringConstraint}
 c(v) \leq T
 \end{equation}
-
-The monitoring starts with (...)
+In turn, this threshold monitoring is treated as a \textit{geometric monitoring problem}, where there's a \textit{valid zone} of vectors $\{v \ | \ c(v) \leq T\}$, which since $c$ is a convex function, every linear combination of vectors inside the \textit{safe zone} is also inside the \textit{safe zone}. 
 
 \subsection{Contributions}
-
+\begin{enumerate}
+\item Introducing multiple innovative distributed monitoring schemes which avoid sending big dimensional data unless crucially critical.
+\item Proving the \distanceLemma , a lemma used as a basis of a distributed monitoring scheme we present. The \distanceLemma \ states that given a convex body and several points, if the sum of distances to the convex border from the points inside the convex body is greater than the sum of distances to the border from the points on the outside, than the average of the points is inside the convex body.
+\item Conducting several experiments, laying out comparisons of multiple attributes of distributed monitoring schemes on real-world data, focusing on the bandwidth consumption.
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%% Previous Work %%%%%%%%%%%%%%%%%
 \section{Previous Work}
