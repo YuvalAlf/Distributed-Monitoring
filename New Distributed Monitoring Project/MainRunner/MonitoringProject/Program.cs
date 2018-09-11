@@ -16,19 +16,19 @@ namespace MonitoringProject
         {
             var textFilesPathes = new[]
                                   {
-                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\News Headlines\news headlines.txt",
-                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Jepordy\jeopardy.txt",
-                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\India News\india-news-headlines.txt",
-                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Books\All Books Combined.txt",
-                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\blogs\blogs.txt"
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Amazon Reviews\amazon.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\blogs\blogs.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\India News\india.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\News Headlines\news headlines.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Reddit Comments\reddit.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Restaurant Reviews\restaurant.txt",
+                                      @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt"
                                   };
             var random = new Random(125424);
+            Func<int, bool> isLeft = i => i % 2 == 0;
+          //  SphereRunner.Run(random, resultPath);
 
-            SphereRunner.Run(random, resultPath);
-
-            //InnerProductRunner.CalculatePca(random, wordsPath, dataPcaPath, textFilesPathes);
-
-          //  InnerProductRunner.RunBagOfWords(random, wordsPath, resultPath, textFilesPathes);
+            InnerProductRunner.RunBagOfWords(random, wordsPath, resultPath, isLeft, textFilesPathes);
 
         }
     }
