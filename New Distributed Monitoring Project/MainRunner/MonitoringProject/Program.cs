@@ -1,6 +1,7 @@
 ﻿using System;
 using Entropy;
 using InnerProduct;
+using Sphere;
 using Utils.TypeUtils;
 
 namespace MonitoringProject
@@ -23,9 +24,11 @@ namespace MonitoringProject
                                   };
             var random = new Random(125424);
 
+            SphereRunner.Run(random, resultPath);
+
             //InnerProductRunner.CalculatePca(random, wordsPath, dataPcaPath, textFilesPathes);
 
-            InnerProductRunner.RunBagOfWords(random, wordsPath, resultPath, textFilesPathes);
+          //  InnerProductRunner.RunBagOfWords(random, wordsPath, resultPath, textFilesPathes);
 
         }
     }

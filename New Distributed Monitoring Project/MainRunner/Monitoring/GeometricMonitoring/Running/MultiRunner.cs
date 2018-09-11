@@ -119,26 +119,16 @@ namespace Monitoring.GeometricMonitoring.Running
                                                                                                SketchedDataValueNode
                                                                                                   .Create(SketchFunction
                                                                                                              .StandardBaseSketch));
-       //     var pcaSketchedDataValueServer = NodeServer<SketchedDataValueNode>.Create(initVectors, numOfNodes,
-       //                                                                                        vectorLength,
-       //                                                                                        globalVectorType,
-       //                                                                                        epsilon,
-       //                                                                                        monitoredFunction,
-       //                                                                                        SketchedDataValueNode
-       //                                                                                           .ResolveNodes,
-        //                                                                                       SketchedDataValueNode
-        //                                                                                          .Create(@"C:\Users\Yuval\Desktop\dataPca.dat".Deserialize<PcaSketchFunction>()));
-
             AddRunner(new MonitoringScheme.Value(),                              valueServer);
             AddRunner(new MonitoringScheme.Vector(),                             vectorServer);
             AddRunner(new MonitoringScheme.Oracle(),                             oracleServer);
-          //  AddRunner(new MonitoringScheme.Naive(),                              naiveServer);
-         //   AddRunner(new MonitoringScheme.SketchedChangeValue("DCT"),           dctSketchedChangeValueServer);
+            AddRunner(new MonitoringScheme.Naive(),                              naiveServer);
+            AddRunner(new MonitoringScheme.SketchedChangeValue("DCT"),           dctSketchedChangeValueServer);
             AddRunner(new MonitoringScheme.SketchedChangeValue("Standard Base"), standardBaseSketchedChangeValueServer);
             AddRunner(new MonitoringScheme.SketchedChangeValue("Dominant Element"), dominantElementSketchedChangeValueServer);
-         //   AddRunner(new MonitoringScheme.SketchedDataValue("DCT"),             dctSketchedDataValueServer);
+            AddRunner(new MonitoringScheme.SketchedDataValue("DCT"),             dctSketchedDataValueServer);
             AddRunner(new MonitoringScheme.SketchedDataValue("Standard Base"),   standardBaseSketchedDataValueServer);
-          //  AddRunner(new MonitoringScheme.SketchedDataValue("PCA"), pcaSketchedDataValueServer);
+
             foreach (var distanceNorm in distanceNorms)
             {
                 var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength,
@@ -146,7 +136,7 @@ namespace Monitoring.GeometricMonitoring.Running
                                                                      epsilon, monitoredFunction,
                                                                      DistanceNode.ResolveNodes,
                                                                      DistanceNode.CreateNorm(distanceNorm));
-                //       AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
+                       AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
             }
 
             return new MultiRunner(runners);

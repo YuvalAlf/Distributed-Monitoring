@@ -30,7 +30,7 @@ namespace Utils.TypeUtils
                     case '\t':
                     case '\r':
                     case '\n':
-                        yield return currentWord.ToString().CleanWord();
+                        yield return currentWord.ToString();
                         currentWord.Clear();
                         break;
                     default:

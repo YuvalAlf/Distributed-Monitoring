@@ -17,13 +17,5 @@ namespace Utils.TypeUtils
                 return "NaN";
             return @this.ToString(CultureInfo.InvariantCulture);
         }
-
-
-        public static string CleanWord(this string word)
-        {
-            word = word.ToLower(CultureInfo.InvariantCulture);
-            word = new string(word.Where(ch => char.IsLetter(ch) || ch == '\'').ToArray());
-            return word;
-        }
     }
 }
