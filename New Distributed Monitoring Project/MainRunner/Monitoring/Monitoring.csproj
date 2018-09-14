@@ -55,6 +55,7 @@
     <Compile Include="Data\AccumaltedResult.cs" />
     <Compile Include="Data\CommunicationPrice.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
+    <Compile Include="GeometricMonitoring\MonitoringType\SkechedChangeDistance.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SketchedChangeValue.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SketchedDataValue.cs" />
     <Compile Include="GeometricMonitoring\Running\MonitoringRunner.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="GeometricMonitoring\VectorType\SumVectorType.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\DistanceNode.cs" />
+    <Compile Include="Nodes\SkechedChangeDistanceNode.cs" />
     <Compile Include="Nodes\SketchedDataValueNode.cs" />
     <Compile Include="Nodes\SketchedChangeValueNode.cs" />
     <Compile Include="Nodes\ValueNode.cs" />

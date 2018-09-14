@@ -48,7 +48,8 @@ namespace Monitoring.Nodes
 
                 messages  += valueSchemeResolution.GetChoice2.Messages;
                 bandwidth += valueSchemeResolution.GetChoice2.Bandwidth;
-                var (sketches, epsilons, invokedIndices) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, dimension)).UnZip();
+                var currentDimension = dimension;
+                var (sketches, epsilons, invokedIndices) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, currentDimension)).UnZip();
                 messages  += nodes.Length * 2;
                 bandwidth += invokedIndices.Sum(i => i.Dimension);
                 var averageChangeSketch = sketches.AverageVector();

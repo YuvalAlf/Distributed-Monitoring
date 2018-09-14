@@ -10,6 +10,7 @@ namespace Monitoring.GeometricMonitoring
         public Func<Vector<double>, double> Compute { get; }
         public Predicate<double> IsInBound { get; }
         private Dictionary<norm, ClosestPointFromPoint> GetClosestPointOfNorm { get; }
+        public IEnumerable<int> Norms => GetClosestPointOfNorm.Keys;
 
         public ConvexBound(Func<Vector<double>, double> compute, Predicate<double> isInBound, Dictionary<int, ClosestPointFromPoint> getClosestPointOfNorm)
         {

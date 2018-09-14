@@ -17,7 +17,7 @@ namespace Entropy
         // Decrease entropy to reach threshold
         public static Vector<double> ClosestL1PointFromAbove(double desiredEntropy, Vector<double> point)
         {
-            Func<Vector<double>, double> entropyFunction = EntropyFunction.LowerBoundConvexBoundEntropy;
+            Func<Vector<double>, double> entropyFunction = EntropyFunction.ComputeEntropy;
             Predicate<double> l1DistanceOk = l1 => entropyFunction(DecreaseEntropy(l1, point.Clone())) >= desiredEntropy;
             var minL1Distance = 0.0;
             var maxL1Distance = point.L1Norm() + 1.0 - 2 * point.AbsoluteMaximum();
@@ -48,8 +48,7 @@ namespace Entropy
             if (desiredEntropy >= maxEntropy)
                 return maxEntropyVector;
 
-            Func<Vector<double>, double> entropyFunction = EntropyFunction.LowerBoundConvexBoundEntropy;
-            Debug.Assert(point.Sum().AlmostEqual(1.0, 6));
+            Func<Vector<double>, double> entropyFunction = EntropyFunction.ComputeEntropy;
             Predicate<Vector<double>> pointOk = vec => entropyFunction(vec) <= desiredEntropy;
             var minL1Distance = 0.0;
             var maxL1Distance = (point - maxEntropyVector).L1Norm();

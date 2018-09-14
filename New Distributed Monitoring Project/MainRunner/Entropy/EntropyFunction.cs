@@ -11,20 +11,21 @@ namespace Entropy
         public static MonitoredFunction MonitoredFunction => new MonitoredFunction(ComputeEntropy, UpperBound, LowerBound, GlobalVectorType.Average, 1);
 
         public static double MinEntropy => 0.0;
-        public static double MaxEntropy(int vecLength) => vecLength * Entropy(1.0 / vecLength);
-
-        public static double Entropy(double value)
-        {
-            if (value < -0.0000001)
-                return double.NegativeInfinity;
-            if (value <= 0.0)
-                return 0.0;
-            return -value * Math.Log(value);
-        }
+        public static double MaxEntropy(int vecLength) => - Math.Log(1.0 / vecLength);
 
         public static double ComputeEntropy(Vector<double> vector)
         {
-            return vector.Select(Entropy).Sum();
+            double xLine = 1.0 / (10.0 * vector.Count);
+            double yLine = -xLine * Math.Log(xLine);
+            double m     = yLine / xLine;
+            double ComputeEntropyToValue(double value)
+            {
+                if (value > xLine)
+                    return -value * Math.Log(value);
+                return m * value;
+            }
+
+            return vector.Select(ComputeEntropyToValue).Sum();
         }
     }
 }

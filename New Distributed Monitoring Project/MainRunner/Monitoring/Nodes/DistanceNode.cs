@@ -11,12 +11,12 @@ namespace Monitoring.Nodes
 {
     public class DistanceNode : AbstractNode
     {
-        public ConvexBound ConvexBound { get; }
         public int Norm { get; }
-        public double RealDistance { get; private set; }
-        public double SlackDistance { get; private set; }
+        public ConvexBound ConvexBound { get; }
+        public double RealDistance { get; protected set; }
+        public double SlackDistance { get; protected set; }
         public double UsedDistance => RealDistance + SlackDistance;
-        public Vector<double> ResidualVector { get; private set; }
+        public Vector<double> ResidualVector { get; protected set; }
 
         public DistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackDistance, int norm) : base(referencePoint)
         {
@@ -34,8 +34,9 @@ namespace Monitoring.Nodes
             (RealDistance, ResidualVector) = ConvexBound.ComputeDistance(Norm, LocalVector);
         }
         
-        public static Either<(NodeServer<DistanceNode>, Communication), Communication> ResolveNodes
-            (NodeServer<DistanceNode> server, DistanceNode[] nodes, Random rnd)
+        public static Either<(NodeServer<TNode>, Communication), Communication> ResolveNodes<TNode>
+            (NodeServer<TNode> server, TNode[] nodes, Random rnd)
+        where TNode : DistanceNode
         {
             var violatedNodesIndices = nodes.IndicesWhere(n => n.UsedDistance > 0);
             if (violatedNodesIndices.Count == 0)

@@ -79,7 +79,11 @@ namespace Monitoring.GeometricMonitoring.Running
             foreach (var distanceNorm in monitoredFunction.Norms)
             {
                 var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
+                var dctSketchedChangeDistanceServer          = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.DCTSketch, distanceNorm));
+                var standardBaseSketchedChangeDistanceServer = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.StandardBaseSketch, distanceNorm));
                 AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
+                AddRunner(new MonitoringScheme.SketchedChangeDistance("DCT", distanceNorm), dctSketchedChangeDistanceServer);
+                AddRunner(new MonitoringScheme.SketchedChangeDistance("Standard Base", distanceNorm), standardBaseSketchedChangeDistanceServer);
             }
 
             return new MultiRunner(runners);

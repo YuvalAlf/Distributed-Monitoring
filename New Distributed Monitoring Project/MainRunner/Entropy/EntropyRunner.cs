@@ -26,7 +26,7 @@ namespace Entropy
             var epsilon            = new MultiplicativeEpsilon(0.015);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 10000;
-            var amountOfIterations = 5000;
+            var amountOfIterations = 500;
             var vectorLength       = 200;
             var stepSize           = 200;
             var optionalWords      = File.ReadLines(wordsPath).Take(vectorLength).ToArray();

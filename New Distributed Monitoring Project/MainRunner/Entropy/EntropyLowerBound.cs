@@ -6,26 +6,11 @@ namespace Entropy
 {
     public static partial class EntropyFunction
     {
-        public static double LowerBoundConvexBoundEntropy(Vector<double> probVector)
-        {
-            double xLine = 1.0 / (10.0 * probVector.Count);
-            double yLine = Entropy(xLine);
-            double m = yLine / xLine;
-            double ComputeEntropyToValue(double value)
-            {
-                if (value > xLine)
-                    return Entropy(value);
-                return m * value;
-            }
-
-            return probVector.Select(ComputeEntropyToValue).Sum();
-        }
-
         public static ConvexBound LowerBound(Vector<double> initVector, double threshold)
         {
             Vector<double> DistanceL1(Vector<double> point)
             {
-                var entropy = LowerBoundConvexBoundEntropy(point);
+                var entropy = ComputeEntropy(point);
                 if (entropy > threshold)
                     return EntropyMath.ClosestL1PointFromAbove(threshold, point);
                 if (entropy < threshold)
@@ -33,7 +18,7 @@ namespace Entropy
                 return initVector;
             }
 
-            return ConvexBoundBuilder.Create(LowerBoundConvexBoundEntropy, value => value >= threshold)
+            return ConvexBoundBuilder.Create(ComputeEntropy, value => value >= threshold)
                                      .WithDistanceNorm(1, DistanceL1).ToConvexBound();
         }
     }
