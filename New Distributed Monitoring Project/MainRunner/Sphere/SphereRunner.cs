@@ -43,7 +43,7 @@ namespace Sphere
                 var zeroVector = ArrayUtils.Init(vectorLength, _ => 0.0).ToVector();
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => zeroVector.ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                      epsilon, SphereFunction.MonitoredFunction, 2);
+                                                      epsilon, SphereFunction.MonitoredFunction);
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)
                                .Select(r => r.AsCsvString())

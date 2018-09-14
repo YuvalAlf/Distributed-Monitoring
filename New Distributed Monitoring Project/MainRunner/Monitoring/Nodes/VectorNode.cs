@@ -58,8 +58,7 @@ namespace Monitoring.Nodes
             return new Communication(bandwidth, messages);
         }
 
-
-        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
-            => new Communication(0, numOfNodes);
+        public static Communication FullSyncAdditionalCost(VectorNode[] nodes)
+            => new Communication(0, nodes.Length);
     }
 }

@@ -14,7 +14,7 @@ namespace Monitoring.Servers
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilonType)
         {}
 
-        public override (OracleServer, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        protected override (OracleServer, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             if (FunctionValue <= UpperBound && FunctionValue >= LowerBound)
                 return (this, Communication.Zero, false);

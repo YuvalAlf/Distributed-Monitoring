@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using MathNet.Numerics.LinearAlgebra;
+using MoreLinq.Extensions;
 using Utils.TypeUtils;
 
 namespace Utils.MathUtils.Sketches
@@ -25,16 +26,19 @@ namespace Utils.MathUtils.Sketches
             return idct.ToVector();
         }
 
-        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex)
+        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension)
         {
             var indices = new HashSet<int>();
             var dct = DCT(vector);
-            var sketchedDct = Enumerable.Repeat(0.0, vector.Count).ToVector();
-            for (int i = 0; i < dimension; i++)
+            var dctSorted = dct.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
+            var sketchedDct = VectorUtils.CreateVector(vector.Count, _ => 0.0);
+            foreach (var indexValuePair in dctSorted)
             {
-                indices.Add(startIndex.Value);
-                sketchedDct[startIndex.Value] = dct[startIndex.Value];
-                startIndex.Value = (startIndex.Value + 1) % vector.Count;
+                if (Math.Abs(indexValuePair.Value) >= 0.000000000001)
+                {
+                    indices.Add(indexValuePair.Key);
+                    sketchedDct[indexValuePair.Key] = indexValuePair.Value;
+                }
             }
                 
             var sketch  = IDCT(sketchedDct);

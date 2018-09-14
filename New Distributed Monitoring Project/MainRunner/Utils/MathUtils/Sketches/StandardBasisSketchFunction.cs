@@ -5,22 +5,25 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
+using MoreLinq;
 using Utils.TypeUtils;
 
 namespace Utils.MathUtils.Sketches
 {
     public sealed class StandardBasisSketchFunction : SketchFunction
     {
-        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(
-            Vector<double> vector, int dimension, StrongBox<int> startIndex)
+        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension)
         {
-            var indices = new HashSet<int>();
-            var sketch = Enumerable.Repeat(0.0, vector.Count).ToVector();
-            for (int i = 0; i < dimension; i++)
+            var indices    = new HashSet<int>();
+            var sketch     = VectorUtils.CreateVector(vector.Count, _ => 0.0);
+            var sketchData = vector.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
+            foreach (var indexValuePair in sketchData)
             {
-                indices.Add(startIndex.Value);
-                sketch[startIndex.Value] = vector[startIndex.Value];
-                startIndex.Value         = (startIndex.Value + 1) % vector.Count;
+                if (Math.Abs(indexValuePair.Value) >= 0.000000000001)
+                {
+                    indices.Add(indexValuePair.Key);
+                    sketch[indexValuePair.Key] = indexValuePair.Value;
+                }
             }
 
             var epsilon = vector - sketch;

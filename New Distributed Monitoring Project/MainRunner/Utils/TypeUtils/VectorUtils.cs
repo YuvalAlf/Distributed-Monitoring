@@ -57,5 +57,8 @@ namespace Utils.TypeUtils
             for (int i = 0; i < @this.Count; i++)
                 @this[i] += other[i];
         }
+
+        public static Vector<double> CreateVector(int vectorCount, Func<int, double> generator) 
+            => Vector<double>.Build.DenseOfEnumerable(Enumerable.Range(0, vectorCount).Select(generator));
     }
 }

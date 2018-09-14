@@ -41,7 +41,7 @@ namespace Monitoring.Servers
             ReCreate     = reCreate;
         }
 
-        public override (NodeServer<NodeType>, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        protected override (NodeServer<NodeType>, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             double mulBy = GlobalVectorType.MulBy(NumOfNodes);
             for (int nodeNum = 0; nodeNum < NumOfNodes; nodeNum++)
@@ -58,7 +58,12 @@ namespace Monitoring.Servers
         {
             var result = this.ResolveNodes(this, nodes, rnd);
             if (result.IsChoice2)
-                return (this.ReCreate(this.NodesVectors), nodes[0].FullSyncAdditionalCost(NumOfNodes, VectorLength).Add(result.GetChoice2), true);
+            {
+                var parameters = new []{nodes as object};
+                var additionalCost = typeof(NodeType).GetMethod("FullSyncAdditionalCost").Invoke(null, parameters) as Communication;
+                return (this.ReCreate(this.NodesVectors), additionalCost.Add(result.GetChoice2), true);
+            }
+                
 
             var server = result.GetChoice1.Item1;
             return result.GetChoice1.AddLast(false);

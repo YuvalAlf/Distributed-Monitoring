@@ -49,7 +49,7 @@ namespace InnerProduct
                 {
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector()).PadWithZeros(isLeft);
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength * 2, globalVectorType,
-                                                          epsilon, InnerProductFunction.MonitoredFunction, 2);
+                                                          epsilon, InnerProductFunction.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(ch => ch.PadWithZeros(isLeft)).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
                                .Select(r => r.AsCsvString())

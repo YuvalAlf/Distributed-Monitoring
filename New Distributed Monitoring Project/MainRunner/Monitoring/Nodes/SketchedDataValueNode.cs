@@ -13,6 +13,7 @@ using Utils.TypeUtils;
 
 namespace Monitoring.Nodes
 {
+    [Obsolete("Should use Change-Data-Sketch instead", true)]
     public sealed class SketchedDataValueNode : ValueNode
     {
         public SketchFunction Sketch { get; }
@@ -27,9 +28,6 @@ namespace Monitoring.Nodes
         public static Func<Vector<double>, ConvexBound, SketchedDataValueNode> Create(SketchFunction sketchFunction)
             => (initialVector, convexBound) =>
                    new SketchedDataValueNode(initialVector, convexBound, 0.0, sketchFunction);
-
-
-        private StrongBox<int> SketchIndex { get; } = new StrongBox<int>(0);
 
         public static Either<(NodeServer<SketchedDataValueNode>, Communication), Communication> ResolveNodes
             (NodeServer<SketchedDataValueNode> server, SketchedDataValueNode[] nodes, Random rnd)
@@ -52,8 +50,7 @@ namespace Monitoring.Nodes
                 bandwidth += valueSchemeResolution.GetChoice2.Bandwidth;
                 messages  += 2             * nodes.Length;
                 bandwidth += dimension * nodes.Length;
-                var (sketches, epsilons, invokedIndices) =
-                    nodes.Select(n => sketchFunction.Sketch(n.LocalVector, dimension, n.SketchIndex)).UnZip();
+                var (sketches, epsilons, invokedIndices) = nodes.Select(n => sketchFunction.Sketch(n.LocalVector, dimension)).UnZip();
                 bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * nodes.Length;
                 var averageDataSketch = sketches.AverageVector();
                 for (int i = 0; i < nodes.Length; i++)
@@ -72,11 +69,11 @@ namespace Monitoring.Nodes
             return new Communication(bandwidth, messages);
         }
 
-        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+       /* public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
         {
             var lastDimensionUsed = (vectorLength / 2).ClosestPowerOf2FromBelow();
             var dimensionsLeft    = vectorLength - lastDimensionUsed;
             return new Communication(2 * numOfNodes * dimensionsLeft, numOfNodes * 3);
-        }
+        }*/
     }
 }

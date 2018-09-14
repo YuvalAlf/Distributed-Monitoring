@@ -23,12 +23,12 @@ namespace Entropy
         public static void RunBagOfWords(Random rnd, string wordsPath, string resultPath, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Average;
-            var epsilon            = new MultiplicativeEpsilon(0.01);
+            var epsilon            = new MultiplicativeEpsilon(0.015);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 10000;
             var amountOfIterations = 5000;
-            var vectorLength       = 100;
-            var stepSize           = 100;
+            var vectorLength       = 200;
+            var stepSize           = 200;
             var optionalWords      = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings    = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
 
@@ -41,7 +41,7 @@ namespace Entropy
                 {
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector() / windowSize);
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                          epsilon, EntropyFunction.MonitoredFunction, 1);
+                                                          epsilon, EntropyFunction.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v / windowSize)).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
                                .Select(r => r.AsCsvString())

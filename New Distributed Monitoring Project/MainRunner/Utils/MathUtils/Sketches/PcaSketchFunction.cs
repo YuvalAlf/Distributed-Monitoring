@@ -23,7 +23,7 @@ namespace Utils.MathUtils.Sketches
             InversePca = inversePca;
         }
 
-        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension, StrongBox<int> startIndex)
+        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension)
         {
             var indices = new HashSet<int>();
             var pcaVector = Pca.Transform(vector.ToArray());
@@ -34,7 +34,6 @@ namespace Utils.MathUtils.Sketches
                 indices.Add(indexValuePair.Key);
                 sketchArray[indexValuePair.Key] = indexValuePair.Value;
             }
-                
 
             var sketchVector = InversePca.Transform(sketchArray).ToVector();
             var epsilon = vector - sketchVector;

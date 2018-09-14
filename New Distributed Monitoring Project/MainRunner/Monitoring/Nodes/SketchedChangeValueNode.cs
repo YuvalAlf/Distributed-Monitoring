@@ -20,18 +20,14 @@ namespace Monitoring.Nodes
     {
         public SketchFunction Sketch { get; }
 
-        public SketchedChangeValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue,
-                               SketchFunction sketchFunction) :
-            base(referencePoint, convexBound, slackValue)
+        public SketchedChangeValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue,SketchFunction sketchFunction)
+            : base(referencePoint, convexBound, slackValue)
         {
             Sketch = sketchFunction;
         }
 
         public static Func<Vector<double>, ConvexBound, SketchedChangeValueNode> Create(SketchFunction sketchFunction)
             => (initialVector, convexBound) => new SketchedChangeValueNode(initialVector, convexBound, 0.0, sketchFunction);
-
-
-        private StrongBox<int> SketchIndex { get; } = new StrongBox<int>(0);
 
         public static Either<(NodeServer<SketchedChangeValueNode>, Communication), Communication> ResolveNodes
             (NodeServer<SketchedChangeValueNode> server, SketchedChangeValueNode[] nodes, Random rnd)
@@ -41,7 +37,7 @@ namespace Monitoring.Nodes
             var sketchFunction = nodes[0].Sketch;
             var convexBound    = nodes[0].ConvexBound;
 
-            for (int dimension = 2; dimension <= nodes[0].ReferencePoint.Count / 2; dimension *= 2)
+            for (int dimension = 4; dimension <= nodes[0].ReferencePoint.Count / 2; dimension *= 2)
             {
                 var valueSchemeResolution = ValueNode.ResolveNodes(server, nodes, rnd);
                 if (valueSchemeResolution.IsChoice1)
@@ -50,12 +46,13 @@ namespace Monitoring.Nodes
                     return (newServer, communication.Add(new Communication(bandwidth, messages)));
                 }
 
-                messages                 += valueSchemeResolution.GetChoice2.Messages;
-                bandwidth                += valueSchemeResolution.GetChoice2.Bandwidth;
-                messages                 += 2             * nodes.Length;
-                bandwidth                += dimension * nodes.Length;
-                var (sketches, epsilons, invokedIndices) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, dimension, n.SketchIndex)).UnZip();
+                messages  += valueSchemeResolution.GetChoice2.Messages;
+                bandwidth += valueSchemeResolution.GetChoice2.Bandwidth;
+                var (sketches, epsilons, invokedIndices) =  nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, dimension)).UnZip();
+                messages  += nodes.Length * 2;
+                bandwidth += invokedIndices.Sum(i => i.Dimension);
                 var averageChangeSketch = sketches.AverageVector();
+                messages  += nodes.Length;
                 bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * nodes.Length;
                 for (int i = 0; i < nodes.Length; i++)
                 {
@@ -63,8 +60,6 @@ namespace Monitoring.Nodes
                     nodes[i].SlackValue = 0;
                     nodes[i].ThingsChangedUpdateState();
                 }
-                messages  += nodes.Length;
-                bandwidth += dimension * nodes.Length;
                 if (nodes.All(n => convexBound.IsInBound(n.ConvexValue)))
                     return (server, new Communication(bandwidth, messages));
             }
@@ -72,11 +67,13 @@ namespace Monitoring.Nodes
             return new Communication(bandwidth, messages);
         }
 
-        public override Communication FullSyncAdditionalCost(int numOfNodes, int vectorLength)
+        public static Communication FullSyncAdditionalCost(SketchedChangeValueNode[] nodes)
         {
-            var lastDimensionUsed = (vectorLength / 2).ClosestPowerOf2FromBelow();
-            var dimensionsLeft = vectorLength - lastDimensionUsed;
-            return new Communication(2 * numOfNodes * dimensionsLeft, numOfNodes * 3);
+            var sketchFunction = nodes[0].Sketch;
+            var vectorLength = nodes[0].LocalVector.Count;
+            var numOfNodes = nodes.Length;
+            var (sketches, epsilons, invokedIndices) = nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, vectorLength * 2)).UnZip();
+            return new Communication(invokedIndices.Sum(i => i.Dimension) + InvokedIndices.Combine(invokedIndices).Dimension * numOfNodes, numOfNodes * 3);
         }
     }
 }
