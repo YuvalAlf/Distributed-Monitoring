@@ -33,7 +33,8 @@ namespace Entropy
                 return initVector;
             }
 
-            return ConvexBoundBuilder.Create(LowerBoundConvexBoundEntropy, value => value >= threshold).WithDistanceNorm(1, DistanceL1).ToConvexBound();
+            return ConvexBoundBuilder.Create(LowerBoundConvexBoundEntropy, value => value >= threshold)
+                                     .WithDistanceNorm(1, DistanceL1).ToConvexBound();
         }
     }
 }
