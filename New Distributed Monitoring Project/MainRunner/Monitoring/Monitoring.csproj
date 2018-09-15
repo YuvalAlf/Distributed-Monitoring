@@ -57,7 +57,6 @@
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SkechedChangeDistance.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SketchedChangeValue.cs" />
-    <Compile Include="GeometricMonitoring\MonitoringType\SketchedDataValue.cs" />
     <Compile Include="GeometricMonitoring\Running\MonitoringRunner.cs" />
     <Compile Include="Data\SingleResult.cs" />
     <Compile Include="GeometricMonitoring\ConvexBound.cs" />
@@ -80,7 +79,6 @@
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\DistanceNode.cs" />
     <Compile Include="Nodes\SkechedChangeDistanceNode.cs" />
-    <Compile Include="Nodes\SketchedDataValueNode.cs" />
     <Compile Include="Nodes\SketchedChangeValueNode.cs" />
     <Compile Include="Nodes\ValueNode.cs" />
     <Compile Include="Nodes\VectorNode.cs" />

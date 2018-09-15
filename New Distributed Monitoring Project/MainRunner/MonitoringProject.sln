@@ -17,8 +17,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "EntropyMathematics", "Entro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataParsing", "DataParsing\DataParsing.csproj", "{40E7BEF4-E1E8-4302-9998-397338CD3A46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sphere", "Sphere\Sphere.csproj", "{72E2A90B-6BD0-4463-B662-256BA8C3059B}"
 EndProject
 Global
@@ -55,10 +53,6 @@ Global
 		{40E7BEF4-E1E8-4302-9998-397338CD3A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40E7BEF4-E1E8-4302-9998-397338CD3A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40E7BEF4-E1E8-4302-9998-397338CD3A46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72E2A90B-6BD0-4463-B662-256BA8C3059B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72E2A90B-6BD0-4463-B662-256BA8C3059B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72E2A90B-6BD0-4463-B662-256BA8C3059B}.Release|Any CPU.ActiveCfg = Release|Any CPU

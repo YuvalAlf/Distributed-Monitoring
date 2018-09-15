@@ -64,8 +64,6 @@ namespace Monitoring.GeometricMonitoring.Running
             var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
             var dctSketchedChangeValueServer          = NodeServer<SketchedChangeValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeValueNode.ResolveNodes, SketchedChangeValueNode.Create(SketchFunction.DCTSketch));
             var standardBaseSketchedChangeValueServer = NodeServer<SketchedChangeValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeValueNode.ResolveNodes, SketchedChangeValueNode.Create(SketchFunction.StandardBaseSketch));
-            //var dctSketchedDataValueServer = NodeServer<SketchedDataValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedDataValueNodeResolveNodes, SketchedDataValueNodeCreate(SketchFunctionDCTSketch));
-            //var standardBaseSketchedDataValueServer = NodeServer<SketchedDataValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedDataValueNodeResolveNodes, SketchedDataValueNodeCreate(SketchFunctionStandardBaseSketch));
             
             AddRunner(new MonitoringScheme.Value(),  valueServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
@@ -73,9 +71,7 @@ namespace Monitoring.GeometricMonitoring.Running
             AddRunner(new MonitoringScheme.Naive(),  naiveServer);
             AddRunner(new MonitoringScheme.SketchedChangeValue("DCT"),           dctSketchedChangeValueServer);
             AddRunner(new MonitoringScheme.SketchedChangeValue("Standard Base"), standardBaseSketchedChangeValueServer);
-           // AddRunner(new MonitoringScheme.SketchedDataValue("DCT"),             dctSketchedDataValueServer);
-           // AddRunner(new MonitoringScheme.SketchedDataValue("Standard Base"),   standardBaseSketchedDataValueServer);
-
+           
             foreach (var distanceNorm in monitoredFunction.Norms)
             {
                 var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
