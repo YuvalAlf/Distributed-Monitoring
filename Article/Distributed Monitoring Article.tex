@@ -17,6 +17,8 @@
 \newcommand{\valueScheme}{\textit{Value Scheme}}
 \newcommand{\distanceScheme}{\textit{Distance Scheme}}
 \newcommand{\distanceLemma}{\textit{Distance Lemma}}
+\newcommand{\sketchScheme}{\textit{Sketched Change Scheme}}
+\newcommand{\fullSync}{\textit{Full Sync}}
 
 %%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
 \begin{document}
@@ -30,7 +32,7 @@ Yuval Alfassi & Dani Keren & Moshe Gabel \\
 \textit{Computer Science Department} & \textit{Computer Science Department} & \textit{Computer Science Faculty} \\
 \textit{University of Haifa} & \textit{University of Haifa} & \textit{Technion} \\
 Haifa, Israel & Haifa, Israel & Haifa, Israel \\
-yuvalalfassi@gmail.com & dkeren@cs.haifa.ac.il & mgabel@cs.technion.ac.ils \\
+yuvalalfassi@gmail.com & dkeren@cs.haifa.ac.il & mgabel@cs.technion.ac.il\\
 \ & \ & \ 
 \end{tabular} \\
 \begin{tabular}{c c c}
@@ -180,23 +182,49 @@ Firstly, in order to resolve the violation, the violated server sends its ${d_i 
 The monitoring is done solely by the value of the distance. A scalar value is transmitted between the coordinator and the servers, thus we'd expect much less communication bandwidth than the \vectorScheme .
 
 %%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
-\section{Sketched Data Resolution}
+\section{Sketched Change Scheme}
+The \sketchScheme \ is an integration of the \vectorScheme \ and either the \valueScheme \ or the \distanceScheme . \\
+This scheme behaves like the \valueScheme \ or the \distanceScheme \ up until a violation which the one dimensional scheme cannot resolve and a \fullSync \ has to be made. Instead of the \fullSync \ , the coordinator polls the servers for a \textit{sketch} of their change vector of the data. the average of the sketches is combined and sent to the servers, which benefit some data from it. For the sketch function, multiple functions can be used, such as sending the most dominant element of the vector, the most dominant DCT parameters of the vector and the most dominant PCA parameters. \\
+The better the sketch represents the change vector, more beneficial information the servers will have which will help overcome the violation occurred. \\
+Simply, the \sketchScheme \ allows more soft and gradual \fullSync \ to be done. If this partial \fullSync \ still won't allow the one-dimensional distributed monitoring scheme to be continued, the dimension of the sketch will be raised so the \fullSync \ would be more representative of the global vector. \\
+\subsection{Distributed Monitoring}
+The algorithm of the \sketchScheme \ is as follows:
+\begin{enumerate}
+\item Choose a one-dimensional distributed monitoring scheme, note it $d$.
+\item Distributively monitor the global monitored functional according to $d$.
+\item when a \fullSync \ has to be invoked, send a sketch of the 
+\end{enumerate}
+.....
+\subsection{Violation Resolution}
+The violation resolution of the \sketchScheme \ is invoked when the one-dimensional monitoring scheme fails. 
+\begin{enumerate}
+\item Let $n$ be the number of servers. Let $r$ be their reference vectors and $ch_1 ... ch_n$ be their data-change vectors.
+\item Let $d$ be the chosen dimension of the violation resolution.
+\item Let $sk_d$ be a sketch function of dimension $d$. Let $sk_d (ch_i)$ be the sketch of the change vector of the i-th server, and $\varepsilon _d$ be the 'error' of the sketch function so ${ch_i = sk_d(ch_i) + \varepsilon _i}$ for all $server_i$.
+\item Each server sends its $sk_d(ch_i)$ to the coordinator.
+\item The coordinator calculates the average of the sent vectors ${\overline{sk_d} = \frac{1}{n}\sum sk_d(ch_i)}$ and transmits it to the servers.
+\item Each server $server_j$ will update its reference vector to be ${r \leftarrow r + \overline{sk_d}}$ (the reference vector is the same at all servers). The change vectors are updated as well: ${ch_j \leftarrow \varepsilon _i}$.
+\item Set the value/distance scalar slacks of the vectors to zero and try continuing the one-dimensional distributed scheme.
+\item if the one-dimensional scheme immediately tries to invoke a \fullSync \ again, raise the sketch dimension to $2\cdot d$ up to $\frac{n}{2}$.
+\item if a violation reoccurs when ${d \geq \frac{n}{2}}$ invoke a \fullSync .
+\end{enumerate} 
+It's important to note that at all times before and after the violation, the global vector remains the same: ${v = \frac{1}{n}\sum v_i}$. Moreover, the 'error' of the sketch function is taken into account so there's no probabilistic nature to this scheme. As the sketch function represents the change better, the local vector of the server is estimates better the global vector and is closer to it.
+\subsection{Communication Bandwidth}
 
-
-%%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
-\section{Sketched Change Resolution}
+%%%%%%%%%%%%%%%%% Value Scheme vs. Distance Scheme %%%%%%%%%%%%%%%%%
+\section{Value Scheme vs. Distance Scheme}
 
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
 
+\subsection{Norm $L_2$ Squared}
+\subsection{Inner Product}
+\subsection{Entropy}
 
 %%%%%%%%%%%%%%%%% Conclusions %%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
-
-%%%%%%%%%%%%%%%%% Summary %%%%%%%%%%%%%%%%%
-\section{Summary}
 
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
 \begin{thebibliography}{00}
