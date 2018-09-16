@@ -6,6 +6,7 @@
 \usepackage{textcomp}
 \usepackage{balance}
 \usepackage{comment}
+\usepackage[group-separator={,}]{siunitx}
 
 \usepackage[T1]{fontenc}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -19,6 +20,8 @@
 \newcommand{\distanceLemma}{\textit{Distance Lemma}}
 \newcommand{\sketchScheme}{\textit{Sketched Change Scheme}}
 \newcommand{\fullSync}{\textit{Full Sync}}
+\newcommand{\naiveScheme}{\textit{Naive Scheme}}
+\newcommand{\oracleScheme}{\textit{Oracle Scheme}}
 
 %%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
 \begin{document}
@@ -213,9 +216,9 @@ It's important to note that at all times before and after the violation, the glo
 %%%%%%%%%%%%%%%%% Value Scheme vs. Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme vs. Distance Scheme}
 Both \valueScheme \ and \distanceScheme \ are distributed monitoring schemes which are reduced to tracking just one scalar value. In the \distanceScheme \ its the sum of the distances to the convex bound's geometric boundary, and in the \valueScheme \ its the average of the convex function's value. \\
-A good question that arises is which monitoring scheme is better? which one uses less communication bandwidth? Is there a connection b etween the schemes? \\
+A good question that arises is which monitoring scheme is better? which one uses less communication bandwidth? Is there a connection between the schemes? \\
 In [*] its proposed theres a connection between the distance to a function and the value of the function. moreover, when the distance is small, there's a linear correlation between the function's value and the distance. \\
-Nonetheless, since we are dealing with convex functions, the value grows faster than the function's value. A good example is the function ${f(v) = (\sum v_i)^100}$ which  when monitoring ${f(v) \leq 1}$, the function's value changes rapidly outside the boundary, whereas the distance changes regularly.
+Nonetheless, since we are dealing with convex functions, the value grows faster than the function's value. A good example is the function ${f(v) = (\sum v_i)^{100}}$ which  when monitoring ${f(v) \leq 1}$, the function's value changes rapidly outside the boundary, whereas the distance changes regularly.
 This behavor is showed in the experiment done in section [**] on the function ${f(v) = ||v||^2}$. \\
 Even though in convex functions the distance grows faster than its value, it doesn't necessarily imply that the distance scheme is better. for example, monitoring the convex condition $y-x^2 \geq 2$, the results aren't conclusive. As shown in (....) (add paintings)
 (.....)
@@ -223,7 +226,20 @@ Another important factor is that the \valueScheme \ is computationally mathemati
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
+In order to assess the productivity of the distributed monitoring schemes proposed, we tested the communication bandwidth of the data sent between the servers and the coordinator both on real-world diverse data and synthetic scheme-oriented data. \\
+As for the distributed dynamic monitored data, we used a bag-of-words [*] vector of high dimension constructed of occurrences of tokens in a moving sliding window in the servers. The servers data is diverse: one is created out of blogs from \textit{bloggers.com} while other is fed of tweets posted online etc. 
+\subsection{Oracle Scheme and Naive Scheme}
+One of the needs of comparing between the monitoring schemes and assessing whether the monitoring schemes proposed really are economical bandwidth-wise is offering a lower-bound and an upper bound for distributed monitoring schemes. \\
+The obvious communication-bandwidth upper bound is the \naiveScheme \ which simply sends each data change at a server to the coordinator. This method obviously isn't very bandwidth efficient, though its a good upper bound.
+For the lower bound of the communication bandwidth, we propose the \oracleScheme \ which is like an oracle which knows it all. Simply, whenever a true violation occurs, i.e. ${f(v') > (1
++\varepsilon)f(v)}$ or ${f(v') < (1-\varepsilon)f(v)}$ (for simplicity, ${f(v) \geq 0}$), a \fullSync is invoked. Of course this scheme isn't realistic, since a server knows nothing about its neighbours, so the global vector isn't known. In other words, data is transmitted only when its truly needed to be passed -- a \fullSync \ must be done.
 \subsection{Norm $L_2$ Squared}
+The norm $L_2$ is used in multiple scenarios, as in [*] and [**]. Monitoring this function distributively isn't Obvious even though the function is convex. \\
+Here, we monitored the $L_2$ norm squared, namely $f(v) = ||v||^2$. One of the reasons is to confirm that this function is better bandwidth-wise using the \distanceScheme \ in contrast of the \valueScheme . \\
+Finding the convex bound of the function isn't difficult since it's convex. the upper bound is the function itself, and the lower bound's convex function is the tangent plane to the function at the closest point to the global vector with norm squarred as the lower bound's threshold. \\
+To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. In order to make things interesting, all the vectors remained static, but one which changed randomly in the space with small steps. \\
+The bandwidth results over time are presented in figure [***]. For this experiment we monitored the function by bounding it ${(\pm 10)}$ instead of ${(1 \pm \varepsilon)}$.
+ 
 \subsection{Inner Product}
 \subsection{Entropy}
 
