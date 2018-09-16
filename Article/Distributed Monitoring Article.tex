@@ -23,7 +23,6 @@
 %%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%
 \begin{document}
 
-
 %%%%%%%%%%%%%%%%% Title %%%%%%%%%%%%%%%%%
 \title{Bandwidth Efficient Distributed Monitoring Schemes}
 \author{
@@ -213,11 +212,17 @@ It's important to note that at all times before and after the violation, the glo
 
 %%%%%%%%%%%%%%%%% Value Scheme vs. Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme vs. Distance Scheme}
-
+Both \valueScheme \ and \distanceScheme \ are distributed monitoring schemes which are reduced to tracking just one scalar value. In the \distanceScheme \ its the sum of the distances to the convex bound's geometric boundary, and in the \valueScheme \ its the average of the convex function's value. \\
+A good question that arises is which monitoring scheme is better? which one uses less communication bandwidth? Is there a connection b etween the schemes? \\
+In [*] its proposed theres a connection between the distance to a function and the value of the function. moreover, when the distance is small, there's a linear correlation between the function's value and the distance. \\
+Nonetheless, since we are dealing with convex functions, the value grows faster than the function's value. A good example is the function ${f(v) = (\sum v_i)^100}$ which  when monitoring ${f(v) \leq 1}$, the function's value changes rapidly outside the boundary, whereas the distance changes regularly.
+This behavor is showed in the experiment done in section [**] on the function ${f(v) = ||v||^2}$. \\
+Even though in convex functions the distance grows faster than its value, it doesn't necessarily imply that the distance scheme is better. for example, monitoring the convex condition $y-x^2 \geq 2$, the results aren't conclusive. As shown in (....) (add paintings)
+(.....)
+Another important factor is that the \valueScheme \ is computationally mathematically whole, while the \distanceScheme \ may require some approximations. The problem of finding the distance to the convex bound from outside is mathematically closed using convex optimization techniques. On the other hand, finding the distance from inside to the convex body isn't always solvable [**], so the \distanceScheme \ isn't applicable in all the possible functions that require distributed monitoring.
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
-
 \subsection{Norm $L_2$ Squared}
 \subsection{Inner Product}
 \subsection{Entropy}
@@ -225,12 +230,10 @@ It's important to note that at all times before and after the violation, the glo
 %%%%%%%%%%%%%%%%% Conclusions %%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
-
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
 \begin{thebibliography}{00}
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \end{thebibliography}
-
 
 %%%%%%%%%%%%%%%%% End Document %%%%%%%%%%%%%%%%%
 \end{document}

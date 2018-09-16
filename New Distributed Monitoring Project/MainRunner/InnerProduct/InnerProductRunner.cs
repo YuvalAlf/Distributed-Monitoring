@@ -28,7 +28,7 @@ namespace InnerProduct
             return vectors.Select((v, i) => isLeft(i) ? PadLeft(v) : PadRight(v)).ToArray();
         }
 
-        public static void RunBagOfWords(Random rnd, string wordsPath, string resultPath, Func<int, bool> isLeft, string[] textFilesPathes)
+        public static void RunBagOfWords(Random rnd, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(0.025);
@@ -39,6 +39,8 @@ namespace InnerProduct
             var stepSize           = 1000;
             var optionalWords = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
+            var fileName   = $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var resultPath = Path.Combine(resultDir, fileName);
 
             using (var resultCsvFile = File.CreateText(resultPath))
             {

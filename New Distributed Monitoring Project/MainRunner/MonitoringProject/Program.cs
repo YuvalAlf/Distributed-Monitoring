@@ -10,7 +10,7 @@ namespace MonitoringProject
     {
         public static readonly string dataPcaPath = @"C:\Users\Yuval\Desktop\dataPca.dat";
         public static readonly string resultPathInnerProduct = @"C:\Users\Yuval\Desktop\csvResultInnerProduct.csv";
-        public static readonly string resultPathEntropy = @"C:\Users\Yuval\Desktop\csvResultEntropy.csv";
+        public static readonly string resultDir = @"C:\Users\Yuval\Desktop";
         public static readonly string wordsPath = @"C:\Users\Yuval\Desktop\Distributed Data Sets\MostCommonEnglishWords.txt";
 
         static void Main(string[] args)
@@ -28,11 +28,11 @@ namespace MonitoringProject
                                   };
             var random = new Random(125424);
             Func<int, bool> isLeft = i => i < 4;
-          //  SphereRunner.Run(random, resultPath);
+            //  SphereRunner.Run(random, resultPath);
 
-            //InnerProductRunner.RunBagOfWords(random, wordsPath, resultPathInnerProduct, isLeft, textFilesPathes);
-            EntropyRunner.RunBagOfWords(random, wordsPath, resultPathEntropy, textFilesPathes);
-
+            //InnerProductRunner.RunBagOfWords(random, wordsPath, resultDir, isLeft, textFilesPathes);
+            for (int vectorLength = 100; vectorLength <= 1000; vectorLength += 100)
+                EntropyRunner.RunBagOfWords(random, vectorLength, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

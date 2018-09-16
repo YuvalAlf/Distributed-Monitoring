@@ -71,6 +71,7 @@
     <Compile Include="MathUtils\BinarySearch.cs" />
     <Compile Include="MathUtils\ComplexUtils.cs" />
     <Compile Include="DataStructures\HistogramQueue.cs" />
+    <Compile Include="MathUtils\DCTFunction.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
     <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
