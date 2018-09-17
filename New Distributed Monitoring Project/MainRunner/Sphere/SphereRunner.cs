@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
@@ -17,13 +18,15 @@ namespace Sphere
 {
     public static class SphereRunner
     {
-        public static void Run(Random rnd, string resultPath)
+        public static void Run(Random rnd, string resultDir)
         {
-            var numOfNodes = 10;
-            var vectorLength  = 20;
-            var iterations = 1000;
+            var numOfNodes = 100;
+            var vectorLength  = 1000;
+            var iterations = 1500;
             var globalVectorType = GlobalVectorType.Average;
-            var epsilon = new AdditiveEpsilon(20.0);
+            var epsilon = new AdditiveEpsilon(10.0);
+            var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var resultPath = Path.Combine(resultDir, fileName);
 
             Vector<double>[] GetChange()
             {
@@ -32,8 +35,8 @@ namespace Sphere
                     return ArrayUtils.Init(vectorLength, i => rnd.NextDouble() - 0.5).ToVector();
                 }
 
-                //  return ArrayUtils.Init(numOfNodes, i => i == 0 ? GenerateChange() : ArrayUtils.Init(vectorLength, _ => 0.0).ToVector());
-                return ArrayUtils.Init(numOfNodes, _ => GenerateChange());
+                  return ArrayUtils.Init(numOfNodes, i => i <= 5 ? GenerateChange() : ArrayUtils.Init(vectorLength, _ => 0.0).ToVector());
+            //    return ArrayUtils.Init(numOfNodes, _ => GenerateChange());
             }
 
             using (var resultCsvFile = File.CreateText(resultPath))
@@ -44,6 +47,7 @@ namespace Sphere
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => zeroVector.ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, SphereFunction.MonitoredFunction);
+                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Naive(), new MonitoringScheme.Oracle());
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)
                                .Select(r => r.AsCsvString())

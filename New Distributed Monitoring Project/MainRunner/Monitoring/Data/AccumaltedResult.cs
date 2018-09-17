@@ -56,7 +56,7 @@ namespace Monitoring.Data
                 .ConcatCsv("Lower-Bound")
                 .ConcatCsv("Function's Value")
                 .ConcatCsv("Upper-Bound")
-                .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Node " + numNode)));
+                .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Server " + numNode)));
 
         public string HeaderCsv() => Header(NumOfNodes);
 

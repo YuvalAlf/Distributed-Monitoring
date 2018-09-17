@@ -28,11 +28,11 @@ namespace MonitoringProject
                                   };
             var random = new Random(125424);
             Func<int, bool> isLeft = i => i < 4;
-            //  SphereRunner.Run(random, resultPath);
+            SphereRunner.Run(random, resultDir);
 
             //InnerProductRunner.RunBagOfWords(random, wordsPath, resultDir, isLeft, textFilesPathes);
-            for (int vectorLength = 100; vectorLength <= 1000; vectorLength += 100)
-                EntropyRunner.RunBagOfWords(random, vectorLength, wordsPath, resultDir, textFilesPathes);
+           // for (int vectorLength = 100; vectorLength <= 1000; vectorLength += 100)
+           //     EntropyRunner.RunBagOfWords(random, vectorLength, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

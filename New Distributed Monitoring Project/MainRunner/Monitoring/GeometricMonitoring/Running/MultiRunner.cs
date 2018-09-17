@@ -85,9 +85,9 @@ namespace Monitoring.GeometricMonitoring.Running
             return new MultiRunner(runners);
         }
 
-        public void OnlyScheme(MonitoringScheme onlyScheme)
+        public void OnlySchemes(params MonitoringScheme[] onlySchemes)
         {
-            foreach (var monitoringScheme in this.Runners.Keys.Except(new [] {onlyScheme}).ToArray())
+            foreach (var monitoringScheme in this.Runners.Keys.Except(onlySchemes).ToArray())
                 this.RemoveScheme(monitoringScheme);
         }
     }
