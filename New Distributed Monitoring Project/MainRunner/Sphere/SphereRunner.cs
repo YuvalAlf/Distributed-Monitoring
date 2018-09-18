@@ -21,8 +21,8 @@ namespace Sphere
         public static void Run(Random rnd, string resultDir)
         {
             var numOfNodes = 100;
-            var vectorLength  = 1000;
-            var iterations = 1500;
+            var vectorLength  = 10000;
+            var iterations = 200;
             var globalVectorType = GlobalVectorType.Average;
             var epsilon = new AdditiveEpsilon(10.0);
             var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
@@ -32,7 +32,7 @@ namespace Sphere
             {
                 Vector<double> GenerateChange()
                 {
-                    return ArrayUtils.Init(vectorLength, i => rnd.NextDouble() - 0.5).ToVector();
+                    return ArrayUtils.Init(vectorLength, i => (rnd.NextDouble() - 0.5) / 5).ToVector();
                 }
 
                   return ArrayUtils.Init(numOfNodes, i => i <= 5 ? GenerateChange() : ArrayUtils.Init(vectorLength, _ => 0.0).ToVector());
@@ -49,7 +49,7 @@ namespace Sphere
                                                       epsilon, SphereFunction.MonitoredFunction);
                 multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Naive(), new MonitoringScheme.Oracle());
                 for (int i = 0; i < iterations; i++)
-                    multiRunner.Run(GetChange(), rnd, false)
+                    multiRunner.Run(GetChange(), rnd, true)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
 

@@ -38,19 +38,20 @@ namespace Monitoring.Nodes
             var referenceVector = nodes[0].ReferencePoint;
             var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
             var messages = violatedNodesIndices.Count;
-            var bandwidth = violatedNodesIndices.Count * server.VectorLength;
+            var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.CountNonZero());
             while (nodesIndicesToPollNext.Count > 0)
             {
-                bandwidth += server.VectorLength;
+                var nextViolatedNode = nodesIndicesToPollNext.Pop();
+                bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
                 messages += 2;
-                violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
+                violatedNodesIndices.Add(nextViolatedNode);
                 var averageChangeVector = violatedNodesIndices.Map(i => nodes[i].ChangeVector).AverageVector();
                 if (convexFunction.IsInBound(convexFunction.Compute(referenceVector + averageChangeVector)))
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
                     messages  += violatedNodesIndices.Count;
-                    bandwidth += violatedNodesIndices.Count * server.VectorLength;
+                    bandwidth += violatedNodesIndices.Count * averageChangeVector.CountNonZero();
                     return (server, new Communication(bandwidth, messages));
                 }
             }

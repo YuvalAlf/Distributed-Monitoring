@@ -32,7 +32,7 @@ namespace MonitoringProject
 
             //InnerProductRunner.RunBagOfWords(random, wordsPath, resultDir, isLeft, textFilesPathes);
            // for (int vectorLength = 100; vectorLength <= 1000; vectorLength += 100)
-           //     EntropyRunner.RunBagOfWords(random, vectorLength, wordsPath, resultDir, textFilesPathes);
+             //   EntropyRunner.RunBagOfWords(random, 200, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

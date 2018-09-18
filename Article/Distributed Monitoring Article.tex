@@ -10,6 +10,7 @@
 \usepackage{grffile}
 \usepackage{subcaption}
 \usepackage{lipsum}
+\usepackage{float}
 
 
 \usepackage[T1]{fontenc}
@@ -201,6 +202,27 @@ The algorithm of the \sketchScheme \ is as follows:
 \item when a \fullSync \ has to be invoked, send a sketch of the 
 \end{enumerate}
 .....
+
+\begin{figure*}[t]
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{Pics/distanceSchemeFails.PNG}
+\caption{\valueScheme \ beats \distanceScheme}
+\label{fig:valueBeatsDistanceFigure}
+\end{minipage}
+\begin{minipage}[b]{0.5\linewidth}
+\centering
+\includegraphics[width=\textwidth]{Pics/valueSchemeFails.PNG}
+\caption{\distanceScheme \ beats \valueScheme}
+\label{fig:distanceBeatsValueFigure}
+\end{minipage}
+\medskip
+
+\small
+When monitoring the convex condition ${f(x) = y - x^2  \geq 2}$, there are cases of false negative violations which occur only in one distributed monitoring scheme and not the other. The global average vector remains inside the convex bound ${f(x) \geq 2}$ while a false alarm can be raised. In Fig. (\ref{fig:valueBeatsDistanceFigure}) the distance to the boundary $f(x) = 2$ from the outside point $p_2$ is greater than the distance from the point inside - $p_1$, though ${\frac{1}{2}(f(p_1)+f(p_2))\geq 2}$ , so the \valueScheme \ won't raise a violation, while the \distanceScheme \ will raise a violation which is a false alarm. \\
+In Fig. (\ref{fig:distanceBeatsValueFigure}) the distance to the boundary $f(x) = 2$ of the point inside $p_2$ is greater of the distance of the point outside, $p_1$, however, ${\frac{1}{2}(f(p_1)+f(p_2))\leq 2}$, so the \valueScheme \ will raise a false-negative violation, while the \distanceScheme \ correctly won't raise a violation.
+\end{figure*}
+
 \subsection{Violation Resolution}
 The violation resolution of the \sketchScheme \ is invoked when the one-dimensional monitoring scheme fails. 
 \begin{enumerate}
@@ -228,25 +250,6 @@ Even though in convex functions the distance grows faster than its value, it doe
 (.....)
 Another important factor is that the \valueScheme \ is computationally mathematically whole, while the \distanceScheme \ may require some approximations. The problem of finding the distance to the convex bound from outside is mathematically closed using convex optimization techniques. On the other hand, finding the distance from inside to the convex body isn't always solvable [**], so the \distanceScheme \ isn't applicable in all the possible functions that require distributed monitoring.
 
-\begin{figure*}[t]
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{Pics/distanceSchemeFails.PNG}
-\caption{\valueScheme \ beats \distanceScheme}
-\label{fig:valueBeatsDistanceFigure}
-\end{minipage}
-\begin{minipage}[b]{0.5\linewidth}
-\centering
-\includegraphics[width=\textwidth]{Pics/valueSchemeFails.PNG}
-\caption{\distanceScheme \ beats \valueScheme}
-\label{fig:distanceBeatsValueFigure}
-\end{minipage}
-\medskip
-
-\small
-When monitoring the convex condition ${f(x) = y - x^2  \geq 2}$, there are cases of false negative violations which occur only in one distributed monitoring scheme and not the other. The global average vector remains inside the convex bound ${f(x) \geq 2}$ while a false alarm can be raised. In Fig. (\ref{fig:valueBeatsDistanceFigure}) the distance to the boundary $f(x) = 2$ from the outside point $p_2$ is greater than the distance from the point inside - $p_1$, though ${\frac{1}{2}(f(p_1)+f(p_2))\geq 2}$ , so the \valueScheme \ won't raise a violation, while the \distanceScheme \ will raise a violation which is a false alarm. \\
-In Fig. (\ref{fig:distanceBeatsValueFigure}) the distance to the boundary $f(x) = 2$ of the point inside $p_2$ is greater of the distance of the point outside, $p_1$, however, ${\frac{1}{2}(f(p_1)+f(p_2))\leq 2}$, so the \valueScheme \ will raise a false-negative violation, while the \distanceScheme \ correctly won't raise a violation.
-\end{figure*}
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
@@ -261,9 +264,13 @@ For the lower bound of the communication bandwidth, we propose the \oracleScheme
 The norm $L_2$ is used in multiple scenarios, as in [*] and [**]. Monitoring this function distributively isn't Obvious even though the function is convex. \\
 Here, we monitored the $L_2$ norm squared, namely $f(v) = ||v||^2$. One of the reasons is to confirm that this function is better bandwidth-wise using the \distanceScheme \ in contrast of the \valueScheme . \\
 Finding the convex bound of the function isn't difficult since it's convex. the upper bound is the function itself, and the lower bound's convex function is the tangent plane to the function at the closest point to the global vector with norm squarred as the lower bound's threshold. \\
-To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. In order to make things interesting, just a few servers dynamically changed while others remained static. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
+To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. The servers dynamically change. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
 The bandwidth results over time are presented in figure [***]. For this experiment we monitored the function by bounding it ${(\pm 10)}$ instead of a multiplicative ${(1 \pm \varepsilon)f(v_0)}$.
- 
+\begin{figure}[b]
+\includegraphics[width=\linewidth]{Pics/Sphere.PNG}
+\label{SphereMonitoring}
+\caption{\distanceScheme \ uses less communication bandwidth than \valueScheme \ when monitoring norm $L_2$ squared function}
+\end{figure} 
 \subsection{Inner Product}
 \subsection{Entropy}
 
@@ -272,6 +279,19 @@ The bandwidth results over time are presented in figure [***]. For this experime
 
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
 \begin{thebibliography}{00}
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \end{thebibliography}
 
