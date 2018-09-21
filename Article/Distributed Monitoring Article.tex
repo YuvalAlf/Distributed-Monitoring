@@ -89,10 +89,15 @@ In turn, this threshold monitoring can be reduced to a \textit{geometric monitor
 
 %%%%%%%%%%%%%%%%% Previous Work %%%%%%%%%%%%%%%%%
 \section{Previous Work}
-**** Consult with Dani on this part **** \\
-(1) Linear Functions \\
-(2) Covering Spheres Method \\
-(3) Convex Decomposition
+\subsection{Linear Functions}
+Since linear functions are additive and convex, the basic algorithm for distributively monitoring their value is fairly easy. A work about linear functions such as the discributed count problem was done at \cite{keralapura2006communication}. Though, things get more sophisticated when dealing with non-linear functions, where novel approaches had to be developed.
+
+***** Should I add something here???? *****
+\subsection{The Covering Spheres Method}
+
+\subsection{The Convex Decomposition Approach}
+
+\subsection{The Convex Bound Method -- The Vector Scheme}
 (4) Convex Bound Method -- Vector Scheme
 The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and used for the upper (lower) threshold monitoring.
 Given a function $f$ to monitor and a starting global vector $v_0$, it was proposed to approach the problem by finding a convex function $c$ which bounds the function $f$ i.e. for all $v$, ${f(v) \leq c(v)}$ and preferably ${f(v_0)=c(v_0)}$ [**]. 
