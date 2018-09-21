@@ -32,7 +32,7 @@
 \begin{document}
 
 %%%%%%%%%%%%%%%%% Title %%%%%%%%%%%%%%%%%
-\title{Bandwidth Efficient Distributed Monitoring Schemes}
+\title{Guaranteed Approximation and Bandwidth Efficient Distributed Function Monitoring Schemes}
 \author{
 \begin{tabular}{c c c}
 Yuval Alfassi & Dani Keren & Moshe Gabel \\
@@ -59,33 +59,26 @@ assaf@cs.technion.ac.il & \ \ \ \ & gal2016@gmail.com \\
 \textit{Abstract}--- Distributed monitoring is a problem that arises when trying to monitor properties of dynamic data which is spread distributively. Tracking the value of a function over dynamic data in a distributed setting is a challenging problem in numerous real-world modern applications. Several monitoring schemes were proposed as an approach to coping with this problem in order to reduce the amount of communication messages between servers, as well as the communication bandwidth. \\
 Here, we propose several new distributed monitoring schemes using much less communication bandwidth. Existing schemes send high dimensional vectors from server to server while we propose some innovative methods for reducing the dimensionality of the transmitted data.\\
 One scheme we propose is the \valueScheme \ which exploits some traits of convex functions, and another is the \distanceScheme \ which treats the function monitoring problem as a geometric monitoring problem, thereby utilizing geometric distances for distributed monitoring. \\
-Moreover, we present a clever way to incorporate data-sketches into the schemes, which influence the bandwidth as well, allowing for some monitoring trade-offs to be made, depending on the sketch size.  }
+Moreover, we present a clever way to incorporate lossy data-sketches into the schemes, which influence the bandwidth as well, allowing for some monitoring trade-offs to be made, depending on the sketch size.  }
 \end{small}
 
 %%%%%%%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%
 \section{Introduction}
-Monitoring a function over large amount of dynamically changed data in a distributed fashion is a common computer-science challenge. Whether it's monitoring features of large distributed dynamic graphs [*] or multiple air pollution sensors [**], innovative approaches had to be developed in order to deal with the difficulties of both the data being dynamic and distributed. \\
-The need of minimizing both the bandwidth and the processing power is expressed in [*]; a good example is internet of things objects which are operated on batteries, hence sending data via a communication channel is very costly, thus should be minimized. Furthermore, in the \textit{Big Data} era, when data is of very high dimensionality and changes rapidly, sending the whole data is not only impractical, but also extremely time consuming; for instance, air pollution sensors which distributively have to determine the air pollution level may benefit from an economical communication approach [***]. \\
-Previous works were made on linear functions [*], where the linear properties make the distributed monitoring much easier; though in order to monitor non-linear functions a handful of difficulties arise. Works were done on distributively monitoring the entropy of distributed streams [*], monitoring the inner-product value of distributed dynamic vectors [**], and monitoring the number of triangles of dynamic graphs held in distributed servers [***]. \\
-It should be noted that the classic approach to monitor distributed dynamic data is to send the data changes at a certain frequency  to a central server, called \textit{the coordinator}. This method may miss peaks of critical global data-changes, and also may be more expensive communication-wise -- not only data will be sent even when little changes are made, but the whole big dimensional data changes will be transmitted which might be extremely expensive. \\
-The distributed monitoring problem is defined as follows:
+Monitoring a function over large amount of dynamically changed data in a distributed fashion is a common computer-science challenge. Whether it's monitoring features of large distributed dynamic graphs \cite{mcgregor2015densest} or a distributed sensor network \cite{burdakis2012detecting}, innovative approaches had to be developed in order to deal with the difficulties of both the data being dynamic and distributed. \\
+The need of minimizing both the bandwidth and the processing power is expressed in \cite{giatrakos2013network}; a good example is internet of things objects which are operated on batteries, hence sending data via a communication channel is very costly, thus should be minimized [*]. Furthermore, in the \textit{Big Data} era, when data is of very high dimensionality and changes rapidly, sending the whole data is not only impractical, but also extremely time consuming; for instance, air pollution sensors which distributively have to determine the air pollution level may benefit from an economical communication approach \cite{cheng2004revised}. \\
+Previous works were made on linear functions \cite{keralapura2006communication}, where the linear properties make the distributed monitoring much easier; though in order to monitor non-linear functions a handful of difficulties arise. Works were done on distributively monitoring the entropy of distributed streams \cite{gabel2017anarchists}[**][***], monitoring the inner-product value of distributed dynamic vectors \cite{garofalakis2013sketch}, and monitoring the number of triangles of dynamic graphs held in distributed servers \cite{yehuda2017monitoring}. \\
+It should be noted that the classic approach to monitor distributed dynamic data is to send the data changes at a certain frequency  to a central server, called \textit{the coordinator}. This method may miss peaks of critical global data-changes, and also may be more expensive communication-wise -- not only data will be sent even when little changes are made, but the whole big dimensional data changes will be transmitted which might be extremely expensive [*]. \\
+The distributed function approximation problem is defined as follows \cite{garofalakis2013sketch}:
 \begin{enumerate}
 \item There are $n$ servers and a coordinator. \\ $server_i$ maintains its dynamic \textit{local vector} $v_i$. \\ The \textit{global vector} is the average of the local vectors: $$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
-\item A function $f$ is monitored over the \textit{global vector} $v$ so it is $\varepsilon$-approximated with 100\% accuracy. \\ Let the estimation  be the value $\mu$ and ${f(v) \geq 0}$, than at all times: $$(1-\varepsilon )f(v) \leq \mu \leq (1+\varepsilon )f(v)$$
+\item A function $f$ is monitored over the \textit{global vector} $v$ so it is $\varepsilon$-approximated with 100\% confidence. \\ Let the estimation  be the value $\mu$ and ${f(v) \geq 0}$, than at all times: $$(1-\varepsilon )\mu \leq f(v) \leq (1+\varepsilon )\mu $$
 \end{enumerate}
-The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and used for the upper (lower) threshold monitoring.
-Given a fucntion $f$ to monitor and a starting global vector $v_0$, it was proposed to approach the problem by finding a convex function $c$ which bounds the function $f$ i.e. for all $v$, ${f(v) \leq c(v)}$ and preferably ${f(v_0)=c(v_0)}$ [**]. \\
-The function's approximation problem can be reduced to \textit{threshold monitoring problem} [*] where one monitors whether the function's value crosses a certain threshold. specifically, let $T$ be the threshold's value, than the general upper-bound monitoring objective is to determine whether:
+The function's approximation problem can is reduced to \textit{threshold monitoring problem} \cite{garofalakis2013sketch} where one monitors whether the function's value crosses a certain threshold. specifically, let $T$ be the threshold's value, than the general upper-bound monitoring objective is to determine whether:
 \begin{equation}
 \label{functionMonitoringConstraint}
 f(v) \leq T
 \end{equation}
-and since ${f(v) \leq c(v)}$ for all $v$, we'd monitor whether:
-\begin{equation}
-\label{monitoringConstraint}
-c(v) \leq T
-\end{equation}
-In turn, this threshold monitoring can be treated as a \textit{geometric monitoring problem} [***], where there's a \textit{valid zone} of vectors ${\{v \ | \ c(v) \leq T\}}$, which since $c$ is a convex function, every linear combination of vectors inside the \textit{safe zone} is also inside the \textit{safe zone}. 
+In turn, this threshold monitoring can be reduced to a \textit{geometric monitoring problem} \cite{sharfman2007geometric}, where one tries to find a \textit{safe zone} of vectors ${\{v \ | \ f(v) \leq T\}}$, which is a convex, so every linear combination of vectors inside this \textit{safe zone} is also inside the \textit{safe zone}. This geometric \textit{safe zone} approach is the fundamental idea behind previous distributed monitoring techniques.
 \subsection{Contributions}
 \begin{enumerate}
 \item Introducing multiple innovative distributed monitoring schemes which avoid sending big dimensional data unless its crucially critical.
@@ -98,8 +91,21 @@ In turn, this threshold monitoring can be treated as a \textit{geometric monitor
 \section{Previous Work}
 **** Consult with Dani on this part **** \\
 (1) Linear Functions \\
-(2) Covering Spheres \\
+(2) Covering Spheres Method \\
 (3) Convex Decomposition
+(4) Convex Bound Method -- Vector Scheme
+The monitoring is done by bounding the function $f$ with a 'convex bound' function [*] -- a function $c$ which bounds the function from above (below) and used for the upper (lower) threshold monitoring.
+Given a function $f$ to monitor and a starting global vector $v_0$, it was proposed to approach the problem by finding a convex function $c$ which bounds the function $f$ i.e. for all $v$, ${f(v) \leq c(v)}$ and preferably ${f(v_0)=c(v_0)}$ [**]. 
+
+
+\begin{equation}
+f(v) \leq T
+\end{equation}
+and since ${f(v) \leq c(v)}$ for all $v$, we'd monitor whether:
+\begin{equation}
+\label{monitoringConstraint}
+c(v) \leq T
+\end{equation}
 
 %%%%%%%%%%%%%%%%% Vector Scheme %%%%%%%%%%%%%%%%%
 \section{Vector Scheme}
@@ -272,7 +278,7 @@ Here, we monitored the $L_2$ norm squared, namely $f(v) = ||v||^2$. One of the r
 Finding the convex bound of the function isn't difficult since it's convex. the upper bound is the function itself, and the lower bound's convex function is the tangent plane to the function at the closest point to the global vector with norm squarred as the lower bound's threshold. \\
 To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. The servers dynamically change. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
 The bandwidth results over time are presented in figure [***]. For this experiment we monitored the function by bounding it ${(\pm 10)}$ instead of a multiplicative ${(1 \pm \varepsilon)f(v_0)}$.
-\begin{figure}[b]
+\begin{figure}[t]
 \includegraphics[width=\linewidth]{Pics/Sphere.PNG}
 \label{SphereMonitoring}
 \caption{\distanceScheme \ uses less communication bandwidth than \valueScheme \ when monitoring norm $L_2$ squared function}
@@ -284,22 +290,9 @@ The bandwidth results over time are presented in figure [***]. For this experime
 \section{Conclusions}
 
 %%%%%%%%%%%%%%%%% References %%%%%%%%%%%%%%%%%
-\begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\end{thebibliography}
+%Hello
+\bibliographystyle{ieeetran}
+\bibliography{References}
 
 %%%%%%%%%%%%%%%%% End Document %%%%%%%%%%%%%%%%%
 \end{document}
