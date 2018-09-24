@@ -102,4 +102,8 @@ A.~Lazerson, I.~Sharfman, D.~Keren, A.~Schuster, M.~Garofalakis, and
   V.~Samoladas, ``Monitoring distributed streams using convex decompositions,''
   \emph{Proceedings of the VLDB Endowment}, vol.~8, no.~5, pp. 545--556, 2015.
 
+\bibitem{boyd2004convex}
+S.~Boyd and L.~Vandenberghe, \emph{Convex optimization}.\hskip 1em plus 0.5em
+  minus 0.4em\relax Cambridge university press, 2004.
+
 \end{thebibliography}

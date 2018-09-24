@@ -74,23 +74,35 @@ The \textit{distributed function approximation problem}'s model \cite{garofalaki
 \item There are $n$ data-servers and a central coordinator. \\
 $server_i$ knows only its dynamic \textit{local vector} $v_i$. \\
 The \textit{global vector} $v$ is the average of the local vectors:
-$$v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}$$
-\item A function $f$ is monitored over the \textit{global vector} $v$ so it is $\varepsilon$-approximated with 100\% confidence. \\ Let the estimation  be the value $\mu$ (without loss of generality, assume ${\mu \geq 0}$), then at all times: $$(1-\varepsilon )\mu \leq f(v) \leq (1+\varepsilon )\mu $$
+\begin{equation}
+v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}
+\end{equation}
+\item A function $f$ is monitored over the \textit{global vector} $v$ so it is $\varepsilon$-approximated with 100\% confidence. \\ Let the estimation  be the value $\mu$ (without loss of generality, assume ${\mu \geq 0}$), then at all times: 
+\begin{equation}
+(1-\varepsilon )\mu \leq f(v) \leq (1+\varepsilon )\mu
+\end{equation}
 \end{enumerate}
 The function's approximation problem can be reduced to the \textit{threshold monitoring problem} \cite{garofalakis2013sketch} where one monitors whether the function's value crosses a certain threshold. Specifically, let ${T_u = (1+\varepsilon )\mu}$ be the upper-bound threshold's value, then the general upper-bound monitoring objective is to determine whether:
-$$ f(v) \leq T_u $$
+\begin{equation}
+f(v) \leq T_u
+\end{equation}
 Likewise, a lower-bound monitoring is done simultaneously with ${T_l = (1-\varepsilon )\mu}$ so a function approximation is done by monitoring two threshold conditions. \\
 In turn, this threshold monitoring can be treated as a \textit{geometric monitoring problem} \cite{sharfman2007geometric}, where one tries to find a \textit{safe zone} of vectors ${\{v \ | \ f(v) \leq T\}}$, which is a convex, so every linear combination of vectors inside this \textit{safe zone} is also inside the \textit{safe zone}, see Fig. \ref{fig:ConvexSafeZoneExample}. This geometric \textit{safe zone} approach is the fundamental idea behind previous distributed monitoring techniques.
 \begin{figure}[h]
-\includegraphics[width=\linewidth]{Pics/Convex.PNG}
+\begin{center}
+\includegraphics[width=0.85\linewidth]{Pics/PNGs/ConvexSafeZone.png}
+\end{center}
 \caption{Convex Safe Zone}
 \label{fig:ConvexSafeZoneExample}
 \medskip
+\small
 $C$ is a convex subspace of ${\{v \ | \ f(v) \leq T\}}$ so since ${v_1,v_2,v_3 \in C}$, so does the average vector $v \in C$
 \end{figure}
 \subsection{Distributed Monitoring Initiation}
 When initiating the protocol of the distributed monitoring scheme, its often assumed the initial global vector $v$ is known to the coordinator as well to the local servers. In order to eliminate bias toward a certain server and to prevent local violations initially \cite{sharfman2007geometric},  the local vectors refer to the initial global vector $v$ as their \textit{reference vector}, noted by $r_0$: the monitoring is done so the servers doesn't operate on their local data vector but the reference vector plus their local dynamic data-change. Since at all times the global vector is still the average of the local vectors, this step is permitted. Note the change vectors as ${ch_1 ... ch_n}$, then: \\
-$$v = \frac{v_1+...+ v_n}{n} = \frac{(r_0+ch_1)+...+(r_0+ch_n)}{n}$$
+\begin{equation}
+v = \frac{v_1+...+ v_n}{n} = \frac{(r_0+ch_1)+...+(r_0+ch_n)}{n}
+\end{equation}
 So the local vector $server_i$ maintains would be $r_0 + ch_i$ instead of the real data-vector. \\
 A monitoring violation means that a local server suspects that due to the current local change vector the function approximation may not hold anymore -- so either this suspicion is true, and a \textit{true violation} occurs, so a \fullSync \ has to be invoked, or this was a \textit{false alarm} and a violation resolution protocol has to be done according to the distributed monitoring scheme. \\
 The \fullSync \ gathers the data changes from the servers, recomputes the global average vector $v$, and transmits it to the servers so they set it to be their new reference point, while zeroing out the change vector. In addition, the function's approximation is reset to the current value of $f(v)$, and the lower-bound and upper-bound thresholds are set to ${(1 \pm \varepsilon )f(v)}$. \\
@@ -116,9 +128,15 @@ Furthermore, the violation resolution phase demands transmitting high dimensiona
 Another distributed monitoring scheme previously developed is the \textit{Convex Decomposition} method \cite{lazerson2015monitoring}. This method also treats the function monitoring problem as a geometric monitoring problem. This method composes a convex \textit{safe zone}  by decomposing the space ${\{v \ | \ f(v) \leq T\}}$ into convex subspaces and geometrically monitors whether the average global vector is in their intersection. \\
 Unfortunately, this method suffers from similar issues as the \textit{Covering Spheres} method, and cannot be applied on some basic functions \cite{lazerson2018lightweight}.
 \subsection{The Convex Bound Method -- The Vector Scheme}
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Pics/PNGs/ConvexBound.png}
+\end{center}
+\caption{Convex bound of the function $x^2+10sin(x)$}
+\end{figure}
 (4) Convex Bound Method -- Vector Scheme \\
 The monitoring is done by bounding the function $f$ with a "convex bound" function [*] -- a function $c$ which bounds the function from above (below) and used for the upper (lower) threshold monitoring.
-Given a function $f$ to monitor and a starting global vector $v_0$, it was proposed to approach the problem by finding a convex function $c$ which bounds the function $f$ i.e. for all $v$, ${f(v) \leq c(v)}$ and preferably ${f(v_0)=c(v_0)}$ [**]. 
+Given a function $f$ to monitor and a starting global vector $v_0$, it was proposed to approach the problem by finding a convex function $c$ which bounds the function $f$ i.e. for all $v$, ${f(v) \leq c(v)}$ and preferably ${f(v_0)=c(v_0)}$ \cite{lazerson2018lightweight}. 
 
 
 \begin{equation}
@@ -179,6 +197,16 @@ In the \valueScheme , the whole distributed monitoring is reduced to tracking on
 The \distanceScheme \ is one more \textit{distributed monitoring scheme} that relies on passing a single scalar when communicating. This scheme, treats the distributed monitoring problem as a \textit{geometric monitoring problem}, where there's a geometric \textit{safe zone}, ${\{v \ | \ c(v) \leq T\}}$ where it's valid for local vectors to be at. The scalar that will be passed in the monitoring represents the \textit{distance} of the local vector at the server to the boundary of this convex bound.\\
 This scheme is based on the \textit{Distance Lemma} which is proved below.
 \subsection{The Distance Lemma}
+\begin{figure}[b]
+\begin{center}
+\includegraphics[width=0.9\linewidth]{Pics/PNGs/DistanceLemma.png}
+\end{center}
+{\centering
+\caption{The \distanceLemma}}
+\medskip
+\small
+The average of ${p1...p_k, q_1...q_m}$ is inside the convex body $C$ if ${\sum l_i \geq \sum ||d_i||}$.
+\end{figure}
 The \distanceLemma \ states that the average of points is inside a convex body, if the sum of distances to the surface of the points inside the convex body is greater than the sum of distances to the boundary of the points which are outside of the convex body. This \textit{Distance Lemma} is the basis of the \distanceScheme . \\
 The \distanceLemma : Let ${\{v_1 ... v_n\}}$ be vectors and let $C$ be a convex body. If the sum of the distances to the boundary of $C$ of the vectors inside $C$ is greater than the sum of the distances to the boundary of the vectors from outside, then the average vector ${\frac{1}{n}\sum {v_i}}$ is inside the convex set. \\
 proof: \\
@@ -201,16 +229,13 @@ proof: \\
 \item[\ \ \ ] ${c_i \in C}$ by definition -- $c_i$ is on the boundary of $C$. Also, ${p_i + \frac{l_i d}{l} \in C}$ because ${l \geq ||d||}$ and $l_i$ is the distance of $p_i$ to the boundary. \\
 Since an average of points inside a convex body is also inside the convex body, ${\frac{1}{k+m}(\sum{p_i} + \sum{q_i}) \in C \ \blacksquare} $ 
 \end{enumerate}
-
-\begin{Large}
-** Add a sketch of the distance lemma ** \\
-** Make figures text with tex font **
-\end{Large}
 \subsection{Distributed Monitoring}
 The \distanceScheme 's monitoring is based on the distance value of the local vectors to the function's convex bound geometric boundary. The \distanceScheme \ literally monitors distributively whether the sum of the distances from inside to the boundary is greater than the sum of the distances to the boundary from the outside. For convenience, denote the distance to the boundary from inside the convex body as negative, and the distance from outside as positive, therefore, the \distanceScheme \ monitors whether the sum of the distances is negative. \\
 Like the \valueScheme , the \distanceScheme \ maintains slack scalars that would help "balance" the distances from the boundary between servers as the data changes. Let $server_i$ maintain the scalar $\lambda _i$. As in \valueScheme , at all times the sum of the slacks is zero: ${\sum {\lambda _i} = 0}$. \\
 Denote $d_i$ the distance of $server_i$'s vector to the boundary, then the local server's monitoring constraint is whether ${d_i + \lambda_i \leq 0}$. Therefore, if all the local constraints hold, the global vector's distance is negative and by the \textit{Distance Lemma}, the global constraint (\ref{monitoringConstraint}) holds:
-$$\sum{d_i} = \sum{(d_i + \lambda _i)} \leq n \cdot 0 = 0 $$
+\begin{equation}
+\sum{d_i} = \sum{(d_i + \lambda _i)} \leq n \cdot 0 = 0
+\end{equation}
 The sum of the distances is negative, thus the average vector is inside the convex set. \\
 Whenever ${d_i + \lambda _i > 0}$ at a certain server, a violation occurs and a  \textit{violation resolution protocol} begins. 
 \subsection{Violation Resolution}
@@ -222,13 +247,25 @@ The monitoring is done solely by the value of the distance. A scalar value is tr
 
 %%%%%%%%%%%%%%%%% Value Scheme vs. Distance Scheme %%%%%%%%%%%%%%%%%
 \section{Value Scheme vs. Distance Scheme}
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=\linewidth]{Pics/PNGs/L2NormDistanceVsValue.png}
+\end{center}
+\caption{Norm $L2$ Squared distance and value behaviour}
+\label{fig:ConvexSafeZoneExample}
+\medskip
+\small
+The value of the function $||v||^2$ quadratically grows in relation to the distance.
+\end{figure}
+
 \begin{figure*}[t]
 \begin{minipage}[t]{0.49\linewidth}
 {\centering
-\includegraphics[width=\textwidth]{Pics/distanceSchemeFails.PNG}
+\includegraphics[width=\textwidth]{Pics/PNGs/ValueSchemeBetter.png}
 \caption{\valueScheme \ beats \distanceScheme}
 \label{fig:valueBeatsDistanceFigure}}
 \medskip
+\small
 When monitoring ${y-x^2 \geq 2}$, the distance to the boundary ${f(x) = y - x^2 = 2}$ from the outside point $p_2$ is greater than the distance from the point inside -- $p_1$, though ${\frac{1}{2}(f(p_1)+f(p_2))\geq 2}$ , so the \valueScheme \ won't raise a violation, while the \distanceScheme \ will raise a violation which is a false alarm.
 
 \end{minipage}
@@ -237,20 +274,21 @@ When monitoring ${y-x^2 \geq 2}$, the distance to the boundary ${f(x) = y - x^2 
 \end{minipage}
 \begin{minipage}[t]{0.49\linewidth}
 {\centering
-\includegraphics[width=\textwidth]{Pics/valueSchemeFails.PNG}
+\includegraphics[width=\textwidth]{Pics/PNGs/DistanceSchemeBetter.png}
 \caption{\distanceScheme \ beats \valueScheme}
 \label{fig:distanceBeatsValueFigure}}
 \medskip
-When monitoring ${y-x^2 \geq 2}$, the distance to the boundary ${f(x) = y - x^2 = 2}$ of the point inside $p_2$ is greater of the distance of the point outside, $p_1$, however, ${\frac{1}{2}(f(p_1)+f(p_2))\leq 2}$, so the \valueScheme \ will raise a false-negative violation, while the \distanceScheme \ correctly won't raise a violation.
+\small
+When monitoring ${y-x^2 \geq 2}$, the distance to the boundary ${f(x) = y - x^2 = 2}$ of the point inside $p_1$ is greater of the distance of the point outside, $p_2$, however, ${\frac{1}{2}(f(p_1)+f(p_2))< 2}$, so the \valueScheme \ will raise a false-negative violation, while the \distanceScheme \ correctly won't raise a violation.
 \end{minipage}
 \end{figure*}
 Both \valueScheme \ and \distanceScheme \ are distributed monitoring schemes which are reduced to tracking just one scalar value. In the \distanceScheme \ its the sum of the distances to the convex bound's geometric boundary, and in the \valueScheme \ its the average of the convex function's value. \\
 A good question that arises is which monitoring scheme is better? which one uses less communication bandwidth? Is there a connection between the schemes? \\
 In [*] its proposed there's a linear correlation between the distance to the geometric representation of a function and the value of the function when the distance is small. \\
-Nonetheless, since we are dealing with convex functions, the value grows faster than the function's value. A good example is the function ${f(v) = (\sum v_i)^{100}}$ which  when monitoring ${f(v) \leq 1}$, the function's value changes rapidly outside the boundary, whereas the distance changes much slower. Accordingly, we'd expect the \distanceScheme \ to be better on those convex function whose value grows rapidly.
+Nonetheless, since we are dealing with convex functions, the value grows faster than the function's value. A good example is the function ${f(v) = f(v_1,...,v_n) = \sum v_i^{100}}$ which  when monitoring ${f(v) \leq 1}$, the function's value changes rapidly outside the boundary, whereas the distance changes much slower. Accordingly, we'd expect the \distanceScheme \ to be better on those convex function whose value grows rapidly.
 This behaviour is showed in the experiment done in Fig. \ref{SphereMonitoring} on the function ${f(v) = ||v||^2}$, where \distanceScheme 's communication bandwidth is much less than the \valueScheme . \\
 Even though in convex functions the growth of the distance progresses slower than its value, it doesn't necessarily imply that the distance scheme is better. The function's value growth is two sided -- when a function grows fast on one direction, it may decay fast on the reverse direction. For example, when monitoring the convex condition ${f(x) = y-x^2 \geq 2}$, the results aren't conclusive. As shown in Fig. \ref{fig:valueBeatsDistanceFigure} and Fig. \ref{fig:distanceBeatsValueFigure}, there are cases of false negative violations which occur only in one distributed monitoring scheme and not the other; the global average vector remains inside the convex bound ${f(x) \geq 2}$ while a false alarm can be raised.
-Another important factor is that the \valueScheme \ is computationally mathematically whole, while the \distanceScheme \ may require some approximations. The problem of finding the distance to the convex bound from outside is mathematically closed using convex optimization techniques [*]. On the other hand, finding the distance from inside to the convex body isn't always solvable [**], so the \distanceScheme \ isn't applicable in all the possible functions that require distributed monitoring.
+Another important factor is that the \valueScheme \ is computationally mathematically whole, while the \distanceScheme \ may require some approximations. The problem of finding the distance to the convex bound from outside is mathematically closed using convex optimization techniques \cite{boyd2004convex}. On the other hand, finding the distance from inside to the convex body isn't always solvable [**], so the \distanceScheme \ isn't applicable in all the possible functions that require distributed monitoring.
 
 %%%%%%%%%%%%%%%%% Data Resolution %%%%%%%%%%%%%%%%%
 \section{Sketched Data Scheme}
@@ -285,13 +323,13 @@ Here we'll elaborate a bit about the violation resolution phase of the \sketchSc
 \end{enumerate} 
 It's important to note that at all times before and after the violation, the global vector remains the same: ${v = \frac{1}{n}\sum v_i=\frac{1}{n}\sum (r_0 + ch_i)}$. Moreover, the "error" of the sketch function is taken into account so there's no probabilistic nature to this scheme. The more the sketch function represents the change better, the local vector of the server estimates better the global vector.
 \subsection{Communication Bandwidth}
-The \sketchScheme \ actually makes the \fullSync \ more gradual. Instead of sending the whole data vectors. It sends it bit by ....
-.....
+The \sketchScheme \ actually makes the \fullSync \ more gradual. Instead of sending the whole data vectors, it sends it bit by bit, so when the partially average vector is enough for the \valueScheme \ or the \distanceScheme \ to continue monitoring on its own -- there's no need for more communication to be made. \\
+In addition, since the sketches are done on the change vector, and the servers embed the data they get from round to round into the reference vector, so the information gain is incremental. Moreover, when a \fullSync \ has to be done, already half of the change vector was sent from the servers, so what's left is only the other half, which make the \fullSync \ more efficient.
 
 %%%%%%%%%%%%%%%%% Experimental Results %%%%%%%%%%%%%%%%%
 \section{Experimental Results}
 In order to assess the productivity of the distributed monitoring schemes proposed, we tested the communication bandwidth of the data sent between the servers and the coordinator both on real-world diverse data and synthetic scheme-oriented data. \\
-As for the distributed dynamic monitored data, we used a bag-of-words [*] vector of high dimension constructed of occurrences of tokens in a moving sliding window in the servers. The servers data is diverse: one is created out of blogs from \textit{bloggers.com} while other is fed of tweets posted online etc. 
+As for the distributed dynamic monitored data, we used a bag-of-words vector of high dimension constructed of occurrences of tokens in a moving sliding window in the servers. The servers data is diverse: one is created out of blogs from \textit{bloggers.com} while other is fed of tweets posted online etc. 
 \subsection{Oracle Scheme and Naive Scheme}
 
 Write about that oracle scheme is unfortunately not optimal.
@@ -301,16 +339,17 @@ The obvious communication-bandwidth upper bound is the \naiveScheme \ which simp
 For the lower bound of the communication bandwidth, we propose the \oracleScheme \ which is like an oracle which knows it all. Simply, whenever a true violation occurs, i.e. ${f(v') > (1
 +\varepsilon)f(v)}$ or ${f(v') < (1-\varepsilon)f(v)}$ (for simplicity, ${f(v) \geq 0}$), a \fullSync is invoked. Of course this scheme isn't realistic, since a server knows nothing about its neighbours, so the global vector isn't known. In other words, data is transmitted only when its truly needed to be passed -- a \fullSync \ must be done.
 \subsection{Norm $L_2$ Squared}
-The norm $L_2$ is used in multiple scenarios, as in [*] and [**]. Monitoring this function distributively isn't Obvious even though the function is convex. \\
-Here, we monitored the $L_2$ norm squared, namely $f(v) = ||v||^2$. One of the reasons is to confirm that this function is better bandwidth-wise using the \distanceScheme \ in contrast of the \valueScheme . \\
-Finding the convex bound of the function isn't difficult since it's convex. the upper bound is the function itself, and the lower bound's convex function is the tangent plane to the function at the closest point to the global vector with norm squarred as the lower bound's threshold. \\
-To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. The servers dynamically change. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
-The bandwidth results over time are presented in figure [***]. For this experiment we monitored the function by bounding it ${(\pm 10)}$ instead of a multiplicative ${(1 \pm \varepsilon)f(v_0)}$.
-\begin{figure}[t]
-\includegraphics[width=\linewidth]{Pics/Sphere.PNG}
+\begin{figure}[b]
+\includegraphics[width=\linewidth]{Pics/PNGs/L2NormCommunicationDiagram.png}
 \caption{\distanceScheme \ uses much less communication bandwidth than \valueScheme \ when monitoring norm $L_2$ squared function}
 \label{SphereMonitoring}
 \end{figure} 
+The $L_2$ norm is widely used in multiple scenarios [*][**]. Monitoring this function distributively isn't Obvious even though the function is convex. \\
+Here, we monitored the $L_2$ norm squared, namely $f(v) = ||v||^2$. One of the reasons is to confirm that this function is better bandwidth-wise using the \distanceScheme \ in contrast of the \valueScheme . \\
+Finding the convex bound of the function isn't difficult since it's convex. the upper bound is the function itself, and the lower bound's convex function is the tangent plane to the function at the closest point to the global vector with norm squarred as the lower bound's threshold. \\
+To check the difference between the \valueScheme \ and \distanceScheme \ we constructed one hundred servers with a vector in dimension $\num[group-separator={,}]{10000}$. The servers dynamically change. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
+The bandwidth results over time are presented in Fig. \ref{SphereMonitoring}. For this experiment we monitored the function by bounding it ${(\pm 10)}$ instead of a multiplicative ${(1 \pm \varepsilon)f(v_0)}$.
+
 \subsection{Inner Product}
 \subsection{Entropy}
 
