@@ -31,12 +31,12 @@ namespace InnerProduct
         public static void RunBagOfWords(Random rnd, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new MultiplicativeEpsilon(0.025);
+            var epsilon            = new MultiplicativeEpsilon(0.05);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 100000;
-            var amountOfIterations = 500;
-            var vectorLength       = 500;
-            var stepSize           = 1000;
+            var amountOfIterations = 1000;
+            var vectorLength       = 1500;
+            var stepSize           = 3000;
             var optionalWords = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
             var fileName   = $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";
@@ -53,7 +53,7 @@ namespace InnerProduct
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength * 2, globalVectorType,
                                                           epsilon, InnerProductFunction.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(ch => ch.PadWithZeros(isLeft)).Take(amountOfIterations);
-                    multiRunner.RunAll(changes, rnd, false)
+                    multiRunner.RunAll(changes, rnd, true)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
                 }

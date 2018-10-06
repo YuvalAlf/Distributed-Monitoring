@@ -6,7 +6,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
     {
         public sealed class Vector : MonitoringScheme, IEquatable<Vector>
         {
-            public override string AsString() => "Vector Scheme";
+            public override string AsString() => "Vector";
 
             public bool Equals(Vector other) => true;
 

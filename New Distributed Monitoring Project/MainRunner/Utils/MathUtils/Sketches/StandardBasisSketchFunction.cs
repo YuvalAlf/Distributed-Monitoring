@@ -16,7 +16,7 @@ namespace Utils.MathUtils.Sketches
         {
             var indices    = new HashSet<int>();
             var sketch     = VectorUtils.CreateVector(vector.Count, _ => 0.0);
-            var sketchData = vector.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
+            var sketchData = vector.Index().PartialSortBy(dimension, pair => -Math.Abs(pair.Value));
             foreach (var indexValuePair in sketchData)
             {
                 if (Math.Abs(indexValuePair.Value) >= 0.000000000001)

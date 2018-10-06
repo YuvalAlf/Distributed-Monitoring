@@ -14,7 +14,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
 
             public string SketchName { get; }
 
-            public override string AsString() => SketchName + " Sketched Change Value Scheme";
+            public override string AsString() => "SKV";
 
             public bool Equals(SketchedChangeValue other)
             {

@@ -30,7 +30,7 @@ namespace Utils.MathUtils.Sketches
         {
             var indices = new HashSet<int>();
             var dct = DCT(vector);
-            var dctSorted = dct.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
+            var dctSorted = dct.Index().PartialSortBy(dimension, pair => -Math.Abs(pair.Value));
             var sketchedDct = VectorUtils.CreateVector(vector.Count, _ => 0.0);
             foreach (var indexValuePair in dctSorted)
             {

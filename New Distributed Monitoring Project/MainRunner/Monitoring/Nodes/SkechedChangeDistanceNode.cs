@@ -32,7 +32,7 @@ namespace Monitoring.Nodes
             var sketchFunction = nodes[0].Sketch;
             var convexBound = nodes[0].ConvexBound;
 
-            for (int dimension = 4; dimension <= nodes[0].ReferencePoint.Count / 2; dimension *= 2)
+            for (int dimension = 4; dimension <= nodes[0].ReferencePoint.Count / 4; dimension *= 2)
             {
                 var distanceSchemeResolution = DistanceNode.ResolveNodes(server, nodes, rnd);
                 if (distanceSchemeResolution.IsChoice1)

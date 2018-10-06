@@ -6,7 +6,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
     {
         public sealed class Value : MonitoringScheme, IEquatable<Value>
         {
-            public override string AsString() => "Value Scheme";
+            public override string AsString() => "Value";
 
             public bool Equals(Value other) => true;
 

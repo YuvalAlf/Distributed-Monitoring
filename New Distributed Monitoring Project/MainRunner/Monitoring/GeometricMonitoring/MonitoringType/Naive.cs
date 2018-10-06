@@ -10,7 +10,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
     {
         public sealed class Naive : MonitoringScheme, IEquatable<Naive>
         {
-            public override string AsString() => "Naive Scheme";
+            public override string AsString() => "Naive";
 
             public bool Equals(Naive other) => true;
 

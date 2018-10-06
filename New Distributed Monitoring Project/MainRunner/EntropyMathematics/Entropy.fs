@@ -28,9 +28,9 @@ module Entropy =
         let rec increase minIndexEnd maxIndexEnd l1Distance =
             if l1Distance <= 0.0 || minIndexEnd >= maxIndexEnd then
                 ()
-            elif valueAt(minIndexEnd).AlmostEqual(valueAt(minIndexEnd + 1)) then
+            elif valueAt(minIndexEnd).AlmostEqual(valueAt(minIndexEnd + 1), 0.000001) then
                 increase (minIndexEnd + 1) (maxIndexEnd) (l1Distance)
-            elif valueAt(maxIndexEnd).AlmostEqual(valueAt(maxIndexEnd - 1)) then
+            elif valueAt(maxIndexEnd).AlmostEqual(valueAt(maxIndexEnd - 1), 0.000001) then
                 increase (minIndexEnd) (maxIndexEnd - 1) (l1Distance)
             else
                 let minVal = valueAt minIndexEnd

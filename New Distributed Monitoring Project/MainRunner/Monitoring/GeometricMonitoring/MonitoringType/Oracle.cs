@@ -6,7 +6,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
     {
         public sealed class Oracle : MonitoringScheme, IEquatable<Oracle>
         {
-            public override string AsString() => "Oracle Scheme";
+            public override string AsString() => "Oracle";
 
             public bool Equals(Oracle other) => true;
 
