@@ -106,4 +106,22 @@ A.~Lazerson, I.~Sharfman, D.~Keren, A.~Schuster, M.~Garofalakis, and
 S.~Boyd and L.~Vandenberghe, \emph{Convex optimization}.\hskip 1em plus 0.5em
   minus 0.4em\relax Cambridge university press, 2004.
 
+\bibitem{arackaparambil2010distributed}
+C.~Arackaparambil, S.~Bratus, J.~Brody, and A.~Shubina, ``Distributed
+  monitoring of conditional entropy for anomaly detection in streams,'' in
+  \emph{Parallel \& Distributed Processing, Workshops and Phd Forum (IPDPSW),
+  2010 IEEE International Symposium on}.\hskip 1em plus 0.5em minus 0.4em\relax
+  IEEE, 2010, pp. 1--8.
+
+\bibitem{anderson2004entropy}
+R.~Anderson and J.~Jakobsson, ``Entropy of eeg during anaesthetic induction: a
+  comparative study with propofol or nitrous oxide as sole agent,''
+  \emph{British Journal of Anaesthesia}, vol.~92, no.~2, pp. 167--170, 2004.
+
+\bibitem{ermes2008detection}
+M.~Ermes, J.~P{\"a}rkk{\"a}, J.~M{\"a}ntyj{\"a}rvi, and I.~Korhonen,
+  ``Detection of daily activities and sports with wearable sensors in
+  controlled and uncontrolled conditions,'' \emph{IEEE transactions on
+  information technology in biomedicine}, vol.~12, no.~1, pp. 20--26, 2008.
+
 \end{thebibliography}
