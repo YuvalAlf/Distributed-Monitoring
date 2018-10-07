@@ -369,7 +369,9 @@ Of course this scheme isn't realistic, since a server knows nothing about its ne
 \end{figure} 
 The $L_2$ norm is widely used in multiple scenarios, either for (...) [*] or for (...) [**]. \\
 Here, we monitored the $L_2$ norm squared, namely ${f(v) = ||v||^2}$. One of the reasons is to confirm that this function requires less communication bandwidth using the \distanceScheme \ in contrast to the \valueScheme . \\
-Finding the convex bound of the function isn't difficult since it's convex; the upper bound is the function itself, and the lower bound's concave function is the tangent plane to the function at the closest point from the global vector. \\
+\subsubsection{Lower and Upper Bounds}
+Finding the convex bound of the function isn't difficult since it's convex; the upper bound is the function itself, and the lower bound's concave function is the tangent plane to the function at the closest point from the global vector. Computing the distance from a point to the boundary also is faily easy - both to the sphere and to the tangent plane. \\
+\subsubsection{Experiments}
 To check the difference between the \valueScheme \ and the \distanceScheme \ we constructed one hundred servers with dynamic vectors in dimension $\num[group-separator={,}]{10000}$. The changes were of small steps in all the $\num[group-separator={,}]{10000}$ dimensions. \\
 The bandwidth results over time are presented in Fig. \ref{SphereMonitoring}. The \distanceScheme \ resulted in about eight times less transmitted data. \\
 Since we started with zero vectors, we monitored the function by bounding it additively ${(\pm 10)}$ instead of a multiplicative ${(1 \pm \varepsilon)}$.
@@ -388,19 +390,26 @@ The entropy function of the probability-vector $v$ of dimension $n$ is defined a
 \begin{equation}
 f(v) = f(v_1,...,v_n)=\sum\limits_{i=0}^n -v_i \cdot ln(v_i)
 \end{equation}
+\subsubsection{Lower and Upper Bounds}
 Applying the convex-bound method on the entropy function requires finding a convex bound from above and a concave bound from below. As for the upper bound, since the function is concave, a good upper bound is the tangent plane at the closest point. For the lower bound, seemingly, because the function is concave, it should be its own concave bound, which isn't fully correct. Notice we work not on the data vectors but on  the reference point plus the change vector, so parameters could become negative, which isn't defined on the entropy function. Consequently, we'd have to "extend" the entropy function to the negative part. As  suggested in \cite{gabel2017anarchists}, we bound the entropy function by itself, but below the point where the probability is $p_0 = \frac{1}{const}$ we take the line that starts at $p_0$ and passes at the origin of the coordinate system. A sketch of an instance of an upper bound and lower bound of the entropy function is shown in Fig. \ref{EntropyBoundsFigure}. \\
 After finding the convex upper bound and the lower concave bound, distributed monitoring the entropy can be done by applying the \valueScheme \ or the \vectorScheme \ , though the \distanceScheme \ requires being able to calculate distances to the bounding function's surface. \\
+\subsubsection{Distance to Bounds}
 The main challenge is computing the distance from inside the concave lower bound.  \\
 The convex upper bound is a tangent plane. Finding the distance from a point to the tangent plane's surface has a closed mathematical solution. \\
 As for the concave lower bound, finding the distance to the entropy's bound surface from outside is solvable by convex optimization \cite{boyd2004convex}, but from inside, finding the $L_2$ norm isn't easy. So instead of computing the $L_2$ distances, we compute $L_1$ distances so the \distanceScheme \ is done on $L_1$ distances. Note that the \distanceLemma \ is correct on any norm of distances since the norm it uses requires only the triangle inequality. \\
 Since the entropy's lower bound function is concave and permutation invariant, finding its $L_1$ distance can be calculated by a basic binary search on the value of $L_1$ done by climbing the derivation function. \\
-
+\subsubsection{Experiments}
+....
+\subsection{Inner Product}
+In order to adjust the inner-product function to the distributed monitoring model, we treated the inner-product function as a function whose input is an even dimensional vector. The $2n$ dimensional inner product function over the vector $v$ is defined as follows:
+\begin{equation}
+f(v) = f(v_1,...,v_{2n}) = \sum\limits_{i=0}^{n} v_i v_{i+n}
+\end{equation}
+The inner-product function is extensively used in mathematics and computer science as a component of other functions. Its used as [..] and [...] and also in [...].
 \subsubsection{Lower and Upper Bounds}
 \subsubsection{Distance to Bounds}
 \subsubsection{Experiments}
-
-\subsection{Inner Product}
-
+....
 %%%%%%%%%%%%%%%%% Conclusions %%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
