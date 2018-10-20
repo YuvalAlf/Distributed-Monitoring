@@ -69,7 +69,7 @@ namespace Monitoring.GeometricMonitoring.Running
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
             AddRunner(new MonitoringScheme.Oracle(), oracleServer);
             AddRunner(new MonitoringScheme.Naive(),  naiveServer);
-          //  AddRunner(new MonitoringScheme.SketchedChangeValue("DCT"),           dctSketchedChangeValueServer);
+            AddRunner(new MonitoringScheme.SketchedChangeValue("DCT"),           dctSketchedChangeValueServer);
             AddRunner(new MonitoringScheme.SketchedChangeValue("Standard Base"), standardBaseSketchedChangeValueServer);
            
             foreach (var distanceNorm in monitoredFunction.Norms)
@@ -78,7 +78,7 @@ namespace Monitoring.GeometricMonitoring.Running
                 var dctSketchedChangeDistanceServer          = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.DCTSketch, distanceNorm));
                 var standardBaseSketchedChangeDistanceServer = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.StandardBaseSketch, distanceNorm));
                 AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
-               // AddRunner(new MonitoringScheme.SketchedChangeDistance("DCT", distanceNorm), dctSketchedChangeDistanceServer);
+                AddRunner(new MonitoringScheme.SketchedChangeDistance("DCT", distanceNorm), dctSketchedChangeDistanceServer);
                 AddRunner(new MonitoringScheme.SketchedChangeDistance("Standard Base", distanceNorm), standardBaseSketchedChangeDistanceServer);
             }
 

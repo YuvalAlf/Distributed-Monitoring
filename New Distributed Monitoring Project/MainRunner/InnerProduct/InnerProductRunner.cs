@@ -28,14 +28,13 @@ namespace InnerProduct
             return vectors.Select((v, i) => isLeft(i) ? PadLeft(v) : PadRight(v)).ToArray();
         }
 
-        public static void RunBagOfWords(Random rnd, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
+        public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(0.05);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 100000;
-            var amountOfIterations = 1000;
-            var vectorLength       = 1500;
+            var amountOfIterations = 10000;
             var stepSize           = 3000;
             var optionalWords = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);

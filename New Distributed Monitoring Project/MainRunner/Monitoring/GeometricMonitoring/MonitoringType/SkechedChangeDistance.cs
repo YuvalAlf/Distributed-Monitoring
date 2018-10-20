@@ -19,7 +19,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
                 this.norm = norm;
             }
 
-            public override string AsString() => SketchName + "SKD";
+            public override string AsString() => "SKD";
 
             public bool Equals(SketchedChangeDistance other)
             {
