@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using Accord.Math;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -8,6 +9,13 @@ namespace Utils.TypeUtils
 {
     public static class VectorUtils
     {
+        public static Matrix<double> AsMatrix(this Vector<double> @this)
+        {
+            var size = (int)Math.Sqrt(@this.Count);
+            var matrix = Matrix<double>.Build.Sparse(size, size, (r, c) => @this[r * size + c]);
+            return matrix;
+        }
+
         public static Vector<double> SumVector(this Vector<double>[] @this)
         {
             var vecLength = @this[0].Count;

@@ -24,7 +24,7 @@ namespace InnerProduct
             }
 
 
-            Vector<double> DistanceFunc(Vector<double> vector)
+            Either<Vector<double>, double> DistanceFunc(Vector<double> vector)
             {
                 if (double.IsInfinity(threshold))
                     return Enumerable.Repeat(double.PositiveInfinity, vector.Count).ToVector();

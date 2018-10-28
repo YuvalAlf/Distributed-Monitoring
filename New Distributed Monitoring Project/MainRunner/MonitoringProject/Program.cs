@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ClassLibrary1;
 using Entropy;
 using InnerProduct;
 using MoreLinq.Extensions;
@@ -29,19 +30,22 @@ namespace MonitoringProject
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt",
                                   };
             var             random = new Random(125424);
-            Func<int, bool> isLeft = i => i < 4;
+
+            SpectralGapFunction.Run(random, 5, 0.5, 10, resultDir);
+
+            // Func<int, bool> isLeft = i => i < 4;
             //   SphereRunner.Run(random, resultDir);
 
-            Console.WriteLine("Left:");
-            textFilesPathes.Where((_, i) => isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
-            Console.WriteLine("Right:");
-            textFilesPathes.Where((_, i) => !isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
+            //  Console.WriteLine("Left:");
+            //  textFilesPathes.Where((_, i) => isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
+            //   Console.WriteLine("Right:");
+            //  textFilesPathes.Where((_, i) => !isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
 
 
 
             // InnerProductRunner.RunBagOfWords(random, wordsPath, resultDir, isLeft, textFilesPathes);
-           // for (int vectorLength = 200; vectorLength <= 800; vectorLength += 200)
-                 InnerProductRunner.RunBagOfWords(random, 400, wordsPath, resultDir, isLeft, textFilesPathes);
+            // for (int vectorLength = 200; vectorLength <= 800; vectorLength += 200)
+            //       InnerProductRunner.RunBagOfWords(random, 400, wordsPath, resultDir, isLeft, textFilesPathes);
         }
     }
 }

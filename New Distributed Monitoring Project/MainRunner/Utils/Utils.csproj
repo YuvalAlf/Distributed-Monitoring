@@ -84,6 +84,7 @@
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
+    <Compile Include="TypeUtils\FuncUtils.cs" />
     <Compile Include="TypeUtils\IntUtils.cs" />
     <Compile Include="TypeUtils\Serialization.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
+using Utils.TypeUtils;
 
 namespace Entropy
 {
@@ -8,7 +9,7 @@ namespace Entropy
     {
         public static ConvexBound LowerBound(Vector<double> initVector, double threshold)
         {
-            Vector<double> DistanceL1(Vector<double> point)
+            Either<Vector<double>, double> DistanceL1(Vector<double> point)
             {
                 var entropy = ComputeEntropy(point);
                 if (entropy > threshold)

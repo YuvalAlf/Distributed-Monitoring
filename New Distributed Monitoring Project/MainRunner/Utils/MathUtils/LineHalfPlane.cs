@@ -23,7 +23,7 @@ namespace Utils.MathUtils
 
         public double Compute(Vector<double> input) => Parameters * input + ConstantPart;
 
-        public Vector<double> ClosestPointL1(Vector<double> point)
+        public Either<Vector<double>, double> ClosestPointL1(Vector<double> point)
         {
             var sigma    = Parameters * point;
             var minDiff  = double.MaxValue;
@@ -46,7 +46,7 @@ namespace Utils.MathUtils
             return closestPoint;
         }
 
-        public Vector<double> ClosestPointL2(Vector<double> point)
+        public Either<Vector<double>, double> ClosestPointL2(Vector<double> point)
         {
             var sigmaParameterSquared = Parameters * Parameters;
             var sigma                 = Parameters * point;
