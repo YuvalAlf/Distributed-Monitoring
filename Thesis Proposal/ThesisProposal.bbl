@@ -54,43 +54,21 @@ W.-L. Cheng, Y.-C. Kuo, P.-L. Lin, K.-H. Chang, Y.-S. Chen, T.-M. Lin, and
   R.~Huang, ``Revised air quality index derived from an entropy function,''
   \emph{Atmospheric Environment}, vol.~38, no.~3, pp. 383--391, 2004.
 
-\bibitem{keralapura2006communication}
-R.~Keralapura, G.~Cormode, and J.~Ramamirtham, ``Communication-efficient
-  distributed monitoring of thresholded counts,'' in \emph{Proceedings of the
-  2006 ACM SIGMOD international conference on Management of data}.\hskip 1em
-  plus 0.5em minus 0.4em\relax ACM, 2006, pp. 289--300.
-
-\bibitem{gabel2017anarchists}
-M.~Gabel, D.~Keren, and A.~Schuster, ``Anarchists, unite: Practical entropy
-  approximation for distributed streams,'' in \emph{Proceedings of the 23rd ACM
-  SIGKDD International Conference on Knowledge Discovery and Data
-  Mining}.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2017, pp. 837--846.
-
-\bibitem{cormode2013continuous}
-G.~Cormode, ``The continuous distributed monitoring model,'' \emph{ACM SIGMOD
-  Record}, vol.~42, no.~1, pp. 5--14, 2013.
-
 \bibitem{garofalakis2013sketch}
 M.~Garofalakis, D.~Keren, and V.~Samoladas, ``Sketch-based geometric monitoring
   of distributed stream queries,'' \emph{Proceedings of the VLDB Endowment},
   vol.~6, no.~10, pp. 937--948, 2013.
 
-\bibitem{gabel2015monitoring}
-M.~Gabel, D.~Keren, and A.~Schuster, ``Monitoring least squares models of
-  distributed streams,'' in \emph{Proceedings of the 21th ACM SIGKDD
-  international conference on knowledge discovery and data mining}.\hskip 1em
-  plus 0.5em minus 0.4em\relax ACM, 2015, pp. 319--328.
-
-\bibitem{yehuda2017monitoring}
-G.~Yehuda, D.~Keren, and I.~Akaria, ``Monitoring properties of large,
-  distributed, dynamic graphs,'' in \emph{Parallel and Distributed Processing
-  Symposium (IPDPS), 2017 IEEE International}.\hskip 1em plus 0.5em minus
-  0.4em\relax IEEE, 2017, pp. 2--11.
-
 \bibitem{sharfman2007geometric}
 I.~Sharfman, A.~Schuster, and D.~Keren, ``A geometric approach to monitoring
   threshold functions over distributed data streams,'' \emph{ACM Transactions
   on Database Systems (TODS)}, vol.~32, no.~4, p.~23, 2007.
+
+\bibitem{keralapura2006communication}
+R.~Keralapura, G.~Cormode, and J.~Ramamirtham, ``Communication-efficient
+  distributed monitoring of thresholded counts,'' in \emph{Proceedings of the
+  2006 ACM SIGMOD international conference on Management of data}.\hskip 1em
+  plus 0.5em minus 0.4em\relax ACM, 2006, pp. 289--300.
 
 \bibitem{lazerson2018lightweight}
 A.~Lazerson, D.~Keren, and A.~Schuster, ``Lightweight monitoring of distributed
