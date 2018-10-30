@@ -74,6 +74,7 @@
     <Compile Include="MathUtils\DCTFunction.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
+    <Compile Include="MathUtils\RandomExtensions.cs" />
     <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
     <Compile Include="MathUtils\Sketches\PcaBuilder.cs" />
     <Compile Include="MathUtils\Sketches\PcaSketchFunction.cs" />

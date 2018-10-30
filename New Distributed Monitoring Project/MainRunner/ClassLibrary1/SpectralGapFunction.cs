@@ -19,7 +19,7 @@ namespace ClassLibrary1
         {
             var matrix = vector.AsMatrix();
             var (eigenvector1, eigenvalue1) = matrix.PowerIterationMethod(Epsilon, Rnd);
-            var (eigenvector2, eigenvalue2) = matrix.PowerIterationMethod2(Epsilon, eigenvector1, Rnd);
+            var eigenvalue2 = matrix.SecondLargestEigenvalue(eigenvector1, eigenvalue1, Epsilon, Rnd);
             return eigenvalue1 - eigenvalue2;
         }
 

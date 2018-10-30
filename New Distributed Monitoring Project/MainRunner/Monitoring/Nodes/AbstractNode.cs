@@ -7,13 +7,15 @@ namespace Monitoring.Nodes
 {
     public abstract class AbstractNode
     {
+        public int NodeId { get; }
         public Vector<double> ReferencePoint { get; private set; }
         public Vector<double> ChangeVector { get; private set; }
         public Vector<double> LocalVector => ReferencePoint + ChangeVector;
 
-        protected AbstractNode(Vector<double> referencePoint)
+        protected AbstractNode(Vector<double> referencePoint, int nodeId)
         {
             ReferencePoint = referencePoint;
+            NodeId = nodeId;
             ChangeVector = Enumerable.Repeat(0.0, referencePoint.Count).ToVector(); ;
         }
 

@@ -29,9 +29,9 @@ namespace MonitoringProject
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\blogs\blogs.txt",
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt",
                                   };
-            var             random = new Random(125424);
+            var             random = new Random(631);
 
-            SpectralGapFunction.Run(random, 5, 0.5, 10, resultDir);
+            SpectralGapFunction.Run(random, 15, 0.5, 5, resultDir);
 
             // Func<int, bool> isLeft = i => i < 4;
             //   SphereRunner.Run(random, resultDir);

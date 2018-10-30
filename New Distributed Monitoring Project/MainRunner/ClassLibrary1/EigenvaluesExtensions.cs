@@ -10,36 +10,40 @@ namespace ClassLibrary1
 {
     public static class EigenvaluesExtensions
     {
+        public static Matrix<double> AddDiagonal(this Matrix<double> @this, double amount)
+        {
+            var matrix = @this.Clone();
+            for (int i = 0; i < matrix.ColumnCount; i++)
+                matrix[i, i] += amount;
+            return matrix;
+        }
+
         public static (Vector<double> Eigenvector, double Eigenvalue) PowerIterationMethod(this Matrix<double> @this, double epsilon, Random rnd)
         {
-
-            for (int i = 0; i < @this.ColumnCount; i++)
-            {
-                for (int j = 0; j < @this.ColumnCount; j++)
-                    Console.Write(@this[i, j] + " ");
-                Console.WriteLine();
-            }
-
-            Console.WriteLine();
-            var eigens = @this.Evd().EigenValues.Select(e => e.Real).OrderByDescending(x => x).ToArray();
-
-
             var size        = @this.ColumnCount;
+            var operatedMatrix = @this.AddDiagonal(size);
             var rndVec      = Vector<double>.Build.Random(size).Normalize(2);
             var eigenvector = rndVec;
             var change      = 0.0;
+
+            var evds = @this.Evd().EigenValues.ToArray();
             do
             {
                 var lastEigenvector = eigenvector;
-                eigenvector = (@this * eigenvector).Normalize(2);
+                eigenvector = (operatedMatrix * eigenvector).Normalize(2);
                 change      = (eigenvector - lastEigenvector).L1Norm();
             } while (change > epsilon * size);
 
-            var eigenvalue = eigenvector * @this * eigenvector;
-            return (eigenvector, eigenvalue);
+            var eigenvalue = eigenvector * operatedMatrix * eigenvector;
+            return (eigenvector, eigenvalue - size);
         }
 
-        public static (Vector<double> Eigenvector, double Eigenvalue) PowerIterationMethod2(this Matrix<double> @this, double epsilon, Vector<double> orthogonalVector, Random rnd)
+
+        public static double SecondLargestEigenvalue(this Matrix<double> @this, Vector<double> orthogonalVector, double eigenvalue1, double epsilon, Random rnd)
+        {
+            return (@this - eigenvalue1 * orthogonalVector.OuterProduct(orthogonalVector)).PowerIterationMethod(epsilon, rnd).Eigenvalue;
+        }
+        /*public static (Vector<double> Eigenvector, double Eigenvalue) PowerIterationMethod2(this Matrix<double> @this, double epsilon, Vector<double> orthogonalVector, Random rnd)
         {
             var maxEigenvalue  = @this.PowerIterationMethod(epsilon, rnd).Eigenvalue;
 
@@ -66,6 +70,6 @@ namespace ClassLibrary1
 
             var eigenvalue = eigenvector * @this * eigenvector;
             return (eigenvector, eigenvalue - maxEigenvalue);
-        }
+        }*/
     }
 }

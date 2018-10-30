@@ -14,6 +14,7 @@ using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
+using Utils.MathUtils;
 using Utils.TypeUtils;
 
 namespace ClassLibrary1
@@ -26,8 +27,8 @@ namespace ClassLibrary1
             for (int i = 0; i < size; i++)
                 for (int j = i + 1; j < size; j++)
                 {
-                    array[i, j] = Convert.ToInt32(rnd.NextDouble() <= p);
-                    array[j, i] = array[i, j];
+                    var value = Convert.ToInt32(rnd.NextDouble() <= p);
+                    array[i, j] = array[j, i] = value;
                 }
 
             return Matrix<double>.Build.DenseOfArray(array);
@@ -36,8 +37,8 @@ namespace ClassLibrary1
         public static void Run(Random rnd, int size, double edgeProb, int numOfNodes, string resultDir)
         {
             var globalVectorType   = GlobalVectorType.Average;
-            var epsilon            = new ThresholdEpsilon(10);
-            var amountOfIterations = 100;
+            var epsilon            = new ThresholdEpsilon(4.3);
+            var amountOfIterations = 300;
             var fileName = "spectralGap.csv";
             var resultPath = Path.Combine(resultDir, fileName);
 
@@ -64,12 +65,11 @@ namespace ClassLibrary1
                 var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(size * size));
                 foreach (var vector in vectors)
                 {
-                    var i = rnd.Next(0, size - 1);
-                    var j = rnd.Next(i + 1, size);
+                    var (i, j) = rnd.ChooseTwoDifferentRandomsInRange(0, size);
                     var index1 = i * size + j;
                     var index2 = j * size + i;
                     var value = initMatrix[i, j];
-                    var change = value.AlmostEqual(0.0) ? -1 : 1;
+                    var change = value.AlmostEqual(0.0) ? 1 : -1;
                     vector[index1] += change;
                     vector[index2] += change;
                     initMatrix[i, j] += change;

@@ -15,14 +15,14 @@ namespace Monitoring.Nodes
     public sealed class SketchedChangeDistanceNode : DistanceNode
     {
         public SketchFunction Sketch { get; }
-        public SketchedChangeDistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue, SketchFunction sketchFunction, int norm)
-            : base(referencePoint, convexBound, slackValue, norm)
+        public SketchedChangeDistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue, SketchFunction sketchFunction, int norm, int nodeId)
+            : base(referencePoint, convexBound, slackValue, norm, nodeId)
         {
             Sketch = sketchFunction;
         }
 
-        public static Func<Vector<double>, ConvexBound, SketchedChangeDistanceNode> Create(SketchFunction sketchFunction, int norm)
-            => (initialVector, convexBound) => new SketchedChangeDistanceNode(initialVector, convexBound, 0.0, sketchFunction, norm);
+        public static Func<Vector<double>, ConvexBound, SketchedChangeDistanceNode> Create(SketchFunction sketchFunction, int norm, int nodeId)
+            => (initialVector, convexBound) => new SketchedChangeDistanceNode(initialVector, convexBound, 0.0, sketchFunction, norm, nodeId);
 
         public static Either<(NodeServer<SketchedChangeDistanceNode>, Communication), Communication> ResolveNodes
             (NodeServer<SketchedChangeDistanceNode> server, SketchedChangeDistanceNode[] nodes, Random rnd)

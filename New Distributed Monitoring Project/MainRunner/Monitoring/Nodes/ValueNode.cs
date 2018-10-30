@@ -16,16 +16,16 @@ namespace Monitoring.Nodes
         public double SlackValue { get; protected set; }
         public double ConvexValue => RealValue + SlackValue;
 
-        public ValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue) : base(
-            referencePoint)
+        public ValueNode(Vector<double> referencePoint, ConvexBound convexBound, double slackValue, int nodeId) : base(
+            referencePoint, nodeId)
         {
             ConvexBound = convexBound;
             SlackValue = slackValue;
             ThingsChangedUpdateState();
         }
 
-        public static ValueNode Create(Vector<double> initialVector, ConvexBound convexBound)
-            => new ValueNode(initialVector, convexBound, 0);
+        public static ValueNode Create(Vector<double> initialVector, ConvexBound convexBound, int nodeId)
+            => new ValueNode(initialVector, convexBound, 0, nodeId);
 
         protected override void ThingsChangedUpdateState()
         {

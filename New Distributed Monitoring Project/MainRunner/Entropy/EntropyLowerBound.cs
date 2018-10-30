@@ -9,7 +9,7 @@ namespace Entropy
     {
         public static ConvexBound LowerBound(Vector<double> initVector, double threshold)
         {
-            Either<Vector<double>, double> DistanceL1(Vector<double> point)
+            Either<Vector<double>, double> DistanceL1(Vector<double> point, int nodeId)
             {
                 var entropy = ComputeEntropy(point);
                 if (entropy > threshold)

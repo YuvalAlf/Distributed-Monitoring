@@ -14,13 +14,13 @@ namespace Monitoring.Nodes
         public ConvexBound ConvexBound { get; }
         public double ConvexValue { get; private set; }
 
-        public VectorNode(Vector<double> referencePoint, ConvexBound convexBound) : base(referencePoint)
+        public VectorNode(Vector<double> referencePoint, ConvexBound convexBound, int nodeId) : base(referencePoint, nodeId)
         {
             ConvexBound = convexBound;
             ThingsChangedUpdateState();
         }
 
-        public static VectorNode Create(Vector<double> initialVector, ConvexBound convexBound) => new VectorNode(initialVector, convexBound);
+        public static VectorNode Create(Vector<double> initialVector, ConvexBound convexBound, int nodeId) => new VectorNode(initialVector, convexBound, nodeId);
 
         protected override void ThingsChangedUpdateState()
         {

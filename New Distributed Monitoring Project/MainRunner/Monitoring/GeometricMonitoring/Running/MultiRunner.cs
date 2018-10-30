@@ -58,14 +58,14 @@ namespace Monitoring.GeometricMonitoring.Running
                 runners[monitoringScheme] = runner;
             }
 
-      //      var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
+            var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
             var vectorServer = NodeServer<VectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, VectorNode.ResolveNodes, VectorNode.Create);
       //      var oracleServer = OracleServer.Create          (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
       //      var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
       //      var dctSketchedChangeValueServer          = NodeServer<SketchedChangeValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeValueNode.ResolveNodes, SketchedChangeValueNode.Create(SketchFunction.DCTSketch));
      //       var standardBaseSketchedChangeValueServer = NodeServer<SketchedChangeValueNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeValueNode.ResolveNodes, SketchedChangeValueNode.Create(SketchFunction.StandardBaseSketch));
             
-        //    AddRunner(new MonitoringScheme.Value(),  valueServer);
+            AddRunner(new MonitoringScheme.Value(),  valueServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
         //    AddRunner(new MonitoringScheme.Oracle(), oracleServer);
          //   AddRunner(new MonitoringScheme.Naive(),  naiveServer);
@@ -74,10 +74,10 @@ namespace Monitoring.GeometricMonitoring.Running
            
             foreach (var distanceNorm in monitoredFunction.Norms)
             {
-       //         var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
+                var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
        //         var dctSketchedChangeDistanceServer          = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.DCTSketch, distanceNorm));
-       //         var standardBaseSketchedChangeDistanceServer = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.StandardBaseSketch, distanceNorm));
-      //          AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
+       //        var standardBaseSketchedChangeDistanceServer = NodeServer<SketchedChangeDistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, SketchedChangeDistanceNode.ResolveNodes, SketchedChangeDistanceNode.Create(SketchFunction.StandardBaseSketch, distanceNorm));
+                AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
       //          AddRunner(new MonitoringScheme.SketchedChangeDistance("DCT", distanceNorm), dctSketchedChangeDistanceServer);
       //          AddRunner(new MonitoringScheme.SketchedChangeDistance("Standard Base", distanceNorm), standardBaseSketchedChangeDistanceServer);
             }

@@ -77,15 +77,15 @@ namespace Monitoring.Servers
             EpsilonType epsilon, 
             MonitoredFunction monitoredFunction,
             ResolveNodesFunction<NodeType> resolveNodes, 
-            Func<Vector<double>, ConvexBound, NodeType> createNode)
+            Func<Vector<double>, ConvexBound, int, NodeType> createNode)
         {
             initVectors = initVectors.Map(v => v.Clone());
             var globalVector = globalVectorType.GetValue(initVectors);
             var (lowerBound, upperBound) = epsilon.Calc(monitoredFunction.Function(globalVector));
             var upperConvexBound = monitoredFunction.UpperBound(globalVector, upperBound);
             var lowerConvexBound = monitoredFunction.LowerBound(globalVector, lowerBound);
-            var upperNodes = Enumerable.Repeat(0, numOfNodes).Map(_ => createNode(globalVector.Clone(), upperConvexBound));
-            var lowerNodes = Enumerable.Repeat(0, numOfNodes).Map(_ => createNode(globalVector.Clone(), lowerConvexBound));
+            var upperNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), upperConvexBound, i));
+            var lowerNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), lowerConvexBound, i));
             NodeServer<NodeType> ReCreate(Vector<double>[] newInitVectors)
                 => Create(newInitVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, resolveNodes, createNode);
 

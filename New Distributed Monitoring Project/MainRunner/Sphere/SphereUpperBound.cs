@@ -13,7 +13,7 @@ namespace Sphere
     {
         public static ConvexBound UpperBound(Vector<double> initialVector, double threshold)
         {
-            ClosestPointFromPoint closestPoint = point =>
+            ClosestPointFromPoint closestPoint = (point, nodeId) =>
                                                  {
                                                      var currentSum = Compute(point);
                                                      if (currentSum <= 0.0000000001)

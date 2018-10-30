@@ -18,7 +18,7 @@ namespace Monitoring.Nodes
         public double UsedDistance => RealDistance + SlackDistance;
         //public Vector<double> ResidualVector { get; protected set; }
 
-        public DistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackDistance, int norm) : base(referencePoint)
+        public DistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackDistance, int norm, int nodeId) : base(referencePoint, nodeId)
         {
             ConvexBound = convexBound;
             SlackDistance = slackDistance;
@@ -26,13 +26,13 @@ namespace Monitoring.Nodes
             ThingsChangedUpdateState();
 
         }
-        public static Func<Vector<double>, ConvexBound, DistanceNode> CreateNorm(int norm) 
-            => (initialVector, convexBound) => new DistanceNode(initialVector, convexBound, 0.0, norm);
+        public static Func<Vector<double>, ConvexBound, int, DistanceNode> CreateNorm(int norm) 
+            => (initialVector, convexBound, nodeId) => new DistanceNode(initialVector, convexBound, 0.0, norm, nodeId);
 
         protected override void ThingsChangedUpdateState()
         {
            // (RealDistance, ResidualVector) = ConvexBound.ComputeDistance(Norm, LocalVector);
-            RealDistance = ConvexBound.ComputeDistance(Norm, LocalVector);
+            RealDistance = ConvexBound.ComputeDistance(Norm, LocalVector, this.NodeId);
         }
         
         public static Either<(NodeServer<TNode>, Communication), Communication> ResolveNodes<TNode>

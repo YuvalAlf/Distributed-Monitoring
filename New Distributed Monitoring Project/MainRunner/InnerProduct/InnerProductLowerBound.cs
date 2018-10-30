@@ -23,7 +23,7 @@ namespace InnerProduct
             }
 
 
-            Either<Vector<double>, double> ClosestPointFromVector(Vector<double> vector)
+            Either<Vector<double>, double> ClosestPointFromVector(Vector<double> vector, int nodeId)
             {
                 if (double.IsNegativeInfinity(threshold))
                     return Enumerable.Repeat(double.NegativeInfinity, vector.Count).ToVector();
