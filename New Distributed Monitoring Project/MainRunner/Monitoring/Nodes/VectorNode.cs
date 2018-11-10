@@ -38,11 +38,13 @@ namespace Monitoring.Nodes
             var referenceVector = nodes[0].ReferencePoint;
             var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
             var messages = violatedNodesIndices.Count;
-            var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.CountNonZero());
+           // var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.CountNonZero());
+            var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.Count);
             while (nodesIndicesToPollNext.Count > 0)
             {
                 var nextViolatedNode = nodesIndicesToPollNext.Pop();
-                bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
+                //bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
+                bandwidth += nodes[nextViolatedNode].ChangeVector.Count;
                 messages += 2;
                 violatedNodesIndices.Add(nextViolatedNode);
                 var averageChangeVector = violatedNodesIndices.Map(i => nodes[i].ChangeVector).AverageVector();
@@ -51,7 +53,8 @@ namespace Monitoring.Nodes
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
                     messages  += violatedNodesIndices.Count;
-                    bandwidth += violatedNodesIndices.Count * averageChangeVector.CountNonZero();
+                    //bandwidth += violatedNodesIndices.Count * averageChangeVector.CountNonZero();
+                    bandwidth += violatedNodesIndices.Count * averageChangeVector.Count;
                     return (server, new Communication(bandwidth, messages));
                 }
             }

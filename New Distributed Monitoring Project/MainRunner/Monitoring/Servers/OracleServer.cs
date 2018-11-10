@@ -37,7 +37,8 @@ namespace Monitoring.Servers
             var newOracleServer = new OracleServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
 
             var messages  = 2 * NumOfNodes;
-            var bandwidth = CurrentChanges.Sum(c => c.CountNonZero()) + NumOfNodes * CurrentChanges.SumVector().CountNonZero();
+           // var bandwidth = CurrentChanges.Sum(c => c.CountNonZero()) + NumOfNodes * CurrentChanges.SumVector().CountNonZero();
+            var bandwidth = CurrentChanges.Sum(c => c.Count) * 2;
             Init();
             return (newOracleServer, new Communication(bandwidth, messages), true);
         }

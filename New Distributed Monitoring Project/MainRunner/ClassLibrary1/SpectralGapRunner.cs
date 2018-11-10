@@ -38,7 +38,7 @@ namespace ClassLibrary1
         {
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new ThresholdEpsilon(0.5);
-            var amountOfIterations = 50;
+            var amountOfIterations = 20;
             var fileName           = "spectralGap.csv";
             var resultPath         = Path.Combine(resultDir, fileName);
 

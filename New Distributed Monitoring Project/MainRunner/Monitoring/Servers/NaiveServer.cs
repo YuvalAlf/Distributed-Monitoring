@@ -24,7 +24,8 @@ namespace Monitoring.Servers
             var newNaiveServer = new NaiveServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
 
             var numberOfMessages = NumOfNodes;
-            var bandwidth        = changeMatrix.Sum(v => v.CountNonZero());
+           // var bandwidth        = changeMatrix.Sum(v => v.CountNonZero());
+            var bandwidth        = changeMatrix.Sum(v => v.Count);
 
             return (newNaiveServer, new Communication(bandwidth, numberOfMessages), true);
         }

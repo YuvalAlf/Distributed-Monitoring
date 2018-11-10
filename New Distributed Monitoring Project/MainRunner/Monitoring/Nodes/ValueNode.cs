@@ -68,6 +68,7 @@ namespace Monitoring.Nodes
         }
 
         public static Communication FullSyncAdditionalCost(ValueNode[] nodes)
-            => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
+          //  => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
+            => new Communication(nodes.Sum(n => n.ChangeVector.Count) * 2, nodes.Length * 3);
     }
 }
