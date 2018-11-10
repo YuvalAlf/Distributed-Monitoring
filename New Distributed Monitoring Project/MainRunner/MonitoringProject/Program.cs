@@ -31,7 +31,7 @@ namespace MonitoringProject
                                   };
             var             random = new Random(631);
 
-            SpectralGapFunction.Run(random, 15, 0.5, 5, resultDir);
+            SpectralGapFunction.Run(random, 50, 0.5, 5, resultDir);
 
             // Func<int, bool> isLeft = i => i < 4;
             //   SphereRunner.Run(random, resultDir);

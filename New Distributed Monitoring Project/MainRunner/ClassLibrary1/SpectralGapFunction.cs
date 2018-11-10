@@ -23,7 +23,7 @@ namespace ClassLibrary1
             return eigenvalue1 - eigenvalue2;
         }
 
-        public static MonitoredFunction MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
+        public static MonitoredFunction MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Sum, 2);
 
     }
 }

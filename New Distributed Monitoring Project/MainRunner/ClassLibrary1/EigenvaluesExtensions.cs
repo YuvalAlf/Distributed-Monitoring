@@ -26,7 +26,7 @@ namespace ClassLibrary1
             var eigenvector = rndVec;
             var change      = 0.0;
 
-            var evds = @this.Evd().EigenValues.ToArray();
+           // var evds = @this.Evd().EigenValues.ToArray();
             do
             {
                 var lastEigenvector = eigenvector;

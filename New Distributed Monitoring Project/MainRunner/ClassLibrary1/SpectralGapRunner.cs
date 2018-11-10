@@ -27,7 +27,7 @@ namespace ClassLibrary1
             for (int i = 0; i < size; i++)
                 for (int j = i + 1; j < size; j++)
                 {
-                    var value = Convert.ToInt32(rnd.NextDouble() <= p);
+                    var value                 = Convert.ToInt32(rnd.NextDouble() <= p);
                     array[i, j] = array[j, i] = value;
                 }
 
@@ -36,29 +36,32 @@ namespace ClassLibrary1
 
         public static void Run(Random rnd, int size, double edgeProb, int numOfNodes, string resultDir)
         {
-            var globalVectorType   = GlobalVectorType.Average;
-            var epsilon            = new ThresholdEpsilon(4.3);
-            var amountOfIterations = 300;
-            var fileName = "spectralGap.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
+            var globalVectorType   = GlobalVectorType.Sum;
+            var epsilon            = new ThresholdEpsilon(0.5);
+            var amountOfIterations = 50;
+            var fileName           = "spectralGap.csv";
+            var resultPath         = Path.Combine(resultDir, fileName);
 
             using (var resultCsvFile = File.CreateText(resultPath))
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var initMatrix = GenerateMatrix(size, edgeProb, rnd);
-                var multiRunner = MultiRunner.InitAll(SplitTo(initMatrix, size, numOfNodes, rnd), numOfNodes, size * size, globalVectorType,
+                //var globalVector = initMatrix.ToRowArrays().SelectMany(x => x).ToVector();
+                var multiRunner = MultiRunner.InitAll(SplitTo(initMatrix, size, numOfNodes, rnd), numOfNodes,
+                                                      size * size, globalVectorType,
                                                       epsilon, SpectralGapFunction.MonitoredFunction);
                 var changes = GenerateChanges(initMatrix, size, numOfNodes, rnd).Take(amountOfIterations);
                 multiRunner.RunAll(changes, rnd, false)
                            .Select(r => r.AsCsvString())
-                           .ForEach((Action<string>)resultCsvFile.WriteLine);
+                           .ForEach((Action<string>) resultCsvFile.WriteLine);
             }
 
             Process.Start(resultPath);
         }
 
-        private static IEnumerable<Vector<double>[]> GenerateChanges(Matrix<double> initMatrix, int size, int numOfNodes, Random rnd)
+        private static IEnumerable<Vector<double>[]> GenerateChanges(Matrix<double> initMatrix, int    size,
+                                                                     int            numOfNodes, Random rnd)
         {
             while (true)
             {
@@ -68,10 +71,10 @@ namespace ClassLibrary1
                     var (i, j) = rnd.ChooseTwoDifferentRandomsInRange(0, size);
                     var index1 = i * size + j;
                     var index2 = j * size + i;
-                    var value = initMatrix[i, j];
+                    var value  = initMatrix[i, j];
                     var change = value.AlmostEqual(0.0) ? 1 : -1;
-                    vector[index1] += change;
-                    vector[index2] += change;
+                    vector[index1]   += change;
+                    vector[index2]   += change;
                     initMatrix[i, j] += change;
                     initMatrix[j, i] += change;
                 }
@@ -89,8 +92,8 @@ namespace ClassLibrary1
                     if (initMatrix[i, j].AlmostEqual(1.0))
                     {
                         var index = count++ % vectors.Length;
-                        vectors[index][i * size + j] = numOfNodes;
-                        vectors[index][j * size + i] = numOfNodes;
+                        vectors[index][i * size + j] = 1;
+                        vectors[index][j * size + i] = 1;
                     }
             return vectors;
         }
