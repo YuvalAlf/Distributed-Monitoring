@@ -31,11 +31,11 @@ namespace InnerProduct
         public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new MultiplicativeEpsilon(0.05);
+            var epsilon            = new MultiplicativeEpsilon(0.08);
             var numOfNodes         = textFilesPathes.Length;
-            var windowSize         = 100000;
-            var amountOfIterations = 10000;
-            var stepSize           = 3000;
+            var windowSize         = 20000;
+            var amountOfIterations = 2000;
+            var stepSize           = 1000;
             var optionalWords = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
             var fileName   = $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";

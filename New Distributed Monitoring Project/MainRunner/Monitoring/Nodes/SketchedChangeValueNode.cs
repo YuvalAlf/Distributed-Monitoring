@@ -26,8 +26,8 @@ namespace Monitoring.Nodes
             Sketch = sketchFunction;
         }
 
-        public static Func<Vector<double>, ConvexBound, SketchedChangeValueNode> Create(SketchFunction sketchFunction, int nodeId)
-            => (initialVector, convexBound) => new SketchedChangeValueNode(initialVector, convexBound, 0.0, sketchFunction, nodeId);
+        public static Func<Vector<double>, ConvexBound, int, SketchedChangeValueNode> Create(SketchFunction sketchFunction)
+            => (initialVector, convexBound, nodeId) => new SketchedChangeValueNode(initialVector, convexBound, 0.0, sketchFunction, nodeId);
 
         public static Either<(NodeServer<SketchedChangeValueNode>, Communication), Communication> ResolveNodes
             (NodeServer<SketchedChangeValueNode> server, SketchedChangeValueNode[] nodes, Random rnd)
