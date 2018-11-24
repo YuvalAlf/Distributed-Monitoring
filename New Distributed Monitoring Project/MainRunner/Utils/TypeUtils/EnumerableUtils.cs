@@ -8,7 +8,7 @@ namespace Utils.TypeUtils
     public static class EnumerableUtils
     {
         public static Vector<double> ToVector(this IEnumerable<double> @this) =>
-            Vector<double>.Build.DenseOfEnumerable(@this);
+            Vector<double>.Build.SparseOfEnumerable(@this);
 
         public static S[] Map<T, S>(this IEnumerable<T> @this, Func<T, S> map) => @this.Select(map).ToArray();
 

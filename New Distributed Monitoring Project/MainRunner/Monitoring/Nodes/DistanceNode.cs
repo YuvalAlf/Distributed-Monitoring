@@ -56,8 +56,8 @@ namespace Monitoring.Nodes
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].SlackDistance = averageDistance - nodes[nodeIndex].RealDistance;
-                    bandwidth += nodesIndicesToPollNext.Count;
-                    messages += nodesIndicesToPollNext.Count;
+                    bandwidth += violatedNodesIndices.Count;
+                    messages += violatedNodesIndices.Count;
                     return (server, new Communication(bandwidth, messages));
                 }
             }

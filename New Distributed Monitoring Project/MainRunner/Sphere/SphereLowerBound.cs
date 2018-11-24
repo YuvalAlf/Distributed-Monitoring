@@ -17,7 +17,7 @@ namespace Sphere
         {
             if (threshold <= 0)
             {
-                ClosestPointFromPoint closestPoint = (pt, nodeId) => Enumerable.Repeat((double)int.MaxValue, pt.Count).ToVector();
+                ClosestPointFromPoint closestPoint = (pt, nodeId) => double.MaxValue;
                 return ConvexBoundBuilder.Create(_ => double.NegativeInfinity, _ => true)
                                          .WithDistanceNorm(1, closestPoint)
                                          .WithDistanceNorm(2, closestPoint)

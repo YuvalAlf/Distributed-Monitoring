@@ -67,6 +67,6 @@ namespace Utils.TypeUtils
         }
 
         public static Vector<double> CreateVector(int vectorCount, Func<int, double> generator) 
-            => Vector<double>.Build.DenseOfEnumerable(Enumerable.Range(0, vectorCount).Select(generator));
+            => Vector<double>.Build.SparseOfEnumerable(Enumerable.Range(0, vectorCount).Select(generator));
     }
 }

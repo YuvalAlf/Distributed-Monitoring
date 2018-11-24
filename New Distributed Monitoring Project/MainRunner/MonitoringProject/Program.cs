@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ClassLibrary1;
 using Entropy;
 using InnerProduct;
 using MoreLinq.Extensions;
+using SecondMomentSketch;
 using Sphere;
 using Utils.TypeUtils;
 
@@ -31,10 +33,19 @@ namespace MonitoringProject
                                   };
             var             random = new Random(631);
 
-          //  SpectralGapFunction.Run(random, 40, 0.5, 20, resultDir);
+            SecondMomentRunner.Run(random, 30000, resultDir);
+            SecondMomentRunner.Run(random, 31000, resultDir);
+            SecondMomentRunner.Run(random, 32000, resultDir);
+            SecondMomentRunner.Run(random, 33000, resultDir);
+            SecondMomentRunner.Run(random, 34000, resultDir);
+            SecondMomentRunner.Run(random, 35000, resultDir);
+            SecondMomentRunner.Run(random, 36000, resultDir);
+            SecondMomentRunner.Run(random, 37000, resultDir);
 
-             Func<int, bool> isLeft = i => i < 4;
-            //   SphereRunner.Run(random, resultDir);
+          //  SpectralGapFunction.Run(random, 100, 0.05, 5, resultDir);
+
+         //    Func<int, bool> isLeft = i => i < 4;
+         //    SphereRunner.Run(random, resultDir);
 
           //  Console.WriteLine("Left:");
           //  textFilesPathes.Where((_, i) => isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
@@ -43,8 +54,8 @@ namespace MonitoringProject
 
 
 
-            //   InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
-            EntropyRunner.RunBagOfWords(random, 100, wordsPath, resultDir, textFilesPathes);
+            //   InnerProductRunner.RunBagOfWords(random, 1500, wordsPath, resultDir, isLeft, textFilesPathes);
+           // EntropyRunner.RunBagOfWords(random, 100, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

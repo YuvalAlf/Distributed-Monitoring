@@ -21,7 +21,7 @@ namespace Utils.TypeUtils
             return @this;
         }
 
-        public static Vector<double> ToVector(this double[] @this) => Vector<double>.Build.DenseOfArray(@this);
+        public static Vector<double> ToVector(this double[] @this) => Vector<double>.Build.SparseOfArray(@this);
 
         public static T[] Init<T>(int arraySize, Func<int, T> createFunc) =>
             Enumerable.Range(0, arraySize).Select(createFunc).ToArray();

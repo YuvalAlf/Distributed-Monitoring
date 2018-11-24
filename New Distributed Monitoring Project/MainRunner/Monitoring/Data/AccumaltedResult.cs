@@ -71,7 +71,7 @@ namespace Monitoring.Data
                 .ConcatCsv(NumberOfFullSyncs.ToString())
                 .ConcatCsv(LowerBound.AsCsvString())
                 .ConcatCsv(FunctionValue.ToString(CultureInfo.InvariantCulture))
-                .ConcatCsv(UpperBound.AsCsvString())
+                .ConcatCsv(UpperBound.AsCsvString()) //;
                 .ConcatCsv(NodesFunctionValues.Aggregate("", (csv, value) => csv.ConcatCsv(value.ToString(CultureInfo.InvariantCulture))));
 
         public AccumaltedResult AddSingleRsult(SingleResult singleResult) =>

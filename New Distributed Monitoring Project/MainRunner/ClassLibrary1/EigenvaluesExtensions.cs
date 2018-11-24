@@ -25,8 +25,7 @@ namespace ClassLibrary1
             var rndVec      = Vector<double>.Build.Random(size).Normalize(2);
             var eigenvector = rndVec;
             var change      = 0.0;
-
-           // var evds = @this.Evd().EigenValues.ToArray();
+            
             do
             {
                 var lastEigenvector = eigenvector;
@@ -34,14 +33,40 @@ namespace ClassLibrary1
                 change      = (eigenvector - lastEigenvector).L1Norm();
             } while (change > epsilon * size);
 
-            var eigenvalue = eigenvector * operatedMatrix * eigenvector;
+            var eigenvalue = eigenvector * (operatedMatrix * eigenvector);
+            return (eigenvector, eigenvalue - size);
+        }
+        public static (Vector<double> Eigenvector, double Eigenvalue) PowerIterationMethod(this Matrix<double> @this, double epsilon, Random rnd, Vector<double> orthogonalVector)
+        {
+            var size        = @this.ColumnCount;
+            var operatedMatrix = @this.AddDiagonal(size);
+            var rndVec      = Vector<double>.Build.Random(size).Normalize(2);
+            var eigenvector = rndVec;
+            var change      = 0.0;
+
+            Vector<double> MatrixMul(Vector<double> vec)
+            {
+                var angle = orthogonalVector * vec;
+                return operatedMatrix * vec - angle * orthogonalVector;
+            }
+
+            do
+            {
+                var lastEigenvector = eigenvector;
+                eigenvector = MatrixMul(eigenvector).Normalize(2);
+                change      = (eigenvector - lastEigenvector).L1Norm();
+            } while (change > epsilon * size);
+
+            var eigenvalue = eigenvector * MatrixMul(eigenvector);
             return (eigenvector, eigenvalue - size);
         }
 
 
         public static double SecondLargestEigenvalue(this Matrix<double> @this, Vector<double> orthogonalVector, double eigenvalue1, double epsilon, Random rnd)
         {
-            return (@this - eigenvalue1 * orthogonalVector.OuterProduct(orthogonalVector)).PowerIterationMethod(epsilon, rnd).Eigenvalue;
+            var mulVector = Math.Sqrt(Math.Abs(eigenvalue1)) * orthogonalVector;
+            var result1 = @this.PowerIterationMethod(epsilon, rnd, mulVector).Eigenvalue;
+            return result1;
         }
         /*public static (Vector<double> Eigenvector, double Eigenvalue) PowerIterationMethod2(this Matrix<double> @this, double epsilon, Vector<double> orthogonalVector, Random rnd)
         {

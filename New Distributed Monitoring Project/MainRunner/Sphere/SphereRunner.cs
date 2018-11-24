@@ -20,11 +20,11 @@ namespace Sphere
     {
         public static void Run(Random rnd, string resultDir)
         {
-            var numOfNodes = 100;
-            var vectorLength  = 10000;
-            var iterations = 200;
+            var numOfNodes = 20;
+            var vectorLength  = 100;
+            var iterations = 3000;
             var globalVectorType = GlobalVectorType.Average;
-            var epsilon = new AdditiveEpsilon(10.0);
+            var epsilon = new AdditiveEpsilon(80.0);
             var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
 
@@ -35,8 +35,8 @@ namespace Sphere
                     return ArrayUtils.Init(vectorLength, i => (rnd.NextDouble() - 0.5) / 5).ToVector();
                 }
 
-                  return ArrayUtils.Init(numOfNodes, i => i <= 5 ? GenerateChange() : ArrayUtils.Init(vectorLength, _ => 0.0).ToVector());
-            //    return ArrayUtils.Init(numOfNodes, _ => GenerateChange());
+                //  return ArrayUtils.Init(numOfNodes, GenerateChange() : ArrayUtils.Init(vectorLength, _ => 0.0).ToVector());
+                return ArrayUtils.Init(numOfNodes, _ => GenerateChange());
             }
 
             using (var resultCsvFile = File.CreateText(resultPath))
@@ -47,9 +47,9 @@ namespace Sphere
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => zeroVector.ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, SphereFunction.MonitoredFunction);
-                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Naive(), new MonitoringScheme.Oracle());
+                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Oracle(), new MonitoringScheme.Vector());
                 for (int i = 0; i < iterations; i++)
-                    multiRunner.Run(GetChange(), rnd, true)
+                    multiRunner.Run(GetChange(), rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
 

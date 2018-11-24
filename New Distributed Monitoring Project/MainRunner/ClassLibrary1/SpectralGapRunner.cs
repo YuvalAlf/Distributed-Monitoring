@@ -11,6 +11,7 @@ using Microsoft.Win32;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
@@ -38,7 +39,7 @@ namespace ClassLibrary1
         {
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new ThresholdEpsilon(0.5);
-            var amountOfIterations = 20;
+            var amountOfIterations = 50;
             var fileName           = "spectralGap.csv";
             var resultPath         = Path.Combine(resultDir, fileName);
 
@@ -51,6 +52,8 @@ namespace ClassLibrary1
                 var multiRunner = MultiRunner.InitAll(SplitTo(initMatrix, size, numOfNodes, rnd), numOfNodes,
                                                       size * size, globalVectorType,
                                                       epsilon, SpectralGapFunction.MonitoredFunction);
+                multiRunner.RemoveScheme(new MonitoringScheme.SketchedChangeValue("Standard Base"));
+                multiRunner.RemoveScheme(new MonitoringScheme.SketchedChangeDistance("Standard Base", 2));
                 var changes = GenerateChanges(initMatrix, size, numOfNodes, rnd).Take(amountOfIterations);
                 multiRunner.RunAll(changes, rnd, false)
                            .Select(r => r.AsCsvString())
