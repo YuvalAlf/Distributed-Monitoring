@@ -84,6 +84,7 @@
     <Compile Include="MathUtils\Sketches\StandardBasisSketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
+    <Compile Include="TypeUtils\DictionaryUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
     <Compile Include="TypeUtils\FuncUtils.cs" />

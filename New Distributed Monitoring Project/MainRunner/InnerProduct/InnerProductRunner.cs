@@ -23,12 +23,14 @@ namespace InnerProduct
         private static Vector<double>[] PadWithZeros(this Vector<double>[] vectors, Func<int, bool> isLeft)
         {
             var zeroArray = ArrayUtils.Init(vectors[0].Count, _ => 0.0).ToVector();
-            Vector<double> PadLeft(Vector<double> v) => zeroArray.VConcat(v);
+            Vector<double> PadLeft(Vector<double>  v) => zeroArray.VConcat(v);
             Vector<double> PadRight(Vector<double> v) => v.VConcat(zeroArray);
             return vectors.Select((v, i) => isLeft(i) ? PadLeft(v) : PadRight(v)).ToArray();
         }
 
-        public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, Func<int, bool> isLeft, string[] textFilesPathes)
+        public static void RunBagOfWords(Random          rnd, int vectorLength, string wordsPath,
+                                         string          resultDir,
+                                         Func<int, bool> isLeft, string[] textFilesPathes)
         {
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(0.08);
@@ -36,9 +38,10 @@ namespace InnerProduct
             var windowSize         = 20000;
             var amountOfIterations = 2000;
             var stepSize           = 1000;
-            var optionalWords = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
-            var optionalStrings = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
-            var fileName   = $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var optionalWords      = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
+            var optionalStrings    = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
+            var fileName =
+                $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
 
             using (var resultCsvFile = File.CreateText(resultPath))
@@ -46,18 +49,66 @@ namespace InnerProduct
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
 
-                using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, textFilesPathes))
+                using (var stringDataParser =
+                    DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings,
+                                            textFilesPathes))
                 {
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector()).PadWithZeros(isLeft);
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength * 2, globalVectorType,
                                                           epsilon, InnerProductFunction.MonitoredFunction);
-                    var changes = stringDataParser.AllCountVectors(stepSize).Select(ch => ch.PadWithZeros(isLeft)).Take(amountOfIterations);
+                    var changes = stringDataParser.AllCountVectors(stepSize).Select(ch => ch.PadWithZeros(isLeft))
+                                                  .Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, true)
                                .Select(r => r.AsCsvString())
-                               .ForEach((Action<string>)resultCsvFile.WriteLine);
+                               .ForEach((Action<string>) resultCsvFile.WriteLine);
                 }
             }
 
+            Process.Start(resultPath);
+        }
+
+        public static void RunOneChange(Random random, string resultDir)
+        {
+            var globalVectorType   = GlobalVectorType.Sum;
+            var epsilon            = new MultiplicativeEpsilon(0.05);
+            var numOfNodes         = 10;
+            var amountOfIterations = 2000;
+            var vectorLength       = 500;
+            var fileName =
+                $"InnerProduct_VecSize_{vectorLength}_Iters_{amountOfIterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var resultPath = Path.Combine(resultDir, fileName);
+
+            Vector<double>[] GetInitVectors()
+            {
+                return ArrayUtils.Init(numOfNodes,_ => VectorUtils.CreateVector(vectorLength, __ => 100 * random.NextDouble()));
+            }
+
+            IEnumerable<Vector<double>[]> GetChanges()
+            {
+                while (true)
+                {
+                    yield return ArrayUtils.Init(numOfNodes,
+                                                 i => i == 0
+                                                          ? VectorUtils.CreateVector(vectorLength,
+                                                                                     __ => 10 * (random.NextDouble() - 0.5))
+                                                          : VectorUtils.CreateVector(vectorLength, _ => 0.0));
+                }
+            }
+
+            using (var resultCsvFile = File.CreateText(resultPath))
+            {
+                resultCsvFile.AutoFlush = true;
+                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+
+                var initVectors = GetInitVectors();
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                                                      epsilon, InnerProductFunction.MonitoredFunction);
+                //multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2));
+                var changes = GetChanges().Take(amountOfIterations);
+                multiRunner.RunAll(changes, random, true)
+                           .Select(r => r.AsCsvString())
+                           .ForEach((Action<string>) resultCsvFile.WriteLine);
+            }
             Process.Start(resultPath);
         }
     }

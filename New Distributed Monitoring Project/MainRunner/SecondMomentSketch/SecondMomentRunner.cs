@@ -30,7 +30,7 @@ namespace SecondMomentSketch
             var windowsSize = 300;
             var stepSize = 10;
             var vectorLength     = width * height;
-            var iterations       = 100;
+            var iterations       = 1000;
             var globalVectorType = GlobalVectorType.Average;
             var epsilon          = new ThresholdEpsilon(threshold);
             var fileName = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
@@ -65,7 +65,8 @@ namespace SecondMomentSketch
                 var vecs = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
                 for (var time = 0; time < stepSize * 2; time++)
                 {
-                    for (int j = 0; j < vectors.Length; j++)
+                    //for (int j = 0; j < vectors.Length; j++)
+                    for (int j = 0; j < 1; j++)
                     {
                         var valueToAddOrSubtruct = trnd.Binomial(0.5, valuesRange);
                        // var mul = rnd.NextBoolean() ? 1 : -1;
@@ -84,7 +85,7 @@ namespace SecondMomentSketch
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var multiRunner = MultiRunner.InitAll(InitVectors(), numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, secondMomentFunction.MonitoredFunction);
-           //     multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Vector());
+                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Distance(1));
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)
                                .Select(r => r.AsCsvString())

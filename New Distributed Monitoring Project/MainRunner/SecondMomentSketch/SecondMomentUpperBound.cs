@@ -28,23 +28,40 @@ namespace SecondMomentSketch
             }
 
 
-            Either<Vector<double>, double> DistanceL2(Vector<double> currentData, int nodeId)
+            Either<Vector<double>, double> DistanceL1(Vector<double> currentData, int nodeId)
             {
-                var rowStatistics = new Dictionary<int, (double maxValue, double average)>(Height);
-                for (int row = 0; row < Height; row++)
+                var rowStatistics = new Dictionary<int, (double maxValue, double average)>(releventRows.Length);
+                foreach(var row in releventRows)
                     rowStatistics[row] = (GetRowValues(currentData, row).Max(), RowSquarredAverage(currentData, row));
 
                 double calcDistance(double maxValue, double rowSquarredAverage)
                 {
-                    return Math.Sqrt(threshold + maxValue * maxValue - rowSquarredAverage) - maxValue;
+                    return Math.Sqrt(Width * (threshold - rowSquarredAverage) + maxValue * maxValue) - maxValue;
                 }
 
                 return rowStatistics.Values.Select(r => Math.Abs(calcDistance(r.maxValue, r.average))).Min();
             }
 
+            Either<Vector<double>, double> DistanceL2(Vector<double> currentData, int nodeId)
+            {
+                var rowStatistics = new Dictionary<int, double>(releventRows.Length);
+                foreach (var row in releventRows)
+                    rowStatistics[row] = RowSquarredAverage(currentData, row);
+
+                var (maxAverage, maxRow) = rowStatistics.MaxWithKey();
+                if (maxAverage <= 0.0)
+                    return Math.Sqrt(threshold);
+
+                var rowData = GetRowValues(currentData, maxRow).ToVector();
+                var closestData = rowData * (Math.Sqrt(threshold / maxAverage));
+                var value = closestData * closestData / closestData.Count;
+                return closestData.DistL2FromVector()(rowData);
+            }
+
 
 
             return ConvexBoundBuilder.Create(UpperBoundFunction, value => value <= threshold)
+                                     .WithDistanceNorm(1, DistanceL1)
                                      .WithDistanceNorm(2, DistanceL2)
                                      .ToConvexBound();
         }

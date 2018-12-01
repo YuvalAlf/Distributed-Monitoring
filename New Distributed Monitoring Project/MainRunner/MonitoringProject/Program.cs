@@ -33,29 +33,39 @@ namespace MonitoringProject
                                   };
             var             random = new Random(631);
 
-            SecondMomentRunner.Run(random, 30000, resultDir);
-            SecondMomentRunner.Run(random, 31000, resultDir);
+            //  InnerProductRunner.RunOneChange(random, resultDir);
+
+            //SecondMomentRunner.Run(random, 30000, resultDir);
+            /*SecondMomentRunner.Run(random, 31000, resultDir);
             SecondMomentRunner.Run(random, 32000, resultDir);
             SecondMomentRunner.Run(random, 33000, resultDir);
             SecondMomentRunner.Run(random, 34000, resultDir);
             SecondMomentRunner.Run(random, 35000, resultDir);
             SecondMomentRunner.Run(random, 36000, resultDir);
-            SecondMomentRunner.Run(random, 37000, resultDir);
+            SecondMomentRunner.Run(random, 37000, resultDir);*/
 
-          //  SpectralGapFunction.Run(random, 100, 0.05, 5, resultDir);
+            //  SpectralGapFunction.Run(random, 100, 0.05, 5, resultDir);
 
-         //    Func<int, bool> isLeft = i => i < 4;
-         //    SphereRunner.Run(random, resultDir);
+                Func<int, bool> isLeft = i => i < 4;
+            //    SphereRunner.Run(random, resultDir);
 
-          //  Console.WriteLine("Left:");
-          //  textFilesPathes.Where((_, i) => isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
-         //   Console.WriteLine("Right:");
-         //   textFilesPathes.Where((_, i) => !isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
+            //  Console.WriteLine("Left:");
+            //  textFilesPathes.Where((_, i) => isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
+            //   Console.WriteLine("Right:");
+            //   textFilesPathes.Where((_, i) => !isLeft(i)).Select(t => "\t" + t).ForEach(s => Console.WriteLine(s));
 
 
 
-            //   InnerProductRunner.RunBagOfWords(random, 1500, wordsPath, resultDir, isLeft, textFilesPathes);
-           // EntropyRunner.RunBagOfWords(random, 100, wordsPath, resultDir, textFilesPathes);
+              //InnerProductRunner.RunBagOfWords(random, 1000, wordsPath, resultDir, isLeft, textFilesPathes);
+              InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
+              InnerProductRunner.RunBagOfWords(random, 500, wordsPath, resultDir, isLeft, textFilesPathes);
+             // InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
+             // InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
+             // InnerProductRunner.RunBagOfWords(random, 7500, wordsPath, resultDir, isLeft, textFilesPathes);
+              InnerProductRunner.RunBagOfWords(random, 10000, wordsPath, resultDir, isLeft, textFilesPathes);
+           // EntropyRunner.RunBagOfWords(random, 250, wordsPath, resultDir, textFilesPathes);
+          //  EntropyRunner.RunBagOfWords(random, 500, wordsPath, resultDir, textFilesPathes);
+          //  EntropyRunner.RunBagOfWords(random, 750, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

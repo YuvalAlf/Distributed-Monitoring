@@ -20,7 +20,7 @@ namespace SecondMomentSketch
         {
             Width = width;
             Height = height;
-            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
+            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 1, 2);
         }
 
         private IEnumerable<double> GetRowValues(Vector<double> data, int row)

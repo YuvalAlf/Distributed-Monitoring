@@ -46,10 +46,10 @@ namespace Monitoring.Nodes
                 var currentDimension = dimension;
                 var (sketches, epsilons, invokedIndices) = nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, currentDimension)).UnZip();
                 messages += nodes.Length * 2;
-                bandwidth += invokedIndices.Sum(i => i.Dimension);
+                bandwidth += invokedIndices.Sum(i => i.Dimension) * 2;
                 var averageChangeSketch = sketches.AverageVector();
                 messages += nodes.Length;
-                bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * nodes.Length;
+                bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * 2 * nodes.Length;
                 for (int i = 0; i < nodes.Length; i++)
                 {
                     nodes[i].Reset(nodes[i].ReferencePoint + averageChangeSketch, epsilons[i]);
@@ -69,7 +69,7 @@ namespace Monitoring.Nodes
             var vectorLength   = nodes[0].LocalVector.Count;
             var numOfNodes     = nodes.Length;
             var (sketches, epsilons, invokedIndices) = nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, vectorLength * 2)).UnZip();
-            return new Communication(invokedIndices.Sum(i => i.Dimension) + InvokedIndices.Combine(invokedIndices).Dimension * numOfNodes, numOfNodes * 3);
+            return new Communication(2 * (invokedIndices.Sum(i => i.Dimension) + InvokedIndices.Combine(invokedIndices).Dimension * numOfNodes), numOfNodes * 3);
         }
     }
 }
