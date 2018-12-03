@@ -35,18 +35,20 @@ namespace MonitoringProject
 
             //  InnerProductRunner.RunOneChange(random, resultDir);
 
-            //SecondMomentRunner.Run(random, 30000, resultDir);
-            /*SecondMomentRunner.Run(random, 31000, resultDir);
-            SecondMomentRunner.Run(random, 32000, resultDir);
-            SecondMomentRunner.Run(random, 33000, resultDir);
-            SecondMomentRunner.Run(random, 34000, resultDir);
-            SecondMomentRunner.Run(random, 35000, resultDir);
-            SecondMomentRunner.Run(random, 36000, resultDir);
-            SecondMomentRunner.Run(random, 37000, resultDir);*/
+            var seed = random.Next();
+            SecondMomentRunner.Run(new Random(seed), 6, 5, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 12, 11, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 18, 16, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 24, 21, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 30, 26, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 36, 31, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 42, 36, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 46, 41, 1000000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 52, 46, 1000000, resultDir);
 
             //  SpectralGapFunction.Run(random, 100, 0.05, 5, resultDir);
 
-                Func<int, bool> isLeft = i => i < 4;
+            //   Func<int, bool> isLeft = i => i < 4;
             //    SphereRunner.Run(random, resultDir);
 
             //  Console.WriteLine("Left:");
@@ -56,16 +58,16 @@ namespace MonitoringProject
 
 
 
-              //InnerProductRunner.RunBagOfWords(random, 1000, wordsPath, resultDir, isLeft, textFilesPathes);
-              InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
-              InnerProductRunner.RunBagOfWords(random, 500, wordsPath, resultDir, isLeft, textFilesPathes);
-             // InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
-             // InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
-             // InnerProductRunner.RunBagOfWords(random, 7500, wordsPath, resultDir, isLeft, textFilesPathes);
-              InnerProductRunner.RunBagOfWords(random, 10000, wordsPath, resultDir, isLeft, textFilesPathes);
-           // EntropyRunner.RunBagOfWords(random, 250, wordsPath, resultDir, textFilesPathes);
-          //  EntropyRunner.RunBagOfWords(random, 500, wordsPath, resultDir, textFilesPathes);
-          //  EntropyRunner.RunBagOfWords(random, 750, wordsPath, resultDir, textFilesPathes);
+            //InnerProductRunner.RunBagOfWords(random, 1000, wordsPath, resultDir, isLeft, textFilesPathes);
+            //  InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
+            //  InnerProductRunner.RunBagOfWords(random, 500, wordsPath, resultDir, isLeft, textFilesPathes);
+            // InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
+            // InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
+            // InnerProductRunner.RunBagOfWords(random, 7500, wordsPath, resultDir, isLeft, textFilesPathes);
+            //  InnerProductRunner.RunBagOfWords(random, 10000, wordsPath, resultDir, isLeft, textFilesPathes);
+            // EntropyRunner.RunBagOfWords(random, 250, wordsPath, resultDir, textFilesPathes);
+            //  EntropyRunner.RunBagOfWords(random, 500, wordsPath, resultDir, textFilesPathes);
+            //  EntropyRunner.RunBagOfWords(random, 750, wordsPath, resultDir, textFilesPathes);
         }
     }
 }

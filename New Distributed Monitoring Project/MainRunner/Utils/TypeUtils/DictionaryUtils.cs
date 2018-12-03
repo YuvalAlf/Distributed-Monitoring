@@ -20,7 +20,7 @@ namespace Utils.TypeUtils
             {
                 var key = pair.Key;
                 var value = pair.Value;
-                if (value >= maxKey)
+                if (value >= maxValue)
                 {
                     maxKey = key;
                     maxValue = value;

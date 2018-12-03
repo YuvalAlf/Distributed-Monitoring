@@ -50,8 +50,8 @@ namespace SecondMomentSketch
 
                 var (maxAverage, maxRow) = rowStatistics.MaxWithKey();
                 if (maxAverage <= 0.0)
-                    return Math.Sqrt(threshold);
-
+                    return Math.Sqrt(threshold * Width);
+                
                 var rowData = GetRowValues(currentData, maxRow).ToVector();
                 var closestData = rowData * (Math.Sqrt(threshold / maxAverage));
                 var value = closestData * closestData / closestData.Count;
@@ -61,7 +61,6 @@ namespace SecondMomentSketch
 
 
             return ConvexBoundBuilder.Create(UpperBoundFunction, value => value <= threshold)
-                                     .WithDistanceNorm(1, DistanceL1)
                                      .WithDistanceNorm(2, DistanceL2)
                                      .ToConvexBound();
         }

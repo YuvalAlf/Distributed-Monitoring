@@ -16,7 +16,6 @@ namespace SecondMomentSketch
         {
             return ConvexBoundBuilder.Create(_ => 0.0, value => value >= threshold)
                                      .WithDistanceNorm(2, (point, id) => 0.0)
-                                     .WithDistanceNorm(1, (point, id) => 0.0)
                                      .ToConvexBound();
 
             /*Debug.Assert(Height % 2 == 1);

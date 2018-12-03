@@ -21,20 +21,18 @@ namespace SecondMomentSketch
 {
     public static class SecondMomentRunner
     {
-        public static void Run(Random rnd, double threshold, string resultDir)
+        public static void Run(Random rnd, int width, int height, double threshold, string resultDir)
         {
             var numOfNodes       = 10;
-            var width            = 30;
-            var height           = 21;
-            var valuesRange = 20;
-            var windowsSize = 300;
-            var stepSize = 10;
+            var valuesRange      = 20;
+            var windowSize       = 300;
+            var stepSize         = 10;
             var vectorLength     = width * height;
-            var iterations       = 1000;
+            var iterations       = 500;
             var globalVectorType = GlobalVectorType.Average;
             var epsilon          = new ThresholdEpsilon(threshold);
-            var fileName = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
+            var fileName         = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var resultPath       = Path.Combine(resultDir, fileName);
             var secondMomentFunction = new SecondMoment(width, height);
             var trnd = Troschuetz.Random.TRandom.New(rnd.Next());
 
@@ -49,7 +47,7 @@ namespace SecondMomentSketch
 
             Vector<double>[] InitVectors()
             {
-                for (int time = 0; time < windowsSize; time++)
+                for (int time = 0; time < windowSize; time++)
                 for (int j = 0; j < vectors.Length; j++)
                 {
                     var valueToAdd = trnd.Binomial(0.5, valuesRange);
@@ -65,8 +63,8 @@ namespace SecondMomentSketch
                 var vecs = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
                 for (var time = 0; time < stepSize * 2; time++)
                 {
-                    //for (int j = 0; j < vectors.Length; j++)
-                    for (int j = 0; j < 1; j++)
+                    for (int j = 0; j < vectors.Length; j++)
+                   // for (int j = 0; j < 1; j++)
                     {
                         var valueToAddOrSubtruct = trnd.Binomial(0.5, valuesRange);
                        // var mul = rnd.NextBoolean() ? 1 : -1;
@@ -85,7 +83,7 @@ namespace SecondMomentSketch
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var multiRunner = MultiRunner.InitAll(InitVectors(), numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, secondMomentFunction.MonitoredFunction);
-                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Distance(1));
+                //multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2));
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)
                                .Select(r => r.AsCsvString())
