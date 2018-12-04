@@ -42,7 +42,7 @@ namespace ClassLibrary1
 
             Either<Vector<double>, double> DistanceFromOutside(Vector<double> currentVector, int node)
             {
-                var result = (currentVector - lastDataInside[node]).L2Norm();
+                var result = ((currentVector - lastDataInside[node]) * 2).L2Norm();
                 return result;
             }
 

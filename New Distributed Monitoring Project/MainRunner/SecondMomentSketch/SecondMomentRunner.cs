@@ -28,7 +28,7 @@ namespace SecondMomentSketch
             var windowSize       = 300;
             var stepSize         = 10;
             var vectorLength     = width * height;
-            var iterations       = 500;
+            var iterations       = 5000;
             var globalVectorType = GlobalVectorType.Average;
             var epsilon          = new ThresholdEpsilon(threshold);
             var fileName         = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
@@ -63,11 +63,11 @@ namespace SecondMomentSketch
                 var vecs = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
                 for (var time = 0; time < stepSize * 2; time++)
                 {
-                    for (int j = 0; j < vectors.Length; j++)
-                   // for (int j = 0; j < 1; j++)
+                   // for (int j = 0; j < vectors.Length; j++)
+                    for (int j = 0; j < 1; j++)
                     {
                         var valueToAddOrSubtruct = trnd.Binomial(0.5, valuesRange);
-                       // var mul = rnd.NextBoolean() ? 1 : -1;
+                        var mul = rnd.NextDouble() <= 0.6 ? 1 : -1;
                         for (int i = 0; i < vectorLength; i++)
                             vecs[j][i] += indicator(j, i, valueToAddOrSubtruct);
                     }
@@ -84,8 +84,9 @@ namespace SecondMomentSketch
                 var multiRunner = MultiRunner.InitAll(InitVectors(), numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, secondMomentFunction.MonitoredFunction);
                 //multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2));
-                for (int i = 0; i < iterations; i++)
-                    multiRunner.Run(GetChange(), rnd, false)
+                var changes = Enumerable.Range(0, iterations).Select(_ => GetChange());
+                    multiRunner.RunAll(changes, rnd, false)
+                               .FinishAfter(multiRunner.Runners.Count, r => double.IsInfinity(r.UpperBound))
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
             }

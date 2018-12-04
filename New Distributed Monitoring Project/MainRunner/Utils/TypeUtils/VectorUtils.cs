@@ -11,8 +11,21 @@ namespace Utils.TypeUtils
     {
         public static Matrix<double> AsMatrix(this Vector<double> @this)
         {
-            var size = (int)Math.Sqrt(@this.Count);
-            var matrix = Matrix<double>.Build.Sparse(size, size, (r, c) => @this[r * size + c]);
+            var size = Convert.ToInt32((1 + Math.Sqrt(1 + 4 * @this.Count)) / 2.0);
+
+            double GetValue(int row, int col)
+            {
+                if (row == col)
+                    return 0.0;
+                if (row > col)
+                    return GetValue(col, row);
+                var index = 0;
+                index += row * size - row * (row + 1) / 2;
+                index += col - row - 1;
+                return @this[index];
+            }
+
+            var matrix = Matrix<double>.Build.Sparse(size, size, GetValue);
             return matrix;
         }
 

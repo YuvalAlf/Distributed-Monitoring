@@ -67,20 +67,19 @@ namespace InnerProduct
             Process.Start(resultPath);
         }
 
-        public static void RunOneChange(Random random, string resultDir)
+        public static void RunOneChange(Random random, int vectorLength, string resultDir)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new MultiplicativeEpsilon(0.05);
+            var epsilon            = new MultiplicativeEpsilon(0.01);
             var numOfNodes         = 10;
             var amountOfIterations = 2000;
-            var vectorLength       = 500;
             var fileName =
                 $"InnerProduct_VecSize_{vectorLength}_Iters_{amountOfIterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
 
             Vector<double>[] GetInitVectors()
             {
-                return ArrayUtils.Init(numOfNodes,_ => VectorUtils.CreateVector(vectorLength, __ => 100 * random.NextDouble()));
+                return ArrayUtils.Init(numOfNodes,_ => VectorUtils.CreateVector(vectorLength, __ => 10 * random.NextDouble()));
             }
 
             IEnumerable<Vector<double>[]> GetChanges()
@@ -90,7 +89,7 @@ namespace InnerProduct
                     yield return ArrayUtils.Init(numOfNodes,
                                                  i => i == 0
                                                           ? VectorUtils.CreateVector(vectorLength,
-                                                                                     __ => 10 * (random.NextDouble() - 0.5))
+                                                                                     __ => random.NextDouble() - 0.5)
                                                           : VectorUtils.CreateVector(vectorLength, _ => 0.0));
                 }
             }

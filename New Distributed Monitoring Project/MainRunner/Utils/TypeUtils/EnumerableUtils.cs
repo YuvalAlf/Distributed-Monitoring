@@ -12,6 +12,23 @@ namespace Utils.TypeUtils
 
         public static S[] Map<T, S>(this IEnumerable<T> @this, Func<T, S> map) => @this.Select(map).ToArray();
 
+        public static IEnumerable<T> FinishAfter<T>(this IEnumerable<T> @this, int moreAfterFinish, Predicate<T> shouldFinish)
+        {
+            bool shouldBreak = false;
+            int countBreaking = 0;
+            foreach (var item in @this)
+            {
+                if (shouldBreak)
+                {
+                    if (++countBreaking >= moreAfterFinish)
+                        break;
+                }
+                else if (shouldFinish(item))
+                    shouldBreak = true;
+                yield return item;
+            }
+        }
+
         public static (T1[], T2[]) UnZip<T1, T2>(this IEnumerable<ValueTuple<T1, T2>> @this)
         {
             var t1 = new List<T1>();

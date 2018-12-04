@@ -22,40 +22,41 @@ namespace ClassLibrary1
 {
     public static partial class SpectralGapFunction
     {
-        private static Matrix<double> GenerateMatrix(int size, double p, Random rnd)
+        private static Vector<double> GenerateMatrix(int size, double p, Random rnd)
         {
-            var array = new double[size, size];
-            for (int i = 0; i < size; i++)
-                for (int j = i + 1; j < size; j++)
-                {
-                    var value                 = Convert.ToInt32(rnd.NextDouble() <= p);
-                    array[i, j] = array[j, i] = value;
-                }
+            var array = new double[size * (size - 1) / 2];
+            for (int i = 0; i < array.Length; i++)
+                if (rnd.NextDouble() <= p)
+                    array[i] = 1;
 
-            return Matrix<double>.Build.DenseOfArray(array);
+            return array.ToVector();
         }
 
         public static void Run(Random rnd, int size, double edgeProb, int numOfNodes, string resultDir)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new ThresholdEpsilon(0.5);
-            var amountOfIterations = 50;
-            var fileName           = "spectralGap.csv";
+            var epsilon            = new ThresholdEpsilon(0.1);
+            var amountOfIterations = 500;
+            var initMatrix = GenerateMatrix(size, edgeProb, rnd);
+            var vectorLength = initMatrix.Count;
+            var fileName = $"SpectralGap_VectorLength_{vectorLength}_Nodes_{numOfNodes}_Iterations_{amountOfIterations}.csv";
             var resultPath         = Path.Combine(resultDir, fileName);
 
             using (var resultCsvFile = File.CreateText(resultPath))
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
-                var initMatrix = GenerateMatrix(size, edgeProb, rnd);
-                //var globalVector = initMatrix.ToRowArrays().SelectMany(x => x).ToVector();
                 var multiRunner = MultiRunner.InitAll(SplitTo(initMatrix, size, numOfNodes, rnd), numOfNodes,
-                                                      size * size, globalVectorType,
+                                                      vectorLength, globalVectorType,
                                                       epsilon, SpectralGapFunction.MonitoredFunction);
-                multiRunner.RemoveScheme(new MonitoringScheme.SketchedChangeValue("Standard Base"));
-                multiRunner.RemoveScheme(new MonitoringScheme.SketchedChangeDistance("Standard Base", 2));
-                var changes = GenerateChanges(initMatrix, size, numOfNodes, rnd).Take(amountOfIterations);
+                multiRunner.OnlySchemes(new MonitoringScheme.Distance(2),
+                                        new MonitoringScheme.Value(),
+                                        new MonitoringScheme.Vector(),
+                                        new MonitoringScheme.Naive(),
+                                        new MonitoringScheme.Oracle());
+                var changes = GenerateChanges(initMatrix, numOfNodes, rnd).Take(amountOfIterations);
                 multiRunner.RunAll(changes, rnd, false)
+                           .FinishAfter(multiRunner.Runners.Count , r => double.IsNegativeInfinity(r.LowerBound))
                            .Select(r => r.AsCsvString())
                            .ForEach((Action<string>) resultCsvFile.WriteLine);
             }
@@ -63,40 +64,34 @@ namespace ClassLibrary1
             Process.Start(resultPath);
         }
 
-        private static IEnumerable<Vector<double>[]> GenerateChanges(Matrix<double> initMatrix, int    size,
+        private static IEnumerable<Vector<double>[]> GenerateChanges(Vector<double> initMatrix,
                                                                      int            numOfNodes, Random rnd)
         {
             while (true)
             {
-                var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(size * size));
+                var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(initMatrix.Count));
                 foreach (var vector in vectors)
                 {
-                    var (i, j) = rnd.ChooseTwoDifferentRandomsInRange(0, size);
-                    var index1 = i * size + j;
-                    var index2 = j * size + i;
-                    var value  = initMatrix[i, j];
+                    var index = rnd.Next(initMatrix.Count);
+                    var value  = initMatrix[index];
                     var change = value.AlmostEqual(0.0) ? 1 : -1;
-                    vector[index1]   += change;
-                    vector[index2]   += change;
-                    initMatrix[i, j] += change;
-                    initMatrix[j, i] += change;
+                    vector[index]   += change;
+                    initMatrix[index] += change;
                 }
 
                 yield return vectors;
             }
         }
 
-        private static Vector<double>[] SplitTo(Matrix<double> initMatrix, int size, int numOfNodes, Random rnd)
+        private static Vector<double>[] SplitTo(Vector<double> initMatrix, int size, int numOfNodes, Random rnd)
         {
             var count = 0;
-            var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(size * size));
-            for (int i = 0; i < initMatrix.ColumnCount; i++)
-                for (int j = i + 1; j < initMatrix.RowCount; j++)
-                    if (initMatrix[i, j].AlmostEqual(1.0))
+            var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(initMatrix.Count));
+            for (int i = 0; i < initMatrix.Count; i++)
+                    if (initMatrix[i].AlmostEqual(1.0))
                     {
                         var index = count++ % vectors.Length;
-                        vectors[index][i * size + j] = 1;
-                        vectors[index][j * size + i] = 1;
+                        vectors[index][i] = 1;
                     }
             return vectors;
         }

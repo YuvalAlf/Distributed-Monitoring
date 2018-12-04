@@ -31,22 +31,25 @@ namespace MonitoringProject
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\blogs\blogs.txt",
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt",
                                   };
-            var             random = new Random(631);
+            var random = new Random(631);
 
-            //  InnerProductRunner.RunOneChange(random, resultDir);
+            //SpectralGapFunction.Run(random, 100, 0.01, 2, resultDir);
 
-            var seed = random.Next();
-            SecondMomentRunner.Run(new Random(seed), 6, 5, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 12, 11, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 18, 16, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 24, 21, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 30, 26, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 36, 31, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 42, 36, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 46, 41, 1000000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 52, 46, 1000000, resultDir);
 
-            //  SpectralGapFunction.Run(random, 100, 0.05, 5, resultDir);
+            InnerProductRunner.RunOneChange(random, 2500, resultDir);
+
+            /*var seed = random.Next();
+              SecondMomentRunner.Run(new Random(seed), 6, 5, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 12, 11, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 42, 37, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 46, 41, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 52, 47, 200000, resultDir);*/
+
+
 
             //   Func<int, bool> isLeft = i => i < 4;
             //    SphereRunner.Run(random, resultDir);
