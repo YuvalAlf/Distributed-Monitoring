@@ -35,7 +35,7 @@ namespace ClassLibrary1
         public static void Run(Random rnd, int size, double edgeProb, int numOfNodes, string resultDir)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new ThresholdEpsilon(0.1);
+            var epsilon            = new ThresholdEpsilon(5);
             var amountOfIterations = 500;
             var initMatrix = GenerateMatrix(size, edgeProb, rnd);
             var vectorLength = initMatrix.Count;
@@ -72,9 +72,14 @@ namespace ClassLibrary1
                 var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(initMatrix.Count));
                 foreach (var vector in vectors)
                 {
-                    var index = rnd.Next(initMatrix.Count);
-                    var value  = initMatrix[index];
-                    var change = value.AlmostEqual(0.0) ? 1 : -1;
+                    int index;
+                    int change;
+                    do
+                    {
+                        index = rnd.Next(initMatrix.Count);
+                        var value = initMatrix[index];
+                        change = value.AlmostEqual(0.0) ? 1 : -1;
+                    } while (change == 1);
                     vector[index]   += change;
                     initMatrix[index] += change;
                 }
