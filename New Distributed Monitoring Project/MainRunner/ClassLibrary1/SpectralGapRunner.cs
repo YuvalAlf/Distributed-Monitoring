@@ -35,7 +35,7 @@ namespace ClassLibrary1
         public static void Run(Random rnd, int size, double edgeProb, int numOfNodes, string resultDir)
         {
             var globalVectorType   = GlobalVectorType.Sum;
-            var epsilon            = new ThresholdEpsilon(5);
+            var epsilon            = new ThresholdEpsilon(10);
             var amountOfIterations = 500;
             var initMatrix = GenerateMatrix(size, edgeProb, rnd);
             var vectorLength = initMatrix.Count;
@@ -67,21 +67,44 @@ namespace ClassLibrary1
         private static IEnumerable<Vector<double>[]> GenerateChanges(Vector<double> initMatrix,
                                                                      int            numOfNodes, Random rnd)
         {
+            var amountToAdd = 3;
+            var amountToRemove = 4;
+
+            HashSet<int> GetIndicesToAdd(int amount)
+            {
+                var indices = new HashSet<int>();
+                while (indices.Count < amount)
+                {
+                    var index = rnd.Next(initMatrix.Count);
+                    if (initMatrix[index].AlmostEqual(0.0))
+                        indices.Add(index);
+                }
+                return indices;
+            }
+
+            HashSet<int> GetIndicesToRemove(int amount)
+            {
+                var indices = new HashSet<int>();
+                while (indices.Count < amount)
+                {
+                    var index = rnd.Next(initMatrix.Count);
+                    if (initMatrix[index].AlmostEqual(1.0))
+                        indices.Add(index);
+                }
+                return indices;
+            }
+
             while (true)
             {
                 var vectors = ArrayUtils.Init(numOfNodes, _ => Vector<double>.Build.Sparse(initMatrix.Count));
                 foreach (var vector in vectors)
                 {
-                    int index;
-                    int change;
-                    do
-                    {
-                        index = rnd.Next(initMatrix.Count);
-                        var value = initMatrix[index];
-                        change = value.AlmostEqual(0.0) ? 1 : -1;
-                    } while (change == 1);
-                    vector[index]   += change;
-                    initMatrix[index] += change;
+                    var indicesToAdd = GetIndicesToAdd(amountToAdd);
+                    var indicesToRemove = GetIndicesToRemove(amountToRemove);
+                    indicesToAdd.ForEach(i => vector[i] = 1.0);
+                    indicesToAdd.ForEach(i => initMatrix[i] = 1.0);
+                    indicesToRemove.ForEach(i => vector[i] = -1.0);
+                    indicesToRemove.ForEach(i => initMatrix[i] = 0.0);
                 }
 
                 yield return vectors;

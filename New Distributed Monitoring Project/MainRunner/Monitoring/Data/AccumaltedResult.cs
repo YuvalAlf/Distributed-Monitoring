@@ -46,17 +46,17 @@ namespace Monitoring.Data
 
         public static string Header(int numOfNodes) =>
             "LoopIndex"
-                .ConcatCsv("Monitoring Scheme")
-                .ConcatCsv("Vector Length")
-                .ConcatCsv("# Nodes")
-                .ConcatCsv("Epsilon")
-                .ConcatCsv("Bandwidth")
-                .ConcatCsv("# Messages")
-                .ConcatCsv("# Full Syncs")
-                .ConcatCsv("Lower-Bound")
-                .ConcatCsv("Function's Value")
-                .ConcatCsv("Upper-Bound")
-                .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Server " + numNode)));
+               .ConcatCsv("Monitoring Scheme")
+               .ConcatCsv("Vector Length")
+               .ConcatCsv("# Nodes")
+               .ConcatCsv("Epsilon")
+               .ConcatCsv("Bandwidth")
+               .ConcatCsv("# Messages")
+               .ConcatCsv("# Full Syncs")
+               .ConcatCsv("Lower-Bound")
+               .ConcatCsv("Function's Value")
+               .ConcatCsv("Upper-Bound");
+               // .ConcatCsv(Enumerable.Range(1, numOfNodes).Aggregate("", (csv, numNode) => csv.ConcatCsv("Server " + numNode)));
 
         public string HeaderCsv() => Header(NumOfNodes);
 
@@ -71,8 +71,8 @@ namespace Monitoring.Data
                 .ConcatCsv(NumberOfFullSyncs.ToString())
                 .ConcatCsv(LowerBound.AsCsvString())
                 .ConcatCsv(FunctionValue.ToString(CultureInfo.InvariantCulture))
-                .ConcatCsv(UpperBound.AsCsvString()) //;
-                .ConcatCsv(NodesFunctionValues.Aggregate("", (csv, value) => csv.ConcatCsv(value.ToString(CultureInfo.InvariantCulture))));
+                .ConcatCsv(UpperBound.AsCsvString());
+              //  .ConcatCsv(NodesFunctionValues.Aggregate("", (csv, value) => csv.ConcatCsv(value.ToString(CultureInfo.InvariantCulture))));
 
         public AccumaltedResult AddSingleRsult(SingleResult singleResult) =>
             new AccumaltedResult(
