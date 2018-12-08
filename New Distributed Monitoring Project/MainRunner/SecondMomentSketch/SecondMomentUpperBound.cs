@@ -15,12 +15,11 @@ namespace SecondMomentSketch
     {
         private ConvexBound UpperBound(Vector<double> data, double threshold)
         {
-            Debug.Assert(Height % 2 == 1);
-            var halfHeight = Height / 2;
+            var halfHeight = 1 + Height / 2;
             var rowToAverage = new Dictionary<int, double>(Height);
             for (int row = 0; row < Height; row++)
                 rowToAverage[row] = RowSquarredAverage(data, row);
-            var releventRows = rowToAverage.OrderBy(pair => pair.Value).Select(pair => pair.Key).Take(halfHeight + 1).ToArray();
+            var releventRows = rowToAverage.OrderBy(pair => pair.Value).Select(pair => pair.Key).Take(halfHeight).ToArray();
 
             double UpperBoundFunction(Vector<double> currentData)
             {

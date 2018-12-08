@@ -73,6 +73,7 @@
     <Compile Include="DataStructures\HistogramQueue.cs" />
     <Compile Include="MathUtils\DCTFunction.cs" />
     <Compile Include="MathUtils\Hashing.cs" />
+    <Compile Include="MathUtils\Line.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
     <Compile Include="MathUtils\RandomExtensions.cs" />

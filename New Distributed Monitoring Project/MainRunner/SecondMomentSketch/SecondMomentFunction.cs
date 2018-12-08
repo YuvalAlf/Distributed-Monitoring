@@ -29,6 +29,10 @@ namespace SecondMomentSketch
             for (int i = 0; i < Width; i++)
                 yield return data[baseIndex + i];
         }
+        private double GetValue(Vector<double> data, int row, int col)
+        {
+            return data[row * Width + col];
+        }
 
         private double RowSquarredAverage(Vector<double> data, int row) => GetRowValues(data, row).Select(x => x * x).Average();
 

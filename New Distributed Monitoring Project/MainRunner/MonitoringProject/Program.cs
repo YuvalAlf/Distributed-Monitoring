@@ -33,15 +33,15 @@ namespace MonitoringProject
                                   };
             var random = new Random(631);
 
-            SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
+         //   SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
 
 
           //  InnerProductRunner.RunOneChange(random, 2500, resultDir);
 
-            /*var seed = random.Next();
-              SecondMomentRunner.Run(new Random(seed), 6, 5, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 12, 11, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
+                var seed = random.Next();
+              //SecondMomentRunner.Run(new Random(seed), 6, 5, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 12, 11, resultDir);
+             /* SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
               SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
               SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
               SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
