@@ -78,8 +78,8 @@ The need for minimizing both the bandwidth and the processing power is described
 Commonly, the distributed monitoring model is focused on determining whether a function over dynamic distributed data crosses a certain threshold. This is used as a component to the \textit{distributed function approximation problem} \cite{garofalakis2013sketch}, which $\varepsilon$-approximates the value of a function over time. The distributed model is described as follows:
 \begin{enumerate}
 \item There are $n$ data-servers, $s_1 ... s_n$
-\item A central \textit{coordinator}, $c$ exists, with whom the servers communicate over a communication channel.
-\item $server_i$ knows only its dynamic data -- the local vector, $v_i$.
+\item A central \textit{coordinator} $c$ exists, with whom the servers communicate over a communication channel.
+\item Server $s_i$ knows only its dynamic data -- the local vector, $v_i$.
 \item The global data, represented by the global vector $v$, is the average of the local vectors:
 \begin{equation}
 v = \frac{1}{n}\sum\limits_{i=1}^n {v_i}
@@ -130,7 +130,7 @@ Furthermore, the violation resolution phase demands transmitting high dimensiona
 
 \subsection{The Convex Decomposition Method}
 
-Another distributed monitoring scheme previously developed is the \convexDecomposition \ method \cite{lazerson2015monitoring}. This method composes a convex safe zone by decomposing into half-planes the complement of the geometric space of the monitored condition. The \convexDecomposition \ method geometrically monitoring whether the average global vector is in the intersection of the half-planes.
+Another distributed monitoring scheme previously developed is the \convexDecomposition \ method \cite{lazerson2015monitoring}. This method composes a convex safe zone by decomposing into half-planes the geometric space of the monitored condition. The \convexDecomposition \ method geometrically monitors whether the average global vector is in the intersection of the half-planes.
 
 Unfortunately, this method suffers from similar issues as the \coveringSpheres \ method, and cannot be applied on some basic functions, thus isn't always feasable \cite{lazerson2018lightweight}
 
@@ -152,12 +152,12 @@ Accordingly, the distributed function monitoring is performed on the convex boun
 
 \section{Research Objectives}
 
+The research will focus on developing innovative distributed monitoring schemes which will reduce the communication bandwidth of the distributed monitoring process. Specifically, we'll try:
+
 \begin{enumerate}
-\item Introducing multiple innovative distributed monitoring schemes which avoid sending high dimensional data unless its crucially needed.
+\item Incorporating data-sketches into the \convexBound \ method without damaging the 0\% false-negative necessity of the distributed monitoring problem.
 
-\item Proving the \distanceLemma , a lemma used as a basis of an efficient distributed monitoring scheme we'll develop. The \distanceLemma \ states that given a convex body and several points, if the sum of distances to the convex border from the points inside the convex body is greater than the sum of distances to the border from the points on the outside, then the average of the points is inside the convex body, Thus, distributed monitoring can be performed by sending just one scalar.
-
-\item Incorporating data-sketches into distributed monitoring schemes without damaging the 0\% false-negative necessity of the distributed monitoring problem.
+\item Proving the \distanceLemma , a lemma used as a basis of an efficient distributed monitoring scheme we'll develop. The \distanceLemma \ states that given a convex body and several points, if the sum of distances to the convex border from the points inside the convex body is greater than the sum of distances to the border from the points outside, then the average of the points is inside the convex body. Thus, distributed monitoring can be performed by sending just one scalar -- the distance to the convex body.
 
 \item Conducting several experiments, laying out comparisons of multiple attributes of distributed monitoring schemes on real-world data, focusing on the bandwidth consumption.
 \end{enumerate}
