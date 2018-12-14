@@ -57,15 +57,22 @@ namespace SecondMomentSketch
 
             Either<Vector<double>, double> DistanceL2(Vector<double> point, int nodeId)
             {
+                if (threshold <= 0.0)
+                    return double.PositiveInfinity;
+
                 double DistanceOfRow(int row)
                 {
                     var residual = threshold - CalcAverageValueOfRow(point)(row);
                     var sqrt = sumGradientSquared[row];
                     if (sqrt <= 0.0)
                         return double.PositiveInfinity;
-                    return Math.Abs(residual) / sqrt;
+                    return residual / sqrt;
                 }
-                return releventRows.Select(DistanceOfRow).Min();
+                var distances = releventRows.Map(DistanceOfRow);
+                if (distances.All(d => d <= 0.0))
+                    return -distances.Max();
+                else
+                    return distances.Where(d => d > 0.0).Sum();
             }
 
 

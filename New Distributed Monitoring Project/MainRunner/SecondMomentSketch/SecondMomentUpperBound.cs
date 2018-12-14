@@ -29,7 +29,8 @@ namespace SecondMomentSketch
 
             Either<Vector<double>, double> DistanceL1(Vector<double> currentData, int nodeId)
             {
-                var rowStatistics = new Dictionary<int, (double maxValue, double average)>(releventRows.Length);
+                throw new NotImplementedException();
+ /*               var rowStatistics = new Dictionary<int, (double maxValue, double average)>(releventRows.Length);
                 foreach(var row in releventRows)
                     rowStatistics[row] = (GetRowValues(currentData, row).Max(), RowSquarredAverage(currentData, row));
 
@@ -38,27 +39,30 @@ namespace SecondMomentSketch
                     return Math.Sqrt(Width * (threshold - rowSquarredAverage) + maxValue * maxValue) - maxValue;
                 }
 
-                return rowStatistics.Values.Select(r => Math.Abs(calcDistance(r.maxValue, r.average))).Min();
+                return rowStatistics.Values.Select(r => Math.Abs(calcDistance(r.maxValue, r.average))).Min();*/
             }
 
             Either<Vector<double>, double> DistanceL2(Vector<double> currentData, int nodeId)
             {
-                var rowStatistics = new Dictionary<int, double>(releventRows.Length);
-                foreach (var row in releventRows)
-                    rowStatistics[row] = RowSquarredAverage(currentData, row);
-
-                var (maxAverage, maxRow) = rowStatistics.MaxWithKey();
-                if (maxAverage <= 0.0)
-                    return Math.Sqrt(threshold * Width);
-                
-                var rowData = GetRowValues(currentData, maxRow).ToVector();
-                var closestData = rowData * (Math.Sqrt(threshold / maxAverage));
-                var value = closestData * closestData / closestData.Count;
-                return closestData.DistL2FromVector()(rowData);
+                double DistanceOfRow(int row)
+                {
+                    var rowValue = RowSquarredAverage(currentData, row);
+                    if (rowValue <= 0.0)
+                        return Math.Sqrt(threshold * Width);
+                    var rowData = GetRowValues(currentData, row).ToVector();
+                    var closestData = rowData * (Math.Sqrt(threshold / rowValue));
+                    var value = closestData * closestData / Width;
+                    var t = threshold;
+                    var mul = rowValue <= threshold ? -1 : 1;
+                    return mul * closestData.DistL2FromVector()(rowData);
+                }
+                var distances = releventRows.Map(DistanceOfRow);
+                if (distances.All(d => d <= 0.0))
+                    return -distances.Max();
+                else
+                    return distances.Where(d => d > 0.0).Sum();
             }
-
-
-
+            
             return ConvexBoundBuilder.Create(UpperBoundFunction, value => value <= threshold)
                                      .WithDistanceNorm(2, DistanceL2)
                                      .ToConvexBound();

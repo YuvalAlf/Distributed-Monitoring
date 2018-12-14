@@ -23,14 +23,14 @@ namespace SecondMomentSketch
     {
         public static void Run(Random rnd, int width, int height, string resultDir)
         {
-            var numOfNodes       = 10;
-            var valuesRange      = 50;
+            var numOfNodes       = 7;
+            var valuesRange      = 100;
             var windowSize       = 500;
-            var stepSize         = 5;
+            var stepSize         = 50;
             var vectorLength     = width * height;
-            var iterations       = 1000;
+            var iterations       = 200;
             var globalVectorType = GlobalVectorType.Average;
-            var epsilon          = new MultiplicativeEpsilon(0.5);
+            var epsilon          = new AdditiveEpsilon(10000);
             var fileName         = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath       = Path.Combine(resultDir, fileName);
             var secondMomentFunction = new SecondMoment(width, height);
@@ -52,19 +52,19 @@ namespace SecondMomentSketch
                 {
                     var valueToAdd = trnd.Binomial(0.5, valuesRange);
                     for (int i = 0; i < vectorLength; i++)
-                        vectors[j][i] += indicator(j, i, valueToAdd);
+                        vectors[j][i] += 0.0; //indicator(j, i, valueToAdd);
                 }
 
                 return vectors;
             }
-
+            
             Vector<double>[] GetChange()
             {
                 var vecs = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
                 for (var time = 0; time < stepSize * 2; time++)
                 {
-                    for (int j = 0; j < vectors.Length; j++)
-                //    for (int j = 0; j < 1; j++)
+                //    for (int j = 0; j < vectors.Length; j++)
+                    for (int j = 0; j < 1; j++)
                     {
                         var valueToAddOrSubtruct = trnd.Binomial(0.5, valuesRange);
                         var mul = rnd.NextDouble() <= 0.75 ? 1 : -1;
