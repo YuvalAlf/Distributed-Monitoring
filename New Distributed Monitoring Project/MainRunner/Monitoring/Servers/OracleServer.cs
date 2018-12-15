@@ -6,19 +6,20 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Monitoring.Servers
 {
     public sealed class OracleServer : AbstractServer<OracleServer>
     {
-        private Vector<double>[] CurrentChanges;
+        private Vector[] CurrentChanges;
 
-        private void Init() => CurrentChanges = ArrayUtils.Init(NumOfNodes, _ => VectorUtils.CreateVector(VectorLength, __ => 0.0));
+        private void Init() => CurrentChanges = ArrayUtils.Init(NumOfNodes, _ => new Vector());
 
-        public OracleServer(Vector<double>[]             nodesVectors,     int         numOfNodes, int    vectorLength,
-                            GlobalVectorType             globalVectorType, double      upperBound, double lowerBound,
-                            Func<Vector<double>, double> function,         EpsilonType epsilonType)
+        public OracleServer(Vector[]             nodesVectors,     int         numOfNodes, int    vectorLength,
+                            GlobalVectorType     globalVectorType, double      upperBound, double lowerBound,
+                            Func<Vector, double> function,         EpsilonType epsilonType)
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function,
                    epsilonType)
         {
@@ -27,7 +28,7 @@ namespace Monitoring.Servers
 
 
 
-        protected override (OracleServer, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
+        protected override (OracleServer, Communication, bool fullSync) LocalChange(Vector[] changeMatrix, Random rnd)
         {
             CurrentChanges.ForEach(((vector, i) => vector.AddInPlace(changeMatrix[i])));
             if (FunctionValue <= UpperBound && FunctionValue >= LowerBound)
@@ -38,13 +39,13 @@ namespace Monitoring.Servers
 
             var messages  = 2 * NumOfNodes;
            // var bandwidth = CurrentChanges.Sum(c => c.CountNonZero()) + NumOfNodes * CurrentChanges.SumVector().CountNonZero();
-            var bandwidth = CurrentChanges.Sum(c => c.Count) * 2;
+            var bandwidth = CurrentChanges.Sum(c => VectorLength) * 2;
             Init();
             return (newOracleServer, new Communication(bandwidth, messages), true);
         }
 
         public static OracleServer Create(
-            Vector<double>[] initVectors,
+            Vector[] initVectors,
             int numOfNodes,
             int vectorLength,
             GlobalVectorType globalVectorType,

@@ -40,10 +40,11 @@ namespace Entropy
 
                 using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, textFilesPathes))
                 {
-                    var initVectors = stringDataParser.Histograms.Map(h => h.CountVector() / windowSize);
+                    var entropy = new EntropyFunction(vectorLength);
+                    var initVectors = stringDataParser.Histograms.Map(h => h.CountVector().Divide(windowSize));
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                          epsilon, EntropyFunction.MonitoredFunction);
-                    var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v / windowSize)).Take(amountOfIterations);
+                                                          epsilon, entropy.MonitoredFunction);
+                    var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v.Divide(windowSize))).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);

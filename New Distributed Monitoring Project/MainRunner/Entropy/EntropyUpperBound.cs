@@ -4,17 +4,18 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Utils;
 using Utils.MathUtils;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Entropy
 {
-    public static partial class EntropyFunction
+    public partial class EntropyFunction
     {
-        public static ConvexBound UpperBound(Vector<double> initVector, double threshold)
+        public ConvexBound UpperBound(Vector initVector, double threshold)
         {
-            var constantPart = initVector.Sum();
-            var parameters = initVector.Select(pi => -Math.Log(pi + 0.000000001) - 1).ToVector();
-            var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold);
+            var constantPart = initVector.IndexedValues.Values.Sum();
+            var parameters = initVector.Select(pi => -Math.Log(pi + 0.000000001) - 1);
+            var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
 
             return lineHalfPlane.ToConvexUpperBound();
         }

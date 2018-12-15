@@ -12,6 +12,8 @@ using Utils.TypeUtils;
 
 namespace DataParsing
 {
+    /*
+    [Obsolete]
     public sealed class ArnonDataParser : IDisposable
     {
         public int VectorSize { get; }
@@ -134,5 +136,5 @@ namespace DataParsing
             finishedStream = false;
             return Histograms.Map(h => h.ChangedCountVector());
         }
-    }
+    }*/
 }

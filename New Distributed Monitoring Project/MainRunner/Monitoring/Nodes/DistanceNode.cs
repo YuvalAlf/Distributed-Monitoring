@@ -5,6 +5,7 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Servers;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Monitoring.Nodes
@@ -18,7 +19,7 @@ namespace Monitoring.Nodes
         public double UsedDistance => RealDistance + SlackDistance;
         //public Vector<double> ResidualVector { get; protected set; }
 
-        public DistanceNode(Vector<double> referencePoint, ConvexBound convexBound, double slackDistance, int norm, int nodeId) : base(referencePoint, nodeId)
+        public DistanceNode(Vector referencePoint, ConvexBound convexBound, double slackDistance, int norm, int nodeId, int vectorLength) : base(referencePoint, nodeId, vectorLength)
         {
             ConvexBound = convexBound;
             SlackDistance = slackDistance;
@@ -26,8 +27,8 @@ namespace Monitoring.Nodes
             ThingsChangedUpdateState();
 
         }
-        public static Func<Vector<double>, ConvexBound, int, DistanceNode> CreateNorm(int norm) 
-            => (initialVector, convexBound, nodeId) => new DistanceNode(initialVector, convexBound, 0.0, norm, nodeId);
+        public static Func<Vector, ConvexBound, int, int, DistanceNode> CreateNorm(int norm) 
+            => (initialVector, convexBound, nodeId, vectorLength) => new DistanceNode(initialVector, convexBound, 0.0, norm, nodeId, vectorLength);
 
         protected override void ThingsChangedUpdateState()
         {
@@ -67,6 +68,6 @@ namespace Monitoring.Nodes
 
         public static Communication FullSyncAdditionalCost(DistanceNode[] nodes)
             //  => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
-            => new Communication(nodes.Sum(n => n.ChangeVector.Count) * 2, nodes.Length * 3);
+            => new Communication(nodes.Sum(n => n.VectorLength) * 2, nodes.Length * 3);
     }
 }

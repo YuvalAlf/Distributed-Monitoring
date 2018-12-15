@@ -4,47 +4,50 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using MoreLinq;
 using Utils.MathUtils;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace InnerProduct
 {
-    public static partial class InnerProductFunction
+    public sealed partial class InnerProductFunction
     {
-        public static ConvexBound UpperBound(Vector<double> initialVector, double threshold)
+        public ConvexBound UpperBound(Vector initialVector, double threshold)
         {
-            (var x0, var y0) = initialVector.Halve();
-            var constantPart = (x0 - y0) * (x0 - y0);
+            (var x0, var y0) = initialVector.Halve(HalfDimension);
+            var initialDiff = x0.Subtruct(y0);
+            var constantPart = initialDiff.InnerProduct(initialDiff);
 
-            double ConvexFunc(Vector<double> vector)
+            double ConvexFunc(Vector vector)
             {
-                (var x, var y) = vector.Halve();
-                var convexPart = (x + y) * (x + y);
-                var linearPart = 2 * (vector - initialVector) * (x0 - y0).VConcat(y0 - x0);
+                (var x, var y) = vector.Halve(HalfDimension);
+                var currentSum = x.Add(y);
+                var convexPart = currentSum.InnerProduct(currentSum);
+                var linearPart = vector.Subtruct(initialVector).InnerProduct((x0.Subtruct(y0).Concat(y0.Subtruct(x0), HalfDimension)).MulBy(2));
                 return 0.25 * (convexPart - (linearPart + constantPart));
             }
 
 
-            Either<Vector<double>, double> DistanceFunc(Vector<double> vector, int nodeId)
+            Either<Vector, double> DistanceFunc(Vector vector, int nodeId)
             {
                 if (double.IsInfinity(threshold))
-                    return Enumerable.Repeat(double.PositiveInfinity, vector.Count).ToVector();
+                    return double.PositiveInfinity;
                 var T = threshold;
-                (var p0, var q0) = vector.Halve();
-                var m = p0 + q0;
-                var n = p0 - q0;
-                var r = x0 - y0;
-                Vector<double> GetXY(double t)
+                (var p0, var q0) = vector.Halve(HalfDimension);
+                var m = p0.Add(q0);
+                var n = p0.Subtruct(q0);
+                var r = x0.Subtruct(y0);
+                Vector GetXY(double t)
                 {
-                    var sum = m / t;
-                    var diff = n - r + r * t;
-                    var x = (sum + diff) / 2.0;
-                    var y = (sum - diff) / 2.0;
-                    return x.VConcat(y);
+                    var sum = m.Divide(t);
+                    var diff = n.Subtruct(r).Add(r.MulBy(t));
+                    var x = sum.Add(diff).Divide(2.0);
+                    var y = sum.Subtruct(diff).Divide(2.0);
+                    return x.Concat(y, HalfDimension);
                 }
-                var a = -2 * r * r;
-                var b = 3 * r * r - 2 * r * n - 4 * T;
+                var a = -2 * r.InnerProduct(r);
+                var b = 3 * r.InnerProduct(r) - 2 * r.InnerProduct(n) - 4 * T;
                 var c = 0;
-                var d = m * m;
+                var d = m.InnerProduct(m);
                 var ts = FindRoots.Cubic(d, c, b, a).ToArray();
                 if (a == 0.0)
                     ts = FindRoots.Quadratic(d, c, b).ToArray();

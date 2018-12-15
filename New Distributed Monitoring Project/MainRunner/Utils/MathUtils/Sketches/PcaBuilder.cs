@@ -8,7 +8,7 @@ using Accord.Statistics.Analysis;
 
 namespace Utils.MathUtils.Sketches
 {
-    public sealed class PcaBuilder : IDisposable
+   /* public sealed class PcaBuilder : IDisposable
     {
         private LinkedList<double[]> Data { get; set; } = new LinkedList<double[]>();
 
@@ -25,5 +25,5 @@ namespace Utils.MathUtils.Sketches
         {
             Data = null;
         }
-    }
+    }*/
 }

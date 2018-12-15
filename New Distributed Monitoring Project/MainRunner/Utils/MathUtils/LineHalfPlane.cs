@@ -1,34 +1,37 @@
 ﻿using System;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Utils.MathUtils
 {
     public sealed class LineHalfPlane
     {
-        public Vector<double> Parameters   { get; }
-        public double         ConstantPart { get; }
-        public double         Threshold    { get; }
+        public int Dimension { get; }
+        public Vector Parameters   { get; }
+        public double ConstantPart { get; }
+        public double Threshold    { get; }
 
-        private LineHalfPlane(Vector<double> parameters, double constantPart, double threshold)
+        private LineHalfPlane(Vector parameters, double constantPart, double threshold, int dimension)
         {
             Parameters   = parameters;
             ConstantPart = constantPart;
             Threshold    = threshold;
+            Dimension = dimension;
         }
 
-        public static LineHalfPlane Create(Vector<double> paramters, double constantPart, double threshold)
-            => new LineHalfPlane(paramters, constantPart, threshold);
+        public static LineHalfPlane Create(Vector paramters, double constantPart, double threshold, int dimension)
+            => new LineHalfPlane(paramters, constantPart, threshold, dimension);
 
-        public double Compute(Vector<double> input) => Parameters * input + ConstantPart;
+        public double Compute(Vector input) => Parameters.InnerProduct(input) + ConstantPart;
 
-        public Either<Vector<double>, double> ClosestPointL1(Vector<double> point, int nodeId)
+        public Either<Vector, double> ClosestPointL1(Vector point, int nodeId)
         {
-            var sigma    = Parameters * point;
+            var sigma    = Parameters.InnerProduct(point);
             var minDiff  = double.MaxValue;
             int minIndex = 0;
-            for (int i = 0; i < point.Count; i++)
+            for (int i = 0; i < Dimension; i++)
             {
                 var pi = Parameters[i];
 
@@ -46,13 +49,12 @@ namespace Utils.MathUtils
             return closestPoint;
         }
 
-        public Either<Vector<double>, double> ClosestPointL2(Vector<double> point, int nodeId)
+        public Either<Vector, double> ClosestPointL2(Vector point, int nodeId)
         {
-            var sigmaParameterSquared = Parameters * Parameters;
-            var sigma                 = Parameters * point;
-            var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared)
-                                       .ToVector();
-            return point - diffVector;
+            var sigmaParameterSquared = Parameters.InnerProduct(Parameters);
+            var sigma                 = Parameters.InnerProduct(point);
+            var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared);
+            return point.Subtruct(diffVector);
         }
     }
 }

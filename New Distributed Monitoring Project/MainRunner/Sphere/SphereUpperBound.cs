@@ -5,24 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Sphere
 {
-    public static partial class SphereFunction
+    public partial class SphereFunction
     {
-        public static ConvexBound UpperBound(Vector<double> initialVector, double threshold)
+        public ConvexBound UpperBound(Vector initialVector, double threshold)
         {
             ClosestPointFromPoint closestPoint = (point, nodeId) =>
                                                  {
                                                      var currentSum = Compute(point);
                                                      if (currentSum <= 0.0000000001)
-                                                         return new[] {Math.Sqrt(threshold)}
-                                                               .Concat(Enumerable.Repeat(0.0, initialVector.Count - 1))
-                                                               .ToVector();
+                                                         return threshold;
+                                                     
                                                      var desiredSum = threshold;
                                                      var mulBy      = Math.Sqrt(threshold / currentSum);
-                                                     var result = point * mulBy;
+                                                     var result = point.MulBy(mulBy);
                                                      return result;
                                                  };
 

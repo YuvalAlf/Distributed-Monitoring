@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using ClassLibrary1;
 using Entropy;
 using InnerProduct;
 using MoreLinq.Extensions;
@@ -33,21 +33,33 @@ namespace MonitoringProject
                                   };
             var random = new Random(631);
 
-         //   SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
+            IEnumerable<int> Func()
+            {
+                yield return 1;
+                yield return 2;
+                yield return 3;
+                yield return 4;
+            }
+
+            //      GraphParsing.WriteGraph(@"C:\Users\Yuval\Desktop\youtube.graph", GraphParsing.TransformGraph(@"C:\Users\Yuval\Downloads\youtube-u-growth\out.youtube-u-growth"));
+
+            //  var youtubeGraph = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\YoutubeGraph\youtube.graph";
+            //    SpectralGapFunction.RunOnData(youtubeGraph, resultDir);
+            //   SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
 
 
-          //  InnerProductRunner.RunOneChange(random, 2500, resultDir);
+            //  InnerProductRunner.RunOneChange(random, 2500, resultDir);
 
-                var seed = random.Next();
-              //SecondMomentRunner.Run(new Random(seed), 6, 5, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 12, 11, resultDir);
-             /* SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 42, 37, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 46, 41, 200000, resultDir);
-              SecondMomentRunner.Run(new Random(seed), 52, 47, 200000, resultDir);*/
+            //       var seed = random.Next();
+            //SecondMomentRunner.Run(new Random(seed), 6, 5, resultDir);
+            //       SecondMomentRunner.Run(new Random(seed), 12, 11, resultDir);
+            /* SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 42, 37, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 46, 41, 200000, resultDir);
+             SecondMomentRunner.Run(new Random(seed), 52, 47, 200000, resultDir);*/
 
 
 

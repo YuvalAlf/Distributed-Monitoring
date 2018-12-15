@@ -9,13 +9,14 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using MoreLinq;
 using Utils.MathUtils;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace SecondMomentSketch
 {
     public partial class SecondMoment
     {
-        private ConvexBound LowerBound(Vector<double> data, double threshold)
+        private ConvexBound LowerBound(Vector data, double threshold)
         {
             Debug.Assert(Height % 2 == 1);
             var halfHeight   = 1 + Height / 2;
@@ -37,7 +38,7 @@ namespace SecondMomentSketch
             }
 
 
-            Func<int, double> CalcAverageValueOfRow(Vector<double> currentData) => row =>
+            Func<int, double> CalcAverageValueOfRow(Vector currentData) => row =>
             {
                 var sum = 0.0;
                 for (int col = 0; col < Width; col++)
@@ -45,7 +46,7 @@ namespace SecondMomentSketch
                 return sum / Width;
             };
 
-            double LowerBoundFunction(Vector<double> currentData)
+            double LowerBoundFunction(Vector currentData)
             {
               //  var realValue = this.Compute(currentData);
               //  var lowerBound   = releventRows.Select(CalcAverageValueOfRow(currentData)).Min();
@@ -55,7 +56,7 @@ namespace SecondMomentSketch
             var sumGradientSquared = new Dictionary<int, double>(halfHeight);
             releventRows.ForEach(r => sumGradientSquared.Add(r, Math.Sqrt(rowToLine[r].Values.Sum(l => l.M * l.M))));
 
-            Either<Vector<double>, double> DistanceL2(Vector<double> point, int nodeId)
+            Either<Vector, double> DistanceL2(Vector point, int nodeId)
             {
                 if (threshold <= 0.0)
                     return double.PositiveInfinity;

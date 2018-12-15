@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
+using Utils.SparseTypes;
 
 namespace Utils.TypeUtils
 {
     public static class EnumerableUtils
     {
-        public static Vector<double> ToVector(this IEnumerable<double> @this) =>
-            Vector<double>.Build.SparseOfEnumerable(@this);
+        public static Vector ToVector(this IEnumerable<double> @this)
+        {
+            var vector = new Vector();
+            var index = 0;
+            foreach (var item in @this)
+                vector[index++] = item;
+
+            return vector;
+        }
 
         public static S[] Map<T, S>(this IEnumerable<T> @this, Func<T, S> map) => @this.Select(map).ToArray();
 
