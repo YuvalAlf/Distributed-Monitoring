@@ -22,7 +22,7 @@ namespace Sphere
                                                      
                                                      var desiredSum = threshold;
                                                      var mulBy      = Math.Sqrt(threshold / currentSum);
-                                                     var result = point.MulBy(mulBy);
+                                                     var result = point * mulBy;
                                                      return result;
                                                  };
 

@@ -53,8 +53,8 @@ namespace SecondMomentSketch
                     if (rowValue <= 0.0)
                         return Math.Sqrt(threshold * Width);
                     var rowData = GetRowValues(currentData, row).ToVector();
-                    var closestData = rowData.MulBy(Math.Sqrt(threshold / rowValue));
-                    var value = closestData.InnerProduct(closestData) / Width;
+                    var closestData = rowData * Math.Sqrt(threshold / rowValue);
+                    var value = closestData * closestData / Width;
                     var t = threshold;
                     var mul = rowValue <= threshold ? -1 : 1;
                     return mul * closestData.DistL2FromVector()(rowData);

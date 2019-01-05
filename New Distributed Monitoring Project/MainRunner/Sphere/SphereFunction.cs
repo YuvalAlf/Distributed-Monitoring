@@ -21,6 +21,6 @@ namespace Sphere
             MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
         }
 
-        public double Compute(Vector vector) => vector.InnerProduct(vector);
+        public double Compute(Vector vector) => vector * vector;
     }
 }

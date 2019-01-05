@@ -26,7 +26,7 @@ namespace Entropy
             var epsilon            = new MultiplicativeEpsilon(0.012);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 16384;
-            var amountOfIterations = 2000;
+            var amountOfIterations = 1000;
             var stepSize           = 1024;
             var optionalWords      = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings    = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
@@ -41,10 +41,10 @@ namespace Entropy
                 using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, textFilesPathes))
                 {
                     var entropy = new EntropyFunction(vectorLength);
-                    var initVectors = stringDataParser.Histograms.Map(h => h.CountVector().Divide(windowSize));
+                    var initVectors = stringDataParser.Histograms.Map(h => h.CountVector() / windowSize);
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                           epsilon, entropy.MonitoredFunction);
-                    var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v.Divide(windowSize))).Take(amountOfIterations);
+                    var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v / windowSize)).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);

@@ -53,7 +53,7 @@ namespace Monitoring.Nodes
                 bandwidth += InvokedIndices.Combine(invokedIndices).Dimension * 2 * nodes.Length;
                 for (int i = 0; i < nodes.Length; i++)
                 {
-                    nodes[i].Reset(nodes[i].ReferencePoint.Add(averageChangeSketch), epsilons[i]);
+                    nodes[i].Reset(nodes[i].ReferencePoint + averageChangeSketch, epsilons[i]);
                     nodes[i].SlackDistance = 0;
                     nodes[i].ThingsChangedUpdateState();
                 }

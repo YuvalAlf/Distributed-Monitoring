@@ -21,7 +21,7 @@ namespace InnerProduct
         public double Compute(Vector vector)
         {
             var (vector1, vector2) = vector.Halve(HalfDimension);
-            return vector1.InnerProduct(vector2);
+            return vector1 * vector2;
         }
         
     }

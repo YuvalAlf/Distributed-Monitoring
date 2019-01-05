@@ -29,7 +29,7 @@ namespace Monitoring.GeometricMonitoring
                 return multiply * closestPoint.GetChoice2;
             else
             {
-                var residualVector = givenPoint.Subtruct(closestPoint.GetChoice1);
+                var residualVector = givenPoint - closestPoint.GetChoice1;
                 var distance       = residualVector.Norm(norm);
                 return multiply * distance;
             }

@@ -13,7 +13,7 @@ namespace Monitoring.Nodes
         public int VectorLength { get; }
         public Vector ReferencePoint { get; private set; }
         public Vector ChangeVector { get; private set; }
-        public Vector LocalVector => ReferencePoint.Add(ChangeVector);
+        public Vector LocalVector => ReferencePoint + ChangeVector;
 
         protected AbstractNode(Vector referencePoint, int nodeId, int vectorLength)
         {

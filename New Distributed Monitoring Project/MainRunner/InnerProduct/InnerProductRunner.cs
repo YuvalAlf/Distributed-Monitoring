@@ -25,7 +25,7 @@ namespace InnerProduct
         {
             Vector PadLeft(Vector  v) => new Vector().Concat(v, amount);
             Vector PadRight(Vector v) => v;
-            return vectors.Select((v, i) => isLeft(i) ? PadLeft(v) : PadRight(v)).ToArray();
+            return vectors.Select((v, i) => isLeft(i) ? PadRight(v) : PadLeft(v)).ToArray();
         }
 
         public static void RunBagOfWords(Random          rnd, int vectorLength, string wordsPath,

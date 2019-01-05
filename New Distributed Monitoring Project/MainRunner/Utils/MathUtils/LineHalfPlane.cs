@@ -24,11 +24,11 @@ namespace Utils.MathUtils
         public static LineHalfPlane Create(Vector paramters, double constantPart, double threshold, int dimension)
             => new LineHalfPlane(paramters, constantPart, threshold, dimension);
 
-        public double Compute(Vector input) => Parameters.InnerProduct(input) + ConstantPart;
+        public double Compute(Vector input) => Parameters * input + ConstantPart;
 
         public Either<Vector, double> ClosestPointL1(Vector point, int nodeId)
         {
-            var sigma    = Parameters.InnerProduct(point);
+            var sigma    = Parameters * point;
             var minDiff  = double.MaxValue;
             int minIndex = 0;
             for (int i = 0; i < Dimension; i++)
@@ -51,10 +51,10 @@ namespace Utils.MathUtils
 
         public Either<Vector, double> ClosestPointL2(Vector point, int nodeId)
         {
-            var sigmaParameterSquared = Parameters.InnerProduct(Parameters);
-            var sigma                 = Parameters.InnerProduct(point);
+            var sigmaParameterSquared = Parameters * Parameters;
+            var sigma                 = Parameters * point;
             var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared);
-            return point.Subtruct(diffVector);
+            return point - diffVector;
         }
     }
 }

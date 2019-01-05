@@ -48,11 +48,11 @@ namespace Utils.DataStructures
         }
 
         public Vector CountVector() 
-            => ItemsInside.CountVector().Add(ItemsInserted.CountVector());
+            => ItemsInside.CountVector() + ItemsInserted.CountVector();
 
         public Vector ChangedCountVector()
         {
-            var vec = ItemsInserted.CountVector().Subtruct(ItemsRemoved.CountVector());
+            var vec = ItemsInserted.CountVector() - ItemsRemoved.CountVector();
             return vec;
         }
     }

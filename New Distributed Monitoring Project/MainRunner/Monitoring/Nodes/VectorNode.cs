@@ -50,7 +50,7 @@ namespace Monitoring.Nodes
                 messages += 2;
                 violatedNodesIndices.Add(nextViolatedNode);
                 var averageChangeVector = Vector.AverageVector(violatedNodesIndices.Map(i => nodes[i].ChangeVector));
-                if (convexFunction.IsInBound(convexFunction.Compute(referenceVector.Add(averageChangeVector))))
+                if (convexFunction.IsInBound(convexFunction.Compute(referenceVector + averageChangeVector)))
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());

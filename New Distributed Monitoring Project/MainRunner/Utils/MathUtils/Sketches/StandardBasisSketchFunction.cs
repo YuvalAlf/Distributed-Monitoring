@@ -27,7 +27,7 @@ namespace Utils.MathUtils.Sketches
                 }
             }
 
-            var epsilon = vector.Subtruct(sketch);
+            var epsilon = vector - sketch;
             return (sketch, epsilon, new InvokedIndices(indices));
         }
     }

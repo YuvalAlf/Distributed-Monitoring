@@ -47,8 +47,8 @@ namespace Monitoring.Servers
             double mulBy = GlobalVectorType.MulBy(NumOfNodes);
             for (int nodeNum = 0; nodeNum < NumOfNodes; nodeNum++)
             {
-                this.UpperNodes[nodeNum].Change(changeMatrix[nodeNum].MulBy(mulBy));
-                this.LowerNodes[nodeNum].Change(changeMatrix[nodeNum].MulBy(mulBy));
+                this.UpperNodes[nodeNum].Change(changeMatrix[nodeNum] * mulBy);
+                this.LowerNodes[nodeNum].Change(changeMatrix[nodeNum] * mulBy);
             }
             var (newServerLowerResolved, lowerCommunication, isFullSync1) = this.Resolve(this.LowerNodes, rnd);
             var (newServerAllResolved, upperCommunication, isFullSync2) = newServerLowerResolved.Resolve(newServerLowerResolved.UpperNodes, rnd);

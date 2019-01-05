@@ -8,25 +8,61 @@ using MoreLinq;
 
 namespace Utils.SparseTypes
 {
-    public sealed class Vector
+    public sealed partial class Vector
     {
+        #region Basic Operations
+
         public Dictionary<int, double> IndexedValues { get; } = new Dictionary<int, double>();
+
+        public double this[int index]
+        {
+            get
+            {
+                if (IndexedValues.TryGetValue(index, out double value))
+                    return value;
+                return 0;
+            }
+            set
+            {
+                if (value != 0.0)
+                    IndexedValues[index] = value;
+            }
+        }
+
+        public int CountNonZero() => IndexedValues.Count;
 
         public Vector Clone()
         {
             var vector = new Vector();
             foreach (var keyValuePair in IndexedValues)
-                vector[keyValuePair.Key] = keyValuePair.Value;
+                vector.IndexedValues.Add(keyValuePair.Key, keyValuePair.Value);
             return vector;
         }
+        
+        public void CopyTo(Vector to)
+        {
+            to.IndexedValues.Clear();
+            foreach (var keyValuePair in this.IndexedValues)
+                to.IndexedValues.Add(keyValuePair.Key, keyValuePair.Value);
+        }
 
-        public int CountNonZero() => IndexedValues.Count;
+        public double[] ToArray(int dimension)
+        {
+            var array = new double[dimension];
+            foreach (var keyValuePair in this.IndexedValues)
+                array[keyValuePair.Key] = keyValuePair.Value;
+            return array;
+        }
+
+        #endregion
+
+        #region Enumerable
 
         public Vector Select(Func<double, double> mapFunction)
         {
             var newVector = new Vector();
             foreach (var keyValuePair in this.IndexedValues)
-                newVector[keyValuePair.Key] = mapFunction(keyValuePair.Value);
+                newVector.IndexedValues.Add(keyValuePair.Key, mapFunction(keyValuePair.Value));
             return newVector;
         }
 
@@ -34,57 +70,39 @@ namespace Utils.SparseTypes
         {
             var newVector = new Vector();
             foreach (var keyValuePair in this.IndexedValues)
-                newVector[keyValuePair.Key] = mapFunction(keyValuePair.Key, keyValuePair.Value);
+                newVector.IndexedValues.Add(keyValuePair.Key, mapFunction(keyValuePair.Key, keyValuePair.Value));
             return newVector;
         }
-
+        
         public (Vector, Vector) Halve(int indexToHalveAt)
         {
             var vector1 = new Vector();
             var vector2 = new Vector();
             foreach (var keyValuePair in IndexedValues)
                 if (keyValuePair.Key < indexToHalveAt)
-                    vector1[keyValuePair.Key] = keyValuePair.Value;
+                    vector1.IndexedValues.Add(keyValuePair.Key, keyValuePair.Value);
                 else
-                    vector2[keyValuePair.Key] = keyValuePair.Value;
+                    vector2.IndexedValues.Add(keyValuePair.Key - indexToHalveAt, keyValuePair.Value);
             return (vector1, vector2);
         }
-
-        public Vector MulBy(double mulBy)
+        
+        public Vector Concat(Vector other, int startingIndex)
         {
-            var newVector = new Vector();
-            foreach (var keyValuePair in this.IndexedValues)
-                newVector[keyValuePair.Key] = keyValuePair.Value * mulBy;
-
-            return newVector;
+            var vector = this.Clone();
+            foreach (var otherIndexedValue in other.IndexedValues)
+                vector.IndexedValues.Add(startingIndex + otherIndexedValue.Key, otherIndexedValue.Value);
+            return vector;
         }
 
-        public double InnerProduct(Vector other)
-        {
-            var sumValue = 0.0;
-            foreach (var index in this.IndexedValues.Keys.Intersect(other.IndexedValues.Keys))
-                sumValue += this[index] + other[index];
-            return sumValue;
-        }
+        #endregion
 
-        public Vector Add(Vector other)
-        {
-            Vector sumVector = new Vector();
-            foreach (var index in this.IndexedValues.Keys.Union(other.IndexedValues.Keys).Distinct())
-                sumVector[index] = this[index] + other[index];
-            return sumVector;
-        }
-
-        public Vector Subtruct(Vector other)
-        {
-            Vector sumVector = new Vector();
-            foreach (var index in this.IndexedValues.Keys.Union(other.IndexedValues.Keys).Distinct())
-                sumVector[index] = this[index] - other[index];
-            return sumVector;
-        }
+        #region Norm
 
         public double L1Norm() => this.IndexedValues.Values.Sum(x => Math.Abs(x));
+
         public double L2Norm() => Math.Sqrt(this.IndexedValues.Values.Sum(x => x * x));
+
+        public Func<Vector, double> DistL2FromVector() => v => this.Subtruct(v).L2Norm();
 
         public double Norm(int norm)
         {
@@ -99,43 +117,27 @@ namespace Utils.SparseTypes
             }
         }
 
+        #endregion
+
+        #region Mathematical Operations
+
+        #region Sumation
+
+        private Vector Add(Vector other)
+        {
+            Vector sumVector = this.Clone();
+            foreach (var keyValuePair in other.IndexedValues)
+                sumVector[keyValuePair.Key] += keyValuePair.Value;
+            return sumVector;
+        }
+
+        public static Vector operator+ (Vector v1, Vector v2) => v1.Add(v2);
 
         public void AddInPlace(Vector other)
         {
             foreach (var index in other.IndexedValues.Keys)
                 this[index] += other[index];
         }
-
-        public void DivideInPlace(double divideBy)
-        {
-            foreach (var index in IndexedValues.Keys)
-                IndexedValues[index] /= divideBy;
-        }
-        public Vector Divide(double divideBy)
-        {
-            var newVector = new Vector();
-            foreach (var keyValuePair in this.IndexedValues)
-                newVector[keyValuePair.Key] = keyValuePair.Value / divideBy;
-
-            return newVector;
-        }
-
-
-        public double this[int index]
-        {
-            get
-            {
-                if (IndexedValues.TryGetValue(index, out double value))
-                    return value;
-                return 0;
-            }
-            set
-            {
-                if (value != 0.0)
-                    IndexedValues[index] = value;
-            } 
-        }
-
 
         public static Vector SumVector(Vector[] vectors)
         {
@@ -151,20 +153,72 @@ namespace Utils.SparseTypes
             return sumVector;
         }
 
-        public void CopyTo(Vector to)
+        #endregion
+
+        #region Subtruction
+
+        private Vector Subtruct(Vector other)
         {
-            this.IndexedValues.Clear();
-            foreach (var keyValuePair in to.IndexedValues)
-                this[keyValuePair.Key] = keyValuePair.Value;
+            Vector sumVector = this.Clone();
+            foreach (var keyValuePair in other.IndexedValues)
+                sumVector[keyValuePair.Key] -= keyValuePair.Value;
+            return sumVector;
         }
 
-        public double[] ToArray(int dimension)
+        public static Vector operator -(Vector v1, Vector v2) => v1.Subtruct(v2);
+
+        public static Vector operator -(Vector v) => (-1) * v;
+
+
+        #endregion
+
+        #region Multiply
+
+        private Vector MulBy(double mulBy)
         {
-            var array = new double[dimension];
+            var newVector = new Vector();
             foreach (var keyValuePair in this.IndexedValues)
-                array[keyValuePair.Key] = keyValuePair.Value;
-            return array;
+                newVector.IndexedValues[keyValuePair.Key] = keyValuePair.Value * mulBy;
+            return newVector;
         }
+
+        private double InnerProduct(Vector other)
+        {
+            var sumValue = 0.0;
+            foreach (var index in this.IndexedValues.Keys.Intersect(other.IndexedValues.Keys))
+                sumValue += this.IndexedValues[index] * other.IndexedValues[index];
+            return sumValue;
+        }
+
+        public static Vector operator *(Vector v, double num) => v.MulBy(num);
+
+        public static Vector operator *(double num, Vector v) => v.MulBy(num);
+
+        public static double operator *(Vector v1, Vector v2) => v1.InnerProduct(v2);
+
+        #endregion
+
+        #region Division
+
+        public void DivideInPlace(double divideBy)
+        {
+            foreach (var index in IndexedValues.Keys.ToArray())
+                IndexedValues[index] /= divideBy;
+        }
+
+        private Vector Divide(double divideBy)
+        {
+            var newVector = new Vector();
+            foreach (var keyValuePair in this.IndexedValues)
+                newVector.IndexedValues.Add(keyValuePair.Key, keyValuePair.Value / divideBy);
+            return newVector;
+        }
+
+        public static Vector operator /(Vector v, double divBy) => v.Divide(divBy);
+
+        #endregion
+
+        #region Data Extraction
 
         public int MinimumIndex()
         {
@@ -176,15 +230,8 @@ namespace Utils.SparseTypes
             return this.IndexedValues.MaxBy(pair => pair.Value).First().Key;
         }
 
-        public Vector Concat(Vector other, int startingDimension)
-        {
-            var vector = this.Clone();
-            foreach (var otherIndexedValue in other.IndexedValues)
-                vector[startingDimension + otherIndexedValue.Key] = otherIndexedValue.Value;
+        #endregion
 
-            return vector;
-        }
-
-        public Func<Vector, double> DistL2FromVector() => v => this.Subtruct(v).L2Norm();
+        #endregion
     }
 }

@@ -32,15 +32,7 @@ namespace MonitoringProject
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt",
                                   };
             var random = new Random(631);
-
-            IEnumerable<int> Func()
-            {
-                yield return 1;
-                yield return 2;
-                yield return 3;
-                yield return 4;
-            }
-
+            
             //      GraphParsing.WriteGraph(@"C:\Users\Yuval\Desktop\youtube.graph", GraphParsing.TransformGraph(@"C:\Users\Yuval\Downloads\youtube-u-growth\out.youtube-u-growth"));
 
             //  var youtubeGraph = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\YoutubeGraph\youtube.graph";
@@ -63,7 +55,7 @@ namespace MonitoringProject
 
 
 
-            //   Func<int, bool> isLeft = i => i < 4;
+               Func<int, bool> isLeft = i => i < 4;
             //    SphereRunner.Run(random, resultDir);
 
             //  Console.WriteLine("Left:");
@@ -74,13 +66,13 @@ namespace MonitoringProject
 
 
             //InnerProductRunner.RunBagOfWords(random, 1000, wordsPath, resultDir, isLeft, textFilesPathes);
-            //  InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
+           // InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
             //  InnerProductRunner.RunBagOfWords(random, 500, wordsPath, resultDir, isLeft, textFilesPathes);
             // InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
-            // InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
+             InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
             // InnerProductRunner.RunBagOfWords(random, 7500, wordsPath, resultDir, isLeft, textFilesPathes);
             //  InnerProductRunner.RunBagOfWords(random, 10000, wordsPath, resultDir, isLeft, textFilesPathes);
-            // EntropyRunner.RunBagOfWords(random, 250, wordsPath, resultDir, textFilesPathes);
+          //   EntropyRunner.RunBagOfWords(random, 200, wordsPath, resultDir, textFilesPathes);
             //  EntropyRunner.RunBagOfWords(random, 500, wordsPath, resultDir, textFilesPathes);
             //  EntropyRunner.RunBagOfWords(random, 750, wordsPath, resultDir, textFilesPathes);
         }
