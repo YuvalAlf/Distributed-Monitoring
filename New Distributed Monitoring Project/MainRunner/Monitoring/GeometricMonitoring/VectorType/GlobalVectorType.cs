@@ -1,11 +1,10 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using Utils.SparseTypes;
 
 namespace Monitoring.GeometricMonitoring.VectorType
 {
     public abstract class GlobalVectorType
     {
-        public abstract Vector GetValue(Vector[] vectors);
+        public abstract Vector<double> GetValue(Vector<double>[] vectors);
 
         public abstract int MulBy(int numOfNodes);
 

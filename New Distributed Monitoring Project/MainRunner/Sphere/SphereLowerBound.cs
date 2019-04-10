@@ -7,14 +7,13 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Utils;
 using Utils.MathUtils;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Sphere
 {
-    public partial class SphereFunction
+    public static partial class SphereFunction
     {
-        public ConvexBound LowerBound(Vector initialVector, double threshold)
+        public static ConvexBound LowerBound(Vector<double> initialVector, double threshold)
         {
             if (threshold <= 0)
             {
@@ -28,11 +27,11 @@ namespace Sphere
             var currentNorm = Compute(initialVector);
             var newPointNorm = threshold;
             var mulBy = Math.Sqrt(newPointNorm / currentNorm);
-            var point = initialVector * mulBy;
+            var point = initialVector.Select(x => x * mulBy).ToVector();
 
             var constantPart  = -currentNorm;
-            var parameters    = initialVector * 2;
-            var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
+            var parameters    = 2 * initialVector;
+            var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold);
 
             return lineHalfPlane.ToConvexLowerBound();
         }

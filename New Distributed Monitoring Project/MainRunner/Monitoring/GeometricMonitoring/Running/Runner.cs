@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
-using Utils.SparseTypes;
 
 namespace Monitoring.GeometricMonitoring.Running
 {
@@ -13,12 +12,12 @@ namespace Monitoring.GeometricMonitoring.Running
 
         protected Runner(AccumaltedResult accumalatedResult) => AccumalatedResult = accumalatedResult;
 
-        public abstract AccumaltedResult Run(Vector[] change, Random rnd);
+        public abstract AccumaltedResult Run(Vector<double>[] change, Random rnd);
 
-        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector[]> changes, Random rnd) 
+        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd) 
             => changes.Select(change => this.Run(change, rnd));
 
-        public AccumaltedResult RunToEnd(IEnumerable<Vector[]> changes, Random rnd) 
+        public AccumaltedResult RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd) 
             => RunAll(changes, rnd).Last();
     }
 }

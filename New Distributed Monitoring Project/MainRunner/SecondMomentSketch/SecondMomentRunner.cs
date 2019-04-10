@@ -15,7 +15,6 @@ using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
 using Utils.MathUtils;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace SecondMomentSketch
@@ -44,9 +43,9 @@ namespace SecondMomentSketch
                 return value * 2 - 1;
             }
 
-            var vectors = ArrayUtils.Init(numOfNodes, _ => new Vector());
+            var vectors = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
 
-            Vector[] InitVectors()
+            Vector<double>[] InitVectors()
             {
                 for (int time = 0; time < windowSize; time++)
                 for (int j = 0; j < vectors.Length; j++)
@@ -59,9 +58,9 @@ namespace SecondMomentSketch
                 return vectors;
             }
             
-            Vector[] GetChange()
+            Vector<double>[] GetChange()
             {
-                var vecs = ArrayUtils.Init(numOfNodes, _ => new Vector());
+                var vecs = ArrayUtils.Init(numOfNodes, _ => VectorUtils.CreateVector(vectorLength, __ => 0.0));
                 for (var time = 0; time < stepSize * 2; time++)
                 {
                 //    for (int j = 0; j < vectors.Length; j++)

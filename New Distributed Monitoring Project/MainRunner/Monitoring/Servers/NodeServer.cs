@@ -7,7 +7,6 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Monitoring.Servers
@@ -23,17 +22,17 @@ namespace Monitoring.Servers
         public NodeType[] UpperNodes { get; }
         public NodeType[] LowerNodes { get; }
         public ResolveNodesFunction<NodeType> ResolveNodes { get; }
-        public Func<Vector[], NodeServer<NodeType>> ReCreate { get; }
+        public Func<Vector<double>[], NodeServer<NodeType>> ReCreate { get; }
 
-        public NodeServer(Vector[]                             nodesVectors,
+        public NodeServer(Vector<double>[]                             nodesVectors,
                           int                                          numOfNodes, int vectorLength,
                           GlobalVectorType                             globalVectorType,
                           double                                       upperBound, double lowerBound,
-                          Func<Vector, double>                 function,
+                          Func<Vector<double>, double>                 function,
                           EpsilonType                                  epsilon, NodeType[] upperNodes,
                           NodeType[]                                   lowerNodes,
                           ResolveNodesFunction<NodeType>               resolveNodes,
-                          Func<Vector[], NodeServer<NodeType>> reCreate)
+                          Func<Vector<double>[], NodeServer<NodeType>> reCreate)
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilon)
         {
             UpperNodes   = upperNodes;
@@ -42,7 +41,7 @@ namespace Monitoring.Servers
             ReCreate     = reCreate;
         }
 
-        protected override (NodeServer<NodeType>, Communication, bool fullSync) LocalChange(Vector[] changeMatrix, Random rnd)
+        protected override (NodeServer<NodeType>, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd)
         {
             double mulBy = GlobalVectorType.MulBy(NumOfNodes);
             for (int nodeNum = 0; nodeNum < NumOfNodes; nodeNum++)
@@ -71,23 +70,23 @@ namespace Monitoring.Servers
         }
 
         public static NodeServer<NodeType> Create(
-            Vector[] initVectors, 
+            Vector<double>[] initVectors, 
             int numOfNodes, 
             int vectorLength, 
             GlobalVectorType globalVectorType,
             EpsilonType epsilon, 
             MonitoredFunction monitoredFunction,
             ResolveNodesFunction<NodeType> resolveNodes, 
-            Func<Vector, ConvexBound, int, int, NodeType> createNode)
+            Func<Vector<double>, ConvexBound, int, NodeType> createNode)
         {
             initVectors = initVectors.Map(v => v.Clone());
             var globalVector = globalVectorType.GetValue(initVectors);
             var (lowerBound, upperBound) = epsilon.Calc(monitoredFunction.Function(globalVector));
             var upperConvexBound = monitoredFunction.UpperBound(globalVector, upperBound);
             var lowerConvexBound = monitoredFunction.LowerBound(globalVector, lowerBound);
-            var upperNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), upperConvexBound, i, vectorLength));
-            var lowerNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), lowerConvexBound, i, vectorLength));
-            NodeServer<NodeType> ReCreate(Vector[] newInitVectors)
+            var upperNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), upperConvexBound, i));
+            var lowerNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), lowerConvexBound, i));
+            NodeServer<NodeType> ReCreate(Vector<double>[] newInitVectors)
                 => Create(newInitVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, resolveNodes, createNode);
 
             return new NodeServer<NodeType>(initVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, monitoredFunction.Function,

@@ -84,8 +84,6 @@
     <Compile Include="MathUtils\Sketches\SketchFunction.cs" />
     <Compile Include="MathUtils\Sketches\StandardBasisSketchFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SparseTypes\Matrix.cs" />
-    <Compile Include="SparseTypes\Vector.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\DictionaryUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />
@@ -96,6 +94,7 @@
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
     <Compile Include="TypeUtils\ValueTupleUtils.cs" />
+    <Compile Include="TypeUtils\VectorUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

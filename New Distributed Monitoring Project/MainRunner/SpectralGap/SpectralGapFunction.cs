@@ -8,7 +8,7 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.VectorType;
 using Utils.TypeUtils;
 
-namespace SpectralGap
+namespace ClassLibrary1
 {
     public static partial class SpectralGapFunction
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
 
-namespace SpectralGap
+namespace ClassLibrary1
 {
     public static class EigenvaluesExtensions
     {

@@ -7,7 +7,6 @@ using Utils.TypeUtils;
 
 namespace Utils.DataStructures
 {
-   /* [Obsolete]
     public sealed class ChunckedHistogram<T>
     {
         public Vector<double> ZeroVector { get; }
@@ -64,5 +63,5 @@ namespace Utils.DataStructures
         {
             return Queue.Last.Value.CountVector(ItemsIndices) - LastRemovedItem.CountVector(ItemsIndices);
         }
-    }*/
+    }
 }

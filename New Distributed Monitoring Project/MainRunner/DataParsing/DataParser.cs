@@ -5,7 +5,6 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
 using Utils.DataStructures;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace DataParsing
@@ -56,7 +55,7 @@ namespace DataParsing
             return didntFinish;
         }
 
-        public IEnumerable<Vector[]> AllCountVectors(int stepSize)
+        public IEnumerable<Vector<double>[]> AllCountVectors(int stepSize)
         {
             while (this.Next(stepSize))
                 yield return Histograms.Map(h => h.ChangedCountVector());

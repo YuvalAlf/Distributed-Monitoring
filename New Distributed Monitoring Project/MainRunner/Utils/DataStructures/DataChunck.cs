@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
@@ -7,7 +6,6 @@ using Utils.TypeUtils;
 
 namespace Utils.DataStructures
 {
-  /*  [Obsolete]
     public sealed class DataChunck<T>
     {
         public Vector<double> ZeroVector { get; }
@@ -42,5 +40,5 @@ namespace Utils.DataStructures
             var result = XVector ? counts.Concat(ZeroVector).ToVector() : ZeroVector.Concat(counts).ToVector();
             return result;
         }
-    }*/
+    }
 }

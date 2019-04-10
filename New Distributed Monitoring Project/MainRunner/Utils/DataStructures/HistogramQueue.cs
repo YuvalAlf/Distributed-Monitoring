@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Utils.DataStructures
@@ -52,7 +50,7 @@ namespace Utils.DataStructures
 
         public void EnqueueAll(IEnumerable<T> items) => items.ForEach(this.Enqueue);
 
-        public Vector CountVector()
-            => OptionalItems.Select(i => (double)Counter[i]).ToArray().ToVector();
+        public Vector<double> CountVector()
+            => OptionalItems.Select(i => (double)Counter[i]).ToVector();
     }
 }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Utils.MathUtils
 {
-    /*
     public static class DCTFunction
     {
         public static void DCT(double[] vector)
@@ -61,6 +60,10 @@ namespace Utils.MathUtils
             else // More complicated algorithm for arbitrary sizes
                 TransformBluestein(vector, inverse);
         }
+        /* 
+         * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
+         * The vector's length must be a power of 2. Uses the Cooley-Tukey decimation-in-time radix-2 algorithm.
+         */
         public static void TransformRadix2(Complex[] vector, bool inverse)
         {
             // Length variables
@@ -109,7 +112,11 @@ namespace Utils.MathUtils
         }
 
 
-          
+        /* 
+         * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
+         * The vector can have any length. This requires the convolution function, which in turn requires the radix-2 FFT function.
+         * Uses Bluestein's chirp z-transform algorithm.
+         */
         public static void TransformBluestein(Complex[] vector, bool inverse)
         {
             // Find a power-of-2 convolution length m such that m >= n * 2 + 1
@@ -147,7 +154,9 @@ namespace Utils.MathUtils
                 vector[i] = cvector[i] * expTable[i];
         }
 
-         
+        /* 
+         * Computes the circular convolution of the given complex vectors. Each vector's length must be the same.
+         */
         public static void Convolve(Complex[] xvector, Complex[] yvector, Complex[] outvector)
         {
             int n = xvector.Length;
@@ -171,5 +180,5 @@ namespace Utils.MathUtils
                 result = (result << 1) | (val & 1);
             return result;
         }
-    }*/
+    }
 }

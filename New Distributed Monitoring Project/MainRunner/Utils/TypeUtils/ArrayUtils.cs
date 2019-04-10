@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
-using Utils.SparseTypes;
 
 namespace Utils.TypeUtils
 {
@@ -22,13 +21,7 @@ namespace Utils.TypeUtils
             return @this;
         }
 
-        public static Vector ToVector(this double[] @this)
-        {
-            var vector = new Vector();
-            for (int i = 0; i < @this.Length; i++)
-                vector[i] = @this[i];
-            return vector;
-        }
+        public static Vector<double> ToVector(this double[] @this) => Vector<double>.Build.SparseOfArray(@this);
 
         public static T[] Init<T>(int arraySize, Func<int, T> createFunc) =>
             Enumerable.Range(0, arraySize).Select(createFunc).ToArray();

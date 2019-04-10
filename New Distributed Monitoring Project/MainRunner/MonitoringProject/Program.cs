@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using ClassLibrary1;
 using Entropy;
 using InnerProduct;
 using MoreLinq.Extensions;
@@ -32,30 +32,26 @@ namespace MonitoringProject
                                       @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\Tweets\tweets.txt",
                                   };
             var random = new Random(631);
-            
-            //      GraphParsing.WriteGraph(@"C:\Users\Yuval\Desktop\youtube.graph", GraphParsing.TransformGraph(@"C:\Users\Yuval\Downloads\youtube-u-growth\out.youtube-u-growth"));
 
-            //  var youtubeGraph = @"C:\Users\Yuval\Desktop\Distributed Data Sets\Data Sets\YoutubeGraph\youtube.graph";
-            //    SpectralGapFunction.RunOnData(youtubeGraph, resultDir);
-            //   SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
+         //   SpectralGapFunction.Run(random, 150, 0.2, 5, resultDir);
 
 
-            //  InnerProductRunner.RunOneChange(random, 2500, resultDir);
+          //  InnerProductRunner.RunOneChange(random, 2500, resultDir);
 
-            //       var seed = random.Next();
-            //SecondMomentRunner.Run(new Random(seed), 6, 5, resultDir);
-            //       SecondMomentRunner.Run(new Random(seed), 12, 11, resultDir);
-            /* SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 42, 37, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 46, 41, 200000, resultDir);
-             SecondMomentRunner.Run(new Random(seed), 52, 47, 200000, resultDir);*/
+                var seed = random.Next();
+              //SecondMomentRunner.Run(new Random(seed), 6, 5, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 12, 11, resultDir);
+             /* SecondMomentRunner.Run(new Random(seed), 18, 17, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 24, 21, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 30, 27, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 36, 31, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 42, 37, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 46, 41, 200000, resultDir);
+              SecondMomentRunner.Run(new Random(seed), 52, 47, 200000, resultDir);*/
 
 
 
-               Func<int, bool> isLeft = i => i < 4;
+            //   Func<int, bool> isLeft = i => i < 4;
             //    SphereRunner.Run(random, resultDir);
 
             //  Console.WriteLine("Left:");
@@ -66,13 +62,13 @@ namespace MonitoringProject
 
 
             //InnerProductRunner.RunBagOfWords(random, 1000, wordsPath, resultDir, isLeft, textFilesPathes);
-           // InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
+            //  InnerProductRunner.RunBagOfWords(random, 250, wordsPath, resultDir, isLeft, textFilesPathes);
             //  InnerProductRunner.RunBagOfWords(random, 500, wordsPath, resultDir, isLeft, textFilesPathes);
             // InnerProductRunner.RunBagOfWords(random, 2500, wordsPath, resultDir, isLeft, textFilesPathes);
-             InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
+            // InnerProductRunner.RunBagOfWords(random, 5000, wordsPath, resultDir, isLeft, textFilesPathes);
             // InnerProductRunner.RunBagOfWords(random, 7500, wordsPath, resultDir, isLeft, textFilesPathes);
             //  InnerProductRunner.RunBagOfWords(random, 10000, wordsPath, resultDir, isLeft, textFilesPathes);
-          //   EntropyRunner.RunBagOfWords(random, 200, wordsPath, resultDir, textFilesPathes);
+            // EntropyRunner.RunBagOfWords(random, 250, wordsPath, resultDir, textFilesPathes);
             //  EntropyRunner.RunBagOfWords(random, 500, wordsPath, resultDir, textFilesPathes);
             //  EntropyRunner.RunBagOfWords(random, 750, wordsPath, resultDir, textFilesPathes);
         }

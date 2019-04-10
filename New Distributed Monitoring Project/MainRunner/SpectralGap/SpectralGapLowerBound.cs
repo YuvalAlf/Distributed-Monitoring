@@ -7,7 +7,7 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Utils.TypeUtils;
 
-namespace SpectralGap
+namespace ClassLibrary1
 {
     public static partial class SpectralGapFunction
     {

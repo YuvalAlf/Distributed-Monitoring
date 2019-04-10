@@ -6,21 +6,13 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.VectorType;
-using Utils.SparseTypes;
 
 namespace Sphere
 {
-    public partial class SphereFunction
+    public static partial class SphereFunction
     {
-        public int Dimension { get; }
-        public MonitoredFunction MonitoredFunction { get; }
+        public static double Compute(Vector<double> vector) => vector * vector;
 
-        public SphereFunction(int dimension)
-        {
-            Dimension = dimension;
-            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
-        }
-
-        public double Compute(Vector vector) => vector * vector;
+        public static MonitoredFunction MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
     }
 }

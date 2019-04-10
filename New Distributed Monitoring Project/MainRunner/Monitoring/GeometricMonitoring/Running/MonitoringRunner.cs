@@ -3,7 +3,6 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.Servers;
-using Utils.SparseTypes;
 
 namespace Monitoring.GeometricMonitoring.Running
 {
@@ -24,7 +23,7 @@ namespace Monitoring.GeometricMonitoring.Running
         public string HeaderCsv => AccumalatedResult.HeaderCsv();
 
 
-        public override AccumaltedResult Run(Vector[] change, Random rnd)
+        public override AccumaltedResult Run(Vector<double>[] change, Random rnd)
         {
             var (newServer, singleResult) = Server.Change(change, rnd);
             Server = newServer;
@@ -32,7 +31,7 @@ namespace Monitoring.GeometricMonitoring.Running
             return AccumalatedResult;
         }
 
-        public (AccumaltedResult, Vector[]) RunWithDataPca(Vector[] change, Random rnd)
+        public (AccumaltedResult, Vector<double>[]) RunWithDataPca(Vector<double>[] change, Random rnd)
         {
             var (newServer, singleResult) = Server.Change(change, rnd);
             Server = newServer;

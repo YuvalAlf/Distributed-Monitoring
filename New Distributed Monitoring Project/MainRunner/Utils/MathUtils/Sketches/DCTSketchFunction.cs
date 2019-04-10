@@ -8,7 +8,7 @@ using Utils.TypeUtils;
 
 namespace Utils.MathUtils.Sketches
 {
-   /* internal sealed class DCTSketchFunction : SketchFunction
+    internal sealed class DCTSketchFunction : SketchFunction
     {
         public DCTSketchFunction()
         { }
@@ -31,7 +31,7 @@ namespace Utils.MathUtils.Sketches
             var indices = new HashSet<int>();
             var dct = DCT(vector);
             var dctSorted = dct.Index().PartialSortBy(dimension, pair => -Math.Abs(pair.Value));
-            var sketchedDct = VectorUtils.CreateZeroVector(vector.Count);
+            var sketchedDct = VectorUtils.CreateVector(vector.Count, _ => 0.0);
             foreach (var indexValuePair in dctSorted)
             {
                 if (Math.Abs(indexValuePair.Value) >= 0.000000000001)
@@ -45,5 +45,5 @@ namespace Utils.MathUtils.Sketches
             var epsilon = vector - sketch;
             return (sketch, epsilon, new InvokedIndices(indices));
         }
-    }*/
+    }
 }

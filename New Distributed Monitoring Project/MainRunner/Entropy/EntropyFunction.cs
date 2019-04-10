@@ -3,36 +3,29 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.VectorType;
-using Utils.SparseTypes;
 
 namespace Entropy
 {
-    public partial class EntropyFunction
+    public static partial class EntropyFunction
     {
-        public int Dimension { get; }
-        public MonitoredFunction MonitoredFunction { get; }
+        public static MonitoredFunction MonitoredFunction => new MonitoredFunction(ComputeEntropy, UpperBound, LowerBound, GlobalVectorType.Average, 1);
 
-        public double MinEntropy { get; }
-        public double MaxEntropy { get; }
+        public static double MinEntropy => 0.0;
+        public static double MaxEntropy(int vecLength) => - Math.Log(1.0 / vecLength);
 
-        public EntropyFunction(int dimension)
+        public static double ComputeEntropy(Vector<double> vector)
         {
-            Dimension = dimension;
-            MonitoredFunction = new MonitoredFunction(ComputeEntropy, UpperBound, LowerBound, GlobalVectorType.Average, 1);
-            MinEntropy = 0.0;
-            MaxEntropy = -Math.Log(1.0 / Dimension);
-        }
-
-        public double ComputeEntropy(Vector vector)
-        {
+            double xLine = 1.0 / (10.0 * vector.Count);
+            double yLine = -xLine * Math.Log(xLine);
+            double m     = yLine / xLine;
             double ComputeEntropyToValue(double value)
             {
-                if (value <= 0.0)
-                    return 0.0;
-                return -value * Math.Log(value);
+                if (value > xLine)
+                    return -value * Math.Log(value);
+                return m * value;
             }
 
-            return vector.IndexedValues.Values.Select(ComputeEntropyToValue).Sum();
+            return vector.Select(ComputeEntropyToValue).Sum();
         }
     }
 }

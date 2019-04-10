@@ -7,8 +7,8 @@
     <ProjectGuid>{272C8992-D3AA-4AA5-8218-E0271C0F9284}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpectralGap</RootNamespace>
-    <AssemblyName>SpectralGap</AssemblyName>
+    <RootNamespace>ClassLibrary1</RootNamespace>
+    <AssemblyName>ClassLibrary1</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -52,9 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EigenvaluesExtensions.cs" />
-    <Compile Include="Parsing\GraphCreationState.cs" />
-    <Compile Include="Parsing\GraphParsing.cs" />
-    <Compile Include="Parsing\GraphOperation.cs" />
     <Compile Include="SpectralGapFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpectralGapLowerBound.cs" />

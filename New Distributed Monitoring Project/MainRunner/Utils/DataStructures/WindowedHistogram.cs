@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
-using Utils.SparseTypes;
 
 namespace Utils.DataStructures
 {
@@ -47,12 +45,13 @@ namespace Utils.DataStructures
             return amount.Value;
         }
 
-        public Vector CountVector() 
+        public Vector<double> CountVector() 
             => ItemsInside.CountVector() + ItemsInserted.CountVector();
 
-        public Vector ChangedCountVector()
+        public Vector<double> ChangedCountVector()
         {
             var vec = ItemsInserted.CountVector() - ItemsRemoved.CountVector();
+            Debug.Assert(vec.Sum() == 0);
             return vec;
         }
     }

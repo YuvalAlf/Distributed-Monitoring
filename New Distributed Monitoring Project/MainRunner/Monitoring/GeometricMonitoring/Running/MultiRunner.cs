@@ -11,7 +11,6 @@ using Monitoring.Servers;
 using MoreLinq;
 using Utils.MathUtils;
 using Utils.MathUtils.Sketches;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 using SketchFunction = Utils.MathUtils.Sketches.SketchFunction;
 
@@ -25,7 +24,7 @@ namespace Monitoring.GeometricMonitoring.Running
 
         public void RemoveScheme(MonitoringScheme scheme) => Runners.Remove(scheme);
 
-        public IEnumerable<AccumaltedResult> Run(Vector[] change, Random rnd, bool parallel)
+        public IEnumerable<AccumaltedResult> Run(Vector<double>[] change, Random rnd, bool parallel)
         {
             if (parallel)
                 return Runners.Values.AsParallel().Select(runner => runner.Run(change, rnd));
@@ -33,17 +32,17 @@ namespace Monitoring.GeometricMonitoring.Running
                 return Runners.Values.Select(runner => runner.Run(change, rnd));
         }
 
-        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector[]> changes, Random rnd, bool parallel) 
+        public IEnumerable<AccumaltedResult> RunAll(IEnumerable<Vector<double>[]> changes, Random rnd, bool parallel) 
             => changes.SelectMany(change => this.Run(change, rnd, parallel));
 
-        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector[]> changes, Random rnd, bool parallel)
+        public IEnumerable<AccumaltedResult> RunToEnd(IEnumerable<Vector<double>[]> changes, Random rnd, bool parallel)
             => RunAll(changes, rnd, parallel).TakeLast(Runners.Count);
 
         public string HeaderCsv => Runners.Values.First().AccumalatedResult.HeaderCsv();
 
 
         public static MultiRunner InitAll(
-            Vector[]          initVectors,
+            Vector<double>[]  initVectors,
             int               numOfNodes,
             int               vectorLength,
             GlobalVectorType  globalVectorType,

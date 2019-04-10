@@ -7,14 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
-using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace SecondMomentSketch
 {
     public partial class SecondMoment
     {
-        private ConvexBound UpperBound(Vector data, double threshold)
+        private ConvexBound UpperBound(Vector<double> data, double threshold)
         {
             var halfHeight = 1 + Height / 2;
             var rowToAverage = new Dictionary<int, double>(Height);
@@ -22,15 +21,13 @@ namespace SecondMomentSketch
                 rowToAverage[row] = RowSquarredAverage(data, row);
             var releventRows = rowToAverage.OrderBy(pair => pair.Value).Select(pair => pair.Key).Take(halfHeight).ToArray();
 
-            double UpperBoundFunction(Vector currentData)
+            double UpperBoundFunction(Vector<double> currentData)
             {
                 return releventRows.Select(row => RowSquarredAverage(currentData, row)).Max();
             }
 
 
-#pragma warning disable CS8321 // Local function is declared but never used
-            Either<Vector, double> DistanceL1(Vector currentData, int nodeId)
-#pragma warning restore CS8321 // Local function is declared but never used
+            Either<Vector<double>, double> DistanceL1(Vector<double> currentData, int nodeId)
             {
                 throw new NotImplementedException();
  /*               var rowStatistics = new Dictionary<int, (double maxValue, double average)>(releventRows.Length);
@@ -45,7 +42,7 @@ namespace SecondMomentSketch
                 return rowStatistics.Values.Select(r => Math.Abs(calcDistance(r.maxValue, r.average))).Min();*/
             }
 
-            Either<Vector, double> DistanceL2(Vector currentData, int nodeId)
+            Either<Vector<double>, double> DistanceL2(Vector<double> currentData, int nodeId)
             {
                 double DistanceOfRow(int row)
                 {
@@ -53,7 +50,7 @@ namespace SecondMomentSketch
                     if (rowValue <= 0.0)
                         return Math.Sqrt(threshold * Width);
                     var rowData = GetRowValues(currentData, row).ToVector();
-                    var closestData = rowData * Math.Sqrt(threshold / rowValue);
+                    var closestData = rowData * (Math.Sqrt(threshold / rowValue));
                     var value = closestData * closestData / Width;
                     var t = threshold;
                     var mul = rowValue <= threshold ? -1 : 1;

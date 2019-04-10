@@ -2,6 +2,7 @@
 namespace EntropyMathematics
 
 open System
+open MathNet.Numerics.LinearAlgebra
 
 module Entropy =
     open MathNet.Numerics
@@ -12,18 +13,18 @@ module Entropy =
     
     let arrayEntropy = Array.sumBy valueEntropy
     let seqEntropy seq = seq |> Seq.sumBy valueEntropy
-    let vecEntropy (vec : double array) = vec |> Seq.sumBy valueEntropy
+    let vecEntropy (vec : Vector<double>) = vec |> Seq.sumBy valueEntropy
         
             
-    let increaseEntropy (l1Distance : double, pVector : double array) =
-        let indexedPVector = pVector |> Array.indexed |> Array.sortBy snd
+    let increaseEntropy (l1Distance : double, pVector : double Vector) =
+        let indexedPVector = pVector.ToArray() |> Array.indexed |> Array.sortBy snd
         let changeAtIndex i change =
             let (index, value) = indexedPVector.[i]
             indexedPVector.[i] <- (index, value + change)
         let valueAt i =
             snd indexedPVector.[i]
             
-        let average = 1.0 / double(pVector.Length)
+        let average = 1.0 / double(pVector.Count)
         let rec increase minIndexEnd maxIndexEnd l1Distance =
             if l1Distance <= 0.0 || minIndexEnd >= maxIndexEnd then
                 ()

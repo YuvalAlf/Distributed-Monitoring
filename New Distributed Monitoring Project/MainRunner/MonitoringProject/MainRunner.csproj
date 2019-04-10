@@ -54,11 +54,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\SpectralGap.csproj">
+      <Project>{272C8992-D3AA-4AA5-8218-E0271C0F9284}</Project>
+      <Name>SpectralGap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Entropy\Entropy.csproj">
       <Project>{1EDCD084-B5DF-478E-855E-BA95AB0ED0F1}</Project>
       <Name>Entropy</Name>
