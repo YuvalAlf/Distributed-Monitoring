@@ -14,6 +14,7 @@ using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Monitoring.Servers;
 using MoreLinq;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Entropy
@@ -26,7 +27,7 @@ namespace Entropy
             var epsilon            = new MultiplicativeEpsilon(0.012);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 16384;
-            var amountOfIterations = 2000;
+            var amountOfIterations = 1000;
             var stepSize           = 1024;
             var optionalWords      = File.ReadLines(wordsPath).Take(vectorLength).ToArray();
             var optionalStrings    = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
@@ -38,15 +39,55 @@ namespace Entropy
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
 
-                using (var stringDataParser = DataParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, textFilesPathes))
+                using (var stringDataParser = TextParser<string>.Init(StreamReaderUtils.EnumarateWords, windowSize, optionalStrings, textFilesPathes))
                 {
+                    var entropy = new EntropyFunction(vectorLength);
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector() / windowSize);
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                          epsilon, EntropyFunction.MonitoredFunction);
+                                                          epsilon, entropy.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v / windowSize)).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
+                }
+            }
+
+            Process.Start(resultPath);
+        }
+
+        public static void RunDatabaseAccesses(Random rnd, int numOfNodes, double epsilonValue, int maxVectorLength, string databaseAccessesPath, string resultDir)
+        {
+            var globalVectorType = GlobalVectorType.Average;
+            var epsilon = new MultiplicativeEpsilon(epsilonValue);
+            var fileName = $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Epsilon_{epsilonValue}_Vector_{maxVectorLength}.csv";
+            var resultPath = Path.Combine(resultDir, fileName);
+            var hashUser = new Func<int, int>(userId => userId % numOfNodes);
+
+            using (var resultCsvFile = File.CreateText(resultPath))
+            {
+                resultCsvFile.AutoFlush = true;
+                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+
+                using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength))
+                {
+                    bool didEnd;
+                    var vectorLength = databaseReader.VectorLength;
+                    var entropy = new EntropyFunction(vectorLength);
+                    var initVectors = databaseReader.TakeStep(numOfNodes, hashUser, out didEnd).Map(v => v / v.Sum());
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                                                          epsilon, entropy.MonitoredFunction);
+                    var lastStep = initVectors;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (didEnd)
+                            break;
+                        var step = databaseReader.TakeStep(numOfNodes, hashUser, out didEnd).Map(v => v / v.Sum());
+                        var change = step.Zip(lastStep, (v1, v2) => v1 - v2).ToArray();
+                        lastStep = step;
+                        multiRunner.Run(change, rnd, false)
+                                   .Select(r => r.AsCsvString())
+                                   .ForEach((Action<string>)resultCsvFile.WriteLine);
+                    }
                 }
             }
 

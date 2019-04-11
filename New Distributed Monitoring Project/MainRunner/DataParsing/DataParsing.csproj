@@ -52,8 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArnonDataParser.cs" />
-    <Compile Include="DataParser.cs" />
+    <Compile Include="ArnonTextParser.cs" />
+    <Compile Include="DatabaseAccessesParser.cs" />
+    <Compile Include="TextParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

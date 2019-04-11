@@ -12,6 +12,7 @@ using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Sphere
@@ -28,9 +29,9 @@ namespace Sphere
             var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
 
-            Vector<double>[] GetChange()
+            Vector[] GetChange()
             {
-                Vector<double> GenerateChange()
+                Vector GenerateChange()
                 {
                     return ArrayUtils.Init(vectorLength, i => (rnd.NextDouble() - 0.5) / 5).ToVector();
                 }
@@ -43,10 +44,10 @@ namespace Sphere
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
-                var zeroVector = ArrayUtils.Init(vectorLength, _ => 0.0).ToVector();
-                var initVectors = ArrayUtils.Init(numOfNodes, _ => zeroVector.ToVector());
+                var sphereFunction = new SphereFunction(vectorLength);
+                var initVectors = ArrayUtils.Init(numOfNodes, _ => new Vector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
-                                                      epsilon, SphereFunction.MonitoredFunction);
+                                                      epsilon, sphereFunction.MonitoredFunction);
                 multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Oracle(), new MonitoringScheme.Vector());
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)

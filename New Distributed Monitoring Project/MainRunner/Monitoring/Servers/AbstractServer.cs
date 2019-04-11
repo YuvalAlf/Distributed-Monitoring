@@ -3,6 +3,7 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.VectorType;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Monitoring.Servers
@@ -10,20 +11,20 @@ namespace Monitoring.Servers
     public abstract class AbstractServer<InheritedType>
         where InheritedType : AbstractServer<InheritedType>
     {
-        public Vector<double> GlobalVector => GlobalVectorType.GetValue(NodesVectors);
+        public Vector GlobalVector => GlobalVectorType.GetValue(NodesVectors);
         public double FunctionValue => Function(GlobalVector);
         public double[] NodesFunctionValues => NodesVectors.Map(Function);
 
-        public Vector<double>[] NodesVectors { get; }
+        public Vector[] NodesVectors { get; }
         public int NumOfNodes { get; }
         public int VectorLength { get; }
         public GlobalVectorType GlobalVectorType { get; }
         public double UpperBound { get; }
         public double LowerBound { get; }
-        public Func<Vector<double>, double> Function { get; }
+        public Func<Vector, double> Function { get; }
         public EpsilonType Epsilon { get; }
 
-        protected AbstractServer(Vector<double>[] nodesVectors, int numOfNodes, int vectorLength, GlobalVectorType globalVectorType, double upperBound, double lowerBound, Func<Vector<double>, double> function, EpsilonType epsilon)
+        protected AbstractServer(Vector[] nodesVectors, int numOfNodes, int vectorLength, GlobalVectorType globalVectorType, double upperBound, double lowerBound, Func<Vector, double> function, EpsilonType epsilon)
         {
             NodesVectors = nodesVectors;
             NumOfNodes = numOfNodes;
@@ -35,7 +36,7 @@ namespace Monitoring.Servers
             Epsilon = epsilon;
         }
 
-        public (InheritedType, SingleResult) Change(Vector<double>[] changeMatrix, Random rnd)
+        public (InheritedType, SingleResult) Change(Vector[] changeMatrix, Random rnd)
         {
             for (int i = 0; i < NodesVectors.Length; i++)
                 NodesVectors[i].AddInPlace(changeMatrix[i]);
@@ -43,7 +44,7 @@ namespace Monitoring.Servers
             return (newServer, newServer.CreateResult(communication, fullSync));
         }
 
-        protected abstract (InheritedType, Communication, bool fullSync) LocalChange(Vector<double>[] changeMatrix, Random rnd);
+        protected abstract (InheritedType, Communication, bool fullSync) LocalChange(Vector[] changeMatrix, Random rnd);
 
         private SingleResult CreateResult(Communication communication, bool isFullSync) 
             => new SingleResult(communication.Bandwidth, communication.Messages, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);

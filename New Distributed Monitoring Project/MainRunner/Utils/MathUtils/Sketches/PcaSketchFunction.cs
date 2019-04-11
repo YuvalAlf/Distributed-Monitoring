@@ -11,7 +11,7 @@ using Utils.TypeUtils;
 
 namespace Utils.MathUtils.Sketches
 {
-    [Serializable]
+   /* [Serializable]
     public sealed class PcaSketchFunction : SketchFunction
     {
         private MultivariateLinearRegression Pca { get; }
@@ -40,5 +40,5 @@ namespace Utils.MathUtils.Sketches
             var mse = epsilon.Sum(x => x * x);
             return (sketchVector, epsilon, new InvokedIndices(indices));
         }
-    }
+    }*/
 }

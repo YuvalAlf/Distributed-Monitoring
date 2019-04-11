@@ -5,25 +5,26 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using MoreLinq;
 using Utils.DataStructures;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace DataParsing
 {
-    public sealed class DataParser<T> : IDisposable
+    public sealed class TextParser<T> : IDisposable
     {
         public Dictionary<StreamReader, IEnumerator<T>> DataEnumarators { get; }
         private Dictionary<StreamReader, WindowedHistogram<T>> HistogramsDictionary { get; }
         public IEnumerable<WindowedHistogram<T>> Histograms => HistogramsDictionary.Values;
         public SortedSet<T> OptionalValues { get; }
 
-        public DataParser(Dictionary<StreamReader, WindowedHistogram<T>> histogramsDictionary, SortedSet<T> optionalValues, Dictionary<StreamReader, IEnumerator<T>> dataEnumarators)
+        public TextParser(Dictionary<StreamReader, WindowedHistogram<T>> histogramsDictionary, SortedSet<T> optionalValues, Dictionary<StreamReader, IEnumerator<T>> dataEnumarators)
         {
             HistogramsDictionary = histogramsDictionary;
             OptionalValues = optionalValues;
             DataEnumarators = dataEnumarators;
         }
 
-        public static DataParser<T> Init(Func<StreamReader, IEnumerator<T>> dataEnumarator, int windowSize, SortedSet<T> optionalValues, params string[] pathes)
+        public static TextParser<T> Init(Func<StreamReader, IEnumerator<T>> dataEnumarator, int windowSize, SortedSet<T> optionalValues, params string[] pathes)
         {
             if (!pathes.All(File.Exists))
                 throw new ArgumentException();
@@ -38,7 +39,7 @@ namespace DataParsing
                 histograms.Add(streamReader, histogram);
                 enumarators.Add(streamReader, enumarator);
             }
-            return new DataParser<T>(histograms , optionalValues, enumarators);
+            return new TextParser<T>(histograms , optionalValues, enumarators);
         }
 
         public bool Next(int stepSize)
@@ -55,7 +56,7 @@ namespace DataParsing
             return didntFinish;
         }
 
-        public IEnumerable<Vector<double>[]> AllCountVectors(int stepSize)
+        public IEnumerable<Vector[]> AllCountVectors(int stepSize)
         {
             while (this.Next(stepSize))
                 yield return Histograms.Map(h => h.ChangedCountVector());

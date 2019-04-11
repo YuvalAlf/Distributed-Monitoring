@@ -15,12 +15,13 @@ using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
+using SpectralGap.Parsing;
 using Utils.MathUtils;
 using Utils.TypeUtils;
 
-namespace ClassLibrary1
+namespace SpectralGap
 {
-    public static partial class SpectralGapFunction
+    public static class SpectralGapRunner
     {
         private static Vector<double> GenerateMatrix(int size, double p, Random rnd)
         {
@@ -122,6 +123,26 @@ namespace ClassLibrary1
                         vectors[index][i] = 1;
                     }
             return vectors;
+        }
+
+        public static void RunOnData(string graphPath, string resultDir)
+        {
+            var globalVectorType = GlobalVectorType.Sum;
+            var epsilon          = new ThresholdEpsilon(10);
+            var numOfNodes = 2;
+            var fileName   = $"SpectralGap__YoutubeGraph__Nodes_{numOfNodes}.csv";
+            var resultPath = Path.Combine(resultDir, fileName);
+            var operations = GraphParsing.ReadGraph(graphPath);
+            var initGraph = (GraphOperation.InitGraph) operations.First();
+            var numOfVerices = initGraph.NumOfVertices;
+
+            using (var resultCsvFile = File.CreateText(resultPath))
+            {
+
+            }
+
+
+            Process.Start(resultPath);
         }
     }
 }

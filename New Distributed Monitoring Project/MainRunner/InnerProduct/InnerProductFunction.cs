@@ -2,20 +2,27 @@
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.VectorType;
+using Utils.SparseTypes;
 
 namespace InnerProduct
 {
-    public static partial class InnerProductFunction
+    public sealed partial class InnerProductFunction
     {
-        public static double Compute(Vector<double> vector)
+        public int Dimension { get; }
+        public int HalfDimension => Dimension / 2;
+        public MonitoredFunction MonitoredFunction { get; }
+
+        public InnerProductFunction(int dimension)
         {
-            Debug.Assert(vector.Count % 2 == 0);
-            var halfLength = vector.Count / 2;
-            var sum = 0.0;
-            for (int i = 0; i < halfLength; i++)
-                sum += vector[i] * vector[i + halfLength];
-            return sum;
+            Dimension = dimension;
+            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Sum, 2);
         }
-        public static MonitoredFunction MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Sum, 2);
+
+        public double Compute(Vector vector)
+        {
+            var (vector1, vector2) = vector.Halve(HalfDimension);
+            return vector1 * vector2;
+        }
+        
     }
 }
