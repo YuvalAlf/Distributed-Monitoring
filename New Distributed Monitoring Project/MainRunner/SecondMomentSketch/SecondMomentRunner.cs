@@ -22,73 +22,33 @@ namespace SecondMomentSketch
 {
     public static class SecondMomentRunner
     {
-        public static void Run(Random rnd, int width, int height, string resultDir)
+        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, double epsilonValue, string resultDir)
         {
-            var numOfNodes       = 7;
-            var valuesRange      = 100;
-            var windowSize       = 500;
-            var stepSize         = 50;
             var vectorLength     = width * height;
-            var iterations       = 200;
+            var iterations       = 1000;
             var globalVectorType = GlobalVectorType.Average;
-            var epsilon          = new AdditiveEpsilon(10000);
+            var epsilon          = new MultiplicativeEpsilon(epsilonValue);
             var fileName         = $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath       = Path.Combine(resultDir, fileName);
             var secondMomentFunction = new SecondMoment(width, height);
-            var trnd = Troschuetz.Random.TRandom.New(rnd.Next());
-
-            var md5 = MD5.Create();
-            int indicator(int vectorId, int index, int num)
-            {
-                var value = md5.ComputeHash(vectorId, index, num) % 2;
-                return value * 2 - 1;
-            }
-
-            var vectors = ArrayUtils.Init(numOfNodes, _ => new Vector());
-
-            Vector[] InitVectors()
-            {
-                for (int time = 0; time < windowSize; time++)
-                for (int j = 0; j < vectors.Length; j++)
-                {
-                    var valueToAdd = trnd.Binomial(0.5, valuesRange);
-                    for (int i = 0; i < vectorLength; i++)
-                        vectors[j][i] += 0.0; //indicator(j, i, valueToAdd);
-                }
-
-                return vectors;
-            }
             
-            Vector[] GetChange()
-            {
-                var vecs = ArrayUtils.Init(numOfNodes, _ => new Vector());
-                for (var time = 0; time < stepSize * 2; time++)
-                {
-                //    for (int j = 0; j < vectors.Length; j++)
-                    for (int j = 0; j < 1; j++)
-                    {
-                        var valueToAddOrSubtruct = trnd.Binomial(0.5, valuesRange);
-                        var mul = rnd.NextDouble() <= 0.75 ? 1 : -1;
-                        for (int i = 0; i < vectorLength; i++)
-                            vecs[j][i] += indicator(j, i, valueToAddOrSubtruct) * mul;
-                    }
-                }
-
-                return vecs;
-            }
-
-
             using (var resultCsvFile = File.CreateText(resultPath))
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
-                var multiRunner = MultiRunner.InitAll(InitVectors(), numOfNodes, vectorLength, globalVectorType,
+
+                var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (double)rnd.Next(-100, 101)).ToVector());
+
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                       epsilon, secondMomentFunction.MonitoredFunction);
-                multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Vector(), new MonitoringScheme.Distance(2));
-                var changes = Enumerable.Range(0, iterations).Select(_ => GetChange());
-                    multiRunner.RunAll(changes, rnd, false)
+
+                for (int i = 0; i < iterations; i++)
+                {
+                    var changes = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (double)rnd.Next(-1, 2)).ToVector());
+                    multiRunner.Run(changes, rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
+                }
             }
             Process.Start(resultPath);
         }

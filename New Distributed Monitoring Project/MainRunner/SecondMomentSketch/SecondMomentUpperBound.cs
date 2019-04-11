@@ -27,25 +27,28 @@ namespace SecondMomentSketch
                 return releventRows.Select(row => RowSquarredAverage(currentData, row)).Max();
             }
 
-
-#pragma warning disable CS8321 // Local function is declared but never used
-            Either<Vector, double> DistanceL1(Vector currentData, int nodeId)
-#pragma warning restore CS8321 // Local function is declared but never used
+            Either<Vector, double> DistanceL2(Vector currentData, int nodeId)
             {
-                throw new NotImplementedException();
- /*               var rowStatistics = new Dictionary<int, (double maxValue, double average)>(releventRows.Length);
-                foreach(var row in releventRows)
-                    rowStatistics[row] = (GetRowValues(currentData, row).Max(), RowSquarredAverage(currentData, row));
-
-                double calcDistance(double maxValue, double rowSquarredAverage)
+                double L2DistanceOfRow(int row)
                 {
-                    return Math.Sqrt(Width * (threshold - rowSquarredAverage) + maxValue * maxValue) - maxValue;
+                    var rowValue = RowSquarredAverage(currentData, row);
+                    if (rowValue <= 0.0)
+                        return Math.Sqrt(threshold * Width);
+                    var rowData = GetRowValues(currentData, row).ToVector();
+                    var closestData = rowData * Math.Sqrt(threshold / rowValue);
+                    var value = closestData * closestData / Width;
+                    var t = threshold;
+                    var mul = rowValue <= threshold ? -1 : 1;
+                    return mul * closestData.DistL2FromVector()(rowData);
                 }
-
-                return rowStatistics.Values.Select(r => Math.Abs(calcDistance(r.maxValue, r.average))).Min();*/
+                var distances = releventRows.Map(L2DistanceOfRow);
+                if (distances.All(d => d <= 0.0))
+                    return -distances.Max();
+                else
+                    return distances.Where(d => d > 0.0).Sum();
             }
 
-            Either<Vector, double> DistanceL2(Vector currentData, int nodeId)
+            Either<Vector, double> DistanceL_Inf(Vector currentData, int nodeId)
             {
                 double DistanceOfRow(int row)
                 {
@@ -63,11 +66,12 @@ namespace SecondMomentSketch
                 if (distances.All(d => d <= 0.0))
                     return -distances.Max();
                 else
-                    return distances.Where(d => d > 0.0).Sum();
+                    return distances.Max();
             }
             
             return ConvexBoundBuilder.Create(UpperBoundFunction, value => value <= threshold)
                                      .WithDistanceNorm(2, DistanceL2)
+                                     .WithDistanceNorm(0, DistanceL_Inf)
                                      .ToConvexBound();
         }
     }

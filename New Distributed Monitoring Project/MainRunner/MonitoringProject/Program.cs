@@ -19,12 +19,17 @@ namespace MonitoringProject
 
         static void Main(string[] args)
         {
-            var random = new Random(631);
+            var random = new Random(1631);
             int numOfNodes = 5;
             double epsilon = 0.1;
             var vectorLength = 200;
             //EntropyRunner.RunDatabaseAccesses(random, numOfNodes, epsilon, vectorLength, databaseAccessesPath, resultDir);
-            InnerProductRunner.RunRandomly(random, numOfNodes, epsilon, vectorLength, resultDir);
+           // InnerProductRunner.RunRandomly(random, numOfNodes, epsilon, vectorLength, resultDir);
+
+
+            var width = 16;
+            var height = 15;
+            SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, epsilon, resultDir);
         }
     }
 }

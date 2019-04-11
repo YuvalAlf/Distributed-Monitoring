@@ -24,16 +24,16 @@ namespace SecondMomentSketch
             for (int row = 0; row < Height; row++)
                 rowToAverage[row] = RowSquarredAverage(data, row);
             var releventRows = rowToAverage.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).Take(halfHeight).ToArray();
-            var rowToLine = new Dictionary<int, Dictionary<int, Line>>();
+            var rowToColToLine = new Dictionary<int, Dictionary<int, Line>>();
             foreach (var row in releventRows)
             {
-                rowToLine.Add(row, new Dictionary<int, Line>(Width));
+                rowToColToLine.Add(row, new Dictionary<int, Line>(Width));
                 for (int col = 0; col < Width; col++)
                 {
                     var x = GetValue(data, row, col);
                     var y = x * x;
                     var m = 2 * x;
-                    rowToLine[row].Add(col, Line.OfPointAndGradient(m,x,y));
+                    rowToColToLine[row].Add(col, Line.OfPointAndGradient(m,x,y));
                 }   
             }
 
@@ -42,19 +42,17 @@ namespace SecondMomentSketch
             {
                 var sum = 0.0;
                 for (int col = 0; col < Width; col++)
-                    sum += rowToLine[row][col].Compute(GetValue(currentData, row, col));
+                    sum += rowToColToLine[row][col].Compute(GetValue(currentData, row, col));
                 return sum / Width;
             };
 
             double LowerBoundFunction(Vector currentData)
             {
-              //  var realValue = this.Compute(currentData);
-              //  var lowerBound   = releventRows.Select(CalcAverageValueOfRow(currentData)).Min();
-
                 return releventRows.Select(CalcAverageValueOfRow(currentData)).Min();
             }
-            var sumGradientSquared = new Dictionary<int, double>(halfHeight);
-            releventRows.ForEach(r => sumGradientSquared.Add(r, Math.Sqrt(rowToLine[r].Values.Sum(l => l.M * l.M))));
+            var formulaDenominators = new Dictionary<int, double>(halfHeight);
+            releventRows.ForEach(r => formulaDenominators.Add(r, Math.Sqrt(rowToColToLine[r].Values.Sum(l => l.M * l.M))));
+           // releventRows.ForEach(r => formulaDenominators.Add(r, rowToColToLine[r].Values.Sum(l => l.M * l.M)));
 
             Either<Vector, double> DistanceL2(Vector point, int nodeId)
             {
@@ -64,10 +62,10 @@ namespace SecondMomentSketch
                 double DistanceOfRow(int row)
                 {
                     var residual = threshold - CalcAverageValueOfRow(point)(row);
-                    var sqrt = sumGradientSquared[row];
-                    if (sqrt <= 0.0)
+                    var denominator = formulaDenominators[row];
+                    if (denominator <= 0.0)
                         return double.PositiveInfinity;
-                    return residual / sqrt;
+                    return residual / denominator;
                 }
                 var distances = releventRows.Map(DistanceOfRow);
                 if (distances.All(d => d <= 0.0))
@@ -75,10 +73,29 @@ namespace SecondMomentSketch
                 else
                     return distances.Where(d => d > 0.0).Sum();
             }
+            Either<Vector, double> DistanceL_Inf(Vector point, int nodeId)
+            {
+                if (threshold <= 0.0)
+                    return double.PositiveInfinity;
 
+                double DistanceOfRow(int row)
+                {
+                    var residual = threshold - CalcAverageValueOfRow(point)(row);
+                    var denominator = formulaDenominators[row];
+                    if (denominator <= 0.0)
+                        return double.PositiveInfinity;
+                    return residual / denominator;
+                }
+                var distances = releventRows.Map(DistanceOfRow);
+                if (distances.All(d => d <= 0.0))
+                    return -distances.Max();
+                else
+                    return distances.Max();
+            }
 
             return ConvexBoundBuilder.Create(LowerBoundFunction, value => value >= threshold)
                                      .WithDistanceNorm(2, DistanceL2)
+                                     .WithDistanceNorm(0, DistanceL_Inf)
                                      .ToConvexBound();
         }
     }

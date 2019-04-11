@@ -35,7 +35,7 @@ namespace InnerProduct
             var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(epsilonValue);
             var windowSize         = vectorLength * 2;
-            var amountOfIterations = 100;
+            var amountOfIterations = 1000;
             var stepSize           = windowSize / 5;
             var fileName =
                 $"RandomInnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";

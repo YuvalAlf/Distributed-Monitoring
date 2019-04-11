@@ -21,7 +21,7 @@ namespace SecondMomentSketch
         {
             Width = width;
             Height = height;
-            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2);
+            MonitoredFunction = new MonitoredFunction(Compute, UpperBound, LowerBound, GlobalVectorType.Average, 2, 0);
         }
 
         private IEnumerable<double> GetRowValues(Vector data, int row)
