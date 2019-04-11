@@ -32,6 +32,7 @@ namespace Monitoring.Nodes
         public static Either<(NodeServer<VectorNode>, Communication), Communication> ResolveNodes
             (NodeServer<VectorNode> server, VectorNode[] nodes, Random rnd)
         {
+
             var convexFunction = nodes[0].ConvexBound;
             var violatedNodesIndices = nodes.IndicesWhere(n => !convexFunction.IsInBound(n.ConvexValue));
             if (violatedNodesIndices.Count == 0)
@@ -54,6 +55,7 @@ namespace Monitoring.Nodes
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
+
                     messages  += violatedNodesIndices.Count;
                     //bandwidth += violatedNodesIndices.Count * averageChangeVector.CountNonZero();
                     bandwidth += violatedNodesIndices.Count * nodes[0].VectorLength;

@@ -24,7 +24,9 @@ namespace Utils.SparseTypes
             }
             set
             {
-                if (value != 0.0)
+                if (value == 0.0)
+                    IndexedValues.Remove(index);
+                else
                     IndexedValues[index] = value;
             }
         }
