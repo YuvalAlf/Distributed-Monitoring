@@ -53,7 +53,7 @@ namespace Utils.MathUtils
         {
             var sigmaParameterSquared = Parameters * Parameters;
             var sigma                 = Parameters * point;
-            var diffVector = Parameters.Select(p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared);
+            var diffVector = Parameters.Map(Dimension, p => p * (ConstantPart + sigma - Threshold) / sigmaParameterSquared);
             return point - diffVector;
         }
     }

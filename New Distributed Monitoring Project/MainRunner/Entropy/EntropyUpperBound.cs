@@ -14,7 +14,7 @@ namespace Entropy
         public ConvexBound UpperBound(Vector initVector, double threshold)
         {
             var constantPart = initVector.IndexedValues.Values.Sum();
-            var parameters = initVector.Select(pi => -Math.Log(pi + 0.000000001) - 1);
+            var parameters = initVector.Map(Dimension, pi => -Math.Log(pi + 0.000000001) - 1);
             var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
             
             return lineHalfPlane.ToConvexUpperBound();

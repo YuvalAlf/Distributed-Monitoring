@@ -60,19 +60,15 @@ namespace Utils.SparseTypes
 
         #region Enumerable
 
-        public Vector Select(Func<double, double> mapFunction)
+        public Vector Map(int dimension, Func<double, double> mapFunction)
         {
             var newVector = new Vector();
-            foreach (var keyValuePair in this.IndexedValues)
-                newVector.IndexedValues.Add(keyValuePair.Key, mapFunction(keyValuePair.Value));
-            return newVector;
-        }
-
-        public Vector Select(Func<int, double, double> mapFunction)
-        {
-            var newVector = new Vector();
-            foreach (var keyValuePair in this.IndexedValues)
-                newVector.IndexedValues.Add(keyValuePair.Key, mapFunction(keyValuePair.Key, keyValuePair.Value));
+            var mapZero = mapFunction(0.0);
+            for (int i = 0; i < dimension; i++)
+            {
+                var mappedValueToAdd = this.IndexedValues.ContainsKey(i) ? mapFunction(this[i]) : mapZero;
+                newVector.IndexedValues.Add(i, mappedValueToAdd);
+            }
             return newVector;
         }
         
