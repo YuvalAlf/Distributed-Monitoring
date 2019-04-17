@@ -43,12 +43,10 @@ module Entropy =
                         ()
                     else
                         let minDiff = secondMinVal - minVal
-                        if minDiff < eps then
-                            ignore (5)
                         let maxDiff = maxVal - secondMaxVal
                         let amountOfMin = double(1 + minIndexEnd)
                         let amountOfMax = double(indexedPVector.Length - maxIndexEnd)
-                        let sumOfChanges = (min amountOfMin amountOfMax) * (min minDiff maxDiff)
+                        let sumOfChanges = min (amountOfMin * minDiff) (amountOfMax * maxDiff)
                         let l1Change = min l1Distance sumOfChanges
                         for i = 0 to minIndexEnd do
                             changeAtIndex i (0.5 * l1Change / amountOfMin)

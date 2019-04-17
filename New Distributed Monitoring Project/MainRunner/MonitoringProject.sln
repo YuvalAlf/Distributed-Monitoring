@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sphere", "Sphere\Sphere.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecondMomentSketch", "SecondMomentSketch\SecondMomentSketch.csproj", "{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF28D87C-1AFE-4631-B24A-AB5B6FED3B0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

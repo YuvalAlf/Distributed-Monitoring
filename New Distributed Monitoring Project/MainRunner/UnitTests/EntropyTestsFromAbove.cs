@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Runtime.Remoting.Services;
 using Entropy;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace UnitTests
 {
+    /*
     [TestClass]
     public class EntropyTestsFromAbove
     {
-        private static Vector<double> CreateVec(params double[] values) => values.ToVector();
+        private static Vector CreateVec(params double[] values) => values.ToVector();
 
         public void TestDistanceFromInside(Vector<double> vector, double expectedEntropy, double threshold)
         {
@@ -49,5 +49,5 @@ namespace UnitTests
             var threshold = 1.802585093;
             TestDistanceFromInside(vec, entropy, threshold);
         }
-    }
+    }*/
 }

@@ -62,6 +62,7 @@ namespace Entropy
             var fileName = $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Epsilon_{epsilonValue}_Vector_{maxVectorLength}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
             var hashUser = new Func<int, int>(userId => userId % numOfNodes);
+            var maxIterations = 100000;
 
             using (var resultCsvFile = File.CreateText(resultPath))
             {
@@ -77,14 +78,14 @@ namespace Entropy
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                           epsilon, entropy.MonitoredFunction);
                     var lastStep = initVectors;
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < maxIterations; i++)
                     {
                         if (didEnd)
                             break;
                         var step = databaseReader.TakeStep(numOfNodes, hashUser, out didEnd).Map(v => v / v.Sum());
                         var change = step.Zip(lastStep, (v1, v2) => v1 - v2).ToArray();
                         lastStep = step;
-                        multiRunner.Run(change, rnd, false)
+                        multiRunner.Run(change, rnd, true)
                                    .Select(r => r.AsCsvString())
                                    .ForEach((Action<string>)resultCsvFile.WriteLine);
                     }

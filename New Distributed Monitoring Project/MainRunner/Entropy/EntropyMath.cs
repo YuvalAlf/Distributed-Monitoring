@@ -22,7 +22,7 @@ namespace Entropy
             Func<Vector, double> entropyFunction = LowerBoundEntropy;
             Predicate<double> l1DistanceOk = l1 => entropyFunction(DecreaseEntropy(l1, point.Clone())) >= desiredEntropy;
             var minL1Distance = 0.0;
-            var maxL1Distance = point.L1Norm() + 1.0 - 2 * point.IndexedValues.Values.MaximumAbsolute();
+            var maxL1Distance = 2.0;
             var distanceL1 = BinarySearch.FindWhere(minL1Distance, maxL1Distance, l1DistanceOk, Approximation);
             return DecreaseEntropy(distanceL1, point.Clone());
         }
@@ -51,7 +51,7 @@ namespace Entropy
             Func<Vector, double> entropyFunction = LowerBoundEntropy;
             Predicate<Vector> pointOk = vec => entropyFunction(vec) <= desiredEntropy;
             var minL1Distance = 0.0;
-            var maxL1Distance = point.IndexedValues.Values.Select(v => v - 1.0 / Dimension).Sum(v => Math.Abs(v));
+            var maxL1Distance = (point - maxEntropyVector).L1Norm();
             Action<Vector, double> move = (vec, l1Distance) =>
                                           {
                                               var vecArray = vec.ToArray(Dimension);
@@ -61,11 +61,9 @@ namespace Entropy
                                           };
             Func<Vector, Vector> deepCopy = vec => vec.Clone();
             Action<Vector, Vector> copyInPlace = (from, to) => from.CopyTo(to);
-          //  var distanceL1 = BinarySearch.FindWhere(minL1Distance, maxL1Distance, l1DistanceOk, Approximation);
             var result = point.Clone();
             BinarySearch.GoUpIncreasing(minL1Distance, maxL1Distance, pointOk, Approximation, move, result, result.Clone(), deepCopy, copyInPlace);
             return result;
-            //return EntropyMathematics.Entropy.increaseEntropy(distanceL1, point.Clone());
         }
     }
 }
