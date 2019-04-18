@@ -44,26 +44,10 @@ namespace Entropy
         // Increase entropy to reach threshold
         public Vector ClosestL1PointFromBelow(double desiredEntropy, Vector point)
         {
-            var maxEntropyVector = Enumerable.Repeat(1.0 / Dimension, Dimension).ToVector();
             if (desiredEntropy >= MaxEntropy)
-                return maxEntropyVector;
-
-            Func<Vector, double> entropyFunction = LowerBoundEntropy;
-            Predicate<Vector> pointOk = vec => entropyFunction(vec) <= desiredEntropy;
-            var minL1Distance = 0.0;
-            var maxL1Distance = (point - maxEntropyVector).L1Norm();
-            Action<Vector, double> move = (vec, l1Distance) =>
-                                          {
-                                              var vecArray = vec.ToArray(Dimension);
-                                              EntropyMathematics.Entropy.increaseEntropy(l1Distance, vecArray);
-                                              for (int i = 0; i < vecArray.Length; i++)
-                                                  vec[i] = vecArray[i];
-                                          };
-            Func<Vector, Vector> deepCopy = vec => vec.Clone();
-            Action<Vector, Vector> copyInPlace = (from, to) => from.CopyTo(to);
-            var result = point.Clone();
-            BinarySearch.GoUpIncreasing(minL1Distance, maxL1Distance, pointOk, Approximation, move, result, result.Clone(), deepCopy, copyInPlace);
-            return result;
+                return Enumerable.Repeat(1.0 / Dimension, Dimension).ToVector();
+            
+            return EntropyMathematics.Entropy.l1IncreaseEntropyTo(point, Dimension, desiredEntropy, LowerBoundComputeEntropyToValue, Approximation);
         }
     }
 }

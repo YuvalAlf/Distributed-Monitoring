@@ -25,7 +25,7 @@ namespace UnitTests
             var closestPointEntropy = entropyFunction.ComputeEntropy(closestPoint);
             Assert.AreEqual(threshold, closestPointEntropy, 2 * EntropyFunction.Approximation);
             var distance = (closestPoint - vector).L1Norm();
-            Assert.AreEqual(expectedDistance, distance, EntropyFunction.Approximation);
+            Assert.AreEqual(expectedDistance, distance, 5 * EntropyFunction.Approximation);
         }
 
         [TestMethod]

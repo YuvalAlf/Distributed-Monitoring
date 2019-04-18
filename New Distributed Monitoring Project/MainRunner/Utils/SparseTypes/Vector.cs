@@ -92,6 +92,12 @@ namespace Utils.SparseTypes
             return vector;
         }
 
+        public IEnumerable<double> Enumerate(int dimension)
+        {
+            for (int i = 0; i < dimension; i++)
+                yield return this[i];
+        }
+
         #endregion
 
         #region Norm

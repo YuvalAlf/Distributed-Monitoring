@@ -26,19 +26,21 @@ namespace Entropy
         }
 
 
+        private Lazy<double> XLine => new Lazy<double>(() => 1.0 / (10.0 * Dimension));
+        private Lazy<double> YLine => new Lazy<double>(() => -XLine.Value * Math.Log(XLine.Value));
+        private Lazy<double> M => new Lazy<double>(() => YLine.Value / XLine.Value);
+
+        double LowerBoundComputeEntropyToValue(double value)
+        {
+            if (value > XLine.Value)
+                return -value * Math.Log(value);
+            return M.Value * value;
+        }
+
+
         public double LowerBoundEntropy(Vector vector)
         {
-            double xLine = 1.0    / (10.0 * Dimension);
-            double yLine = -xLine * Math.Log(xLine);
-            double m     = yLine  / xLine;
-            double ComputeEntropyToValue(double value)
-            {
-                if (value > xLine)
-                    return -value * Math.Log(value);
-                return m * value;
-            }
-
-            return vector.IndexedValues.Values.Select(ComputeEntropyToValue).Sum();
+            return vector.IndexedValues.Values.Select(LowerBoundComputeEntropyToValue).Sum();
         }
     }
 }
