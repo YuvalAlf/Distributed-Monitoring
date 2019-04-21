@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataParsing;
+using MathNet.Numerics;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.MonitoringType;
@@ -72,9 +73,9 @@ namespace Entropy
                 using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength))
                 {
                     bool didEnd;
-                    var vectorLength = databaseReader.VectorLength;
+                    var vectorLength = databaseReader.VectorLength + 1;
                     var entropy = new EntropyFunction(vectorLength);
-                    var initVectors = databaseReader.TakeStep(numOfNodes, hashUser, out didEnd).Map(v => v / v.Sum());
+                    var initVectors = databaseReader.TakeStep(numOfNodes, hashUser, vectorLength - 1, out didEnd).Map(v => v / v.Sum());
                     var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
                                                           epsilon, entropy.MonitoredFunction);
                     var lastStep = initVectors;
@@ -82,7 +83,7 @@ namespace Entropy
                     {
                         if (didEnd)
                             break;
-                        var step = databaseReader.TakeStep(numOfNodes, hashUser, out didEnd).Map(v => v / v.Sum());
+                        var step = databaseReader.TakeStep(numOfNodes, hashUser, vectorLength - 1, out didEnd).Map(v => v / v.Sum());
                         var change = step.Zip(lastStep, (v1, v2) => v1 - v2).ToArray();
                         lastStep = step;
                         multiRunner.Run(change, rnd, false)

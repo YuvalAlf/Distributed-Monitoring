@@ -53,10 +53,15 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="FastCountSet.fs" />
+    <Compile Include="RangeQueryArray.fs" />
     <Compile Include="Deque.fs" />
     <Compile Include="DataDeque.fs" />
     <Compile Include="DataVector.fs" />
+    <Compile Include="BinarySearch.fs" />
     <Compile Include="Entropy.fs" />
+    <Compile Include="IncreaseEntropy.fs" />
+    <Compile Include="DecreaseEntropy.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

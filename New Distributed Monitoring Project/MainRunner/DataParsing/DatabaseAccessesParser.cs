@@ -74,11 +74,11 @@ namespace DataParsing
             Accesses?.Dispose();
         }
 
-        public Vector[] TakeStep(int numOfNodes, Func<int, int> hashUser, out bool didEnd)
+        public Vector[] TakeStep(int numOfNodes, Func<int, int> hashUser, int didntChangeIndex, out bool didEnd)
         {
             didEnd = false;
-            Vector[] changes = ArrayUtils.Init(numOfNodes, _ => new Vector());
-
+            Vector[] newVectors = ArrayUtils.Init(numOfNodes, _ => new Vector());
+            bool[] didChange = new bool[numOfNodes];
             while (true)
             {
                 if (!Accesses.MoveNext())
@@ -86,17 +86,20 @@ namespace DataParsing
                     didEnd = true;
                     break;
                 }
-                    
-                    
 
                 var (currentAccess, nextAccess) = Accesses.Current;
-                changes[hashUser(currentAccess.UserId)][currentAccess.TableId] += 1;
+                var node = hashUser(currentAccess.UserId);
+                didChange[node] = true;
+                newVectors[node][currentAccess.TableId] += 1;
 
                 if (currentAccess.Timestamp != nextAccess.Timestamp)
                     break;
             }
-            
-            return changes;
+            for (int node = 0; node < numOfNodes; node++)
+                if (didChange[node] == false)
+                    newVectors[node][didntChangeIndex] = 1.0;
+
+            return newVectors;
         }
     }
 }

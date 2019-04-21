@@ -21,7 +21,8 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
             //int numOfNodes = 5;
-            double epsilon = 0.15;
+           // double epsilon = 0.15;
+            double epsilon = 0.05;
             var vectorLength = 100000;
             foreach (var numOfNodes in new[] {2})
             {
