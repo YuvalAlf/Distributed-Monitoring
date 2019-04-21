@@ -51,8 +51,8 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntropyTestsFromAbove.cs" />
-    <Compile Include="EntropyTestsFromBelow.cs" />
+    <Compile Include="EntropyTestsLowerBoundDistanceFromAbove.cs" />
+    <Compile Include="EntropyTestsLowerBoundDistanceFromBelow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

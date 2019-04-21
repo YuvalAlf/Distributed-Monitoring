@@ -10,9 +10,8 @@ type DataDeque(dataPoints : (double * FastCountSet<index>) Deque) =
     member deque.MaxValuePair   = dataPoints |> Deque.last |> getOccurencess
     member deque.SecondMinValue = dataPoints |> Deque.tail |> Deque.head |> fst
     member deque.SecondMaxValue = dataPoints |> Deque.init |> Deque.last |> fst
-    member deque.IsSingle = dataPoints |> Deque.isSingle
-    
-    member deque.FunctionValue = dataPoints.FunctionValue
+    member deque.IsSingle       = dataPoints |> Deque.isSingle
+    member deque.FunctionValue =  dataPoints.FunctionValue
 
     member deque.CombineMin () =
         let (minValue, minIndices)             = dataPoints.Head
@@ -60,8 +59,12 @@ type DataDeque(dataPoints : (double * FastCountSet<index>) Deque) =
         |> Seq.toArray
         |> Array.sortBy fst
         |> RangeQuery.create func
-        |> Deque.createOfArray
+        |> Deque.createOfRangeQueryArray
         |> DataDeque
+
+    static member AssertRunTime = function
+        | true  -> ()
+        | false -> failwith "Assertun Failed!"
 
     member deque.IncreaseEntropy (averageEntropy : double, l1Distance : double) : DataDeque =
         if deque.IsSingle then
@@ -69,25 +72,30 @@ type DataDeque(dataPoints : (double * FastCountSet<index>) Deque) =
         else
             let (minValue, minAmount) = deque.MinValuePair
             let (maxValue, maxAmount) = deque.MaxValuePair
+            DataDeque.AssertRunTime (maxValue >= averageEntropy)
+            DataDeque.AssertRunTime (minValue <= averageEntropy)
             let secondMinValue = min averageEntropy (deque.SecondMinValue)
             let secondMaxValue = max averageEntropy (deque.SecondMaxValue)
             let minDiff = secondMinValue - minValue
             let maxDiff = maxValue - secondMaxValue
+            DataDeque.AssertRunTime (maxDiff >= 0.0)
+            DataDeque.AssertRunTime (minDiff >= 0.0)
             let minL1Distance = minDiff * minAmount
             let maxL1Distance = maxDiff * maxAmount
             let applicableL1Distance = min minL1Distance maxL1Distance
             let twiceApplicableL1Distance = 2.0 * applicableL1Distance
             if l1Distance < twiceApplicableL1Distance then
-                let minChange = l1Distance * maxAmount / (minAmount + maxAmount)
-                let maxChange = l1Distance * minAmount / (minAmount + maxAmount)
+                let minChange = l1Distance / (2.0 * minAmount)
+                let maxChange = l1Distance / (2.0 * maxAmount)
                 deque.ChangeMinValue(minValue + minChange).ChangeMaxValue(maxValue - maxChange)
             elif minL1Distance < maxL1Distance then
                 let maxChange = minL1Distance / maxAmount
-                let minOperation = if secondMinValue = averageEntropy then deque.ChangeMinValue averageEntropy else deque.CombineMin()
-                minOperation.ChangeMaxValue(maxValue - maxChange).IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)
+                deque.CombineMin().ChangeMaxValue(maxValue - maxChange).IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)
             elif minL1Distance > maxL1Distance then
                 let minChange = maxL1Distance / minAmount
-                let maxOperation = if secondMaxValue = averageEntropy then deque.ChangeMaxValue averageEntropy else deque.CombineMax()
-                maxOperation.ChangeMinValue(minValue + minChange).IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)
-            else
+                deque.CombineMax().ChangeMinValue(minValue + minChange).IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)
+            elif secondMinValue = averageEntropy || secondMaxValue = averageEntropy then
+                DataDeque.AssertRunTime (deque.SecondMinValue = maxValue)
+                deque.ChangeMinValue(averageEntropy).CombineMax()
+            else // Should almost never happen....
                 deque.CombineMin().CombineMax().IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)

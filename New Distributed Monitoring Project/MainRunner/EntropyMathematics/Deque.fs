@@ -2,9 +2,9 @@
 
 type Deque<'T> =
     | OneValue of value : 'T * func : ('T -> double)
-    | Values of min : 'T * minIndex : int * data : 'T RangeQueryArray * maxIndex : int * max : 'T
+    | Values of min : 'T * minIndex : int * data : 'T RangeQueryArray * maxIndex : int * max : 'T // Inclusive
 
-    static member CreateOfArray (data : 'T RangeQueryArray) =
+    static member CreateOfRangeQueryArray (data : 'T RangeQueryArray) =
         match data.Length with
         | 0 -> failwith "Error"
         | 1 -> OneValue (data.[0], data.Func)
@@ -13,7 +13,8 @@ type Deque<'T> =
         match deque with
         | OneValue (value, func) -> func value
         | Values (min, minIndex, data, maxIndex, max) ->
-            data.Func min + data.Func max + data.ValueOfRange(minIndex, maxIndex)
+            (data.Func min) + (data.Func max) + data.ValueOfRange(minIndex, maxIndex)
+
     member deque.Head =
         match deque with
         | OneValue (value, _) -> value
@@ -46,7 +47,7 @@ type Deque<'T> =
         | Values    (_,_,_,_,_) -> false
 
     member deque.ToSeq () =
-        seq{
+        seq {
             match deque with
             | OneValue (value, _) -> yield value
             | Values (min, minIndex, data, maxIndex, max) ->
@@ -69,7 +70,6 @@ type Deque<'T> =
 
 [<AutoOpen>]
 module Deque =
-
     let inline head (q : 'a Deque) = q.Head
     let inline last (q : 'a Deque) = q.Last
     let inline tail (q : 'a Deque) = q.Tail
@@ -78,4 +78,4 @@ module Deque =
     let inline toSeq (q : 'a Deque) = q.ToSeq()
     let inline replaceMin newMin (q : 'a Deque) = q.ReplaceMin newMin
     let inline replaceMax newMax (q : 'a Deque) = q.ReplaceMax newMax
-    let inline createOfArray (arr : 'a RangeQueryArray) = Deque.CreateOfArray arr
+    let inline createOfRangeQueryArray (arr : 'a RangeQueryArray) = Deque.CreateOfRangeQueryArray arr

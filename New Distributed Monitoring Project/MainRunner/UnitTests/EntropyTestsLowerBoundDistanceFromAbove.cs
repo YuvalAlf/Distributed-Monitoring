@@ -9,7 +9,7 @@ namespace UnitTests
 {
     
     [TestClass]
-    public class EntropyTestsFromAbove
+    public class EntropyTestsLowerBoundDistanceFromAbove
     {
         private static Vector CreateVec(params double[] values) => values.ToVector();
 

@@ -11,7 +11,7 @@ using Utils.TypeUtils;
 namespace UnitTests
 {
     [TestClass]
-    public class EntropyTestsFromBelow
+    public class EntropyTestsLowerBoundDistanceFromBelow
     {
         private static Vector CreateVec(params double[] values) => values.ToVector();
 

@@ -69,6 +69,7 @@ namespace Entropy
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
+                Process.Start(@"C:\Program Files\Sublime Text 3\sublime_text.exe", resultPath);
 
                 using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength))
                 {

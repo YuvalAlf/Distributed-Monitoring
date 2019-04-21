@@ -1,8 +1,7 @@
 ﻿namespace EntropyMathematics
 
 type RangeQueryArray<'a>(array : 'a array, func : 'a -> double) =
-    let length = array.Length
-    let values =
+    let queryValues =
             array
             |> Array.scan (fun acc value -> func(value) + acc) 0.0
             |> Array.skip 1
@@ -11,16 +10,16 @@ type RangeQueryArray<'a>(array : 'a array, func : 'a -> double) =
 
     member this.Func = func
 
-    member this.Length = length
+    member this.Length = array.Length
 
-    member this.ValueOfRange (startIndex : int, endIndex : int) =
+    member this.ValueOfRange (startIndex : int, endIndex : int) = // Inclusive
         if startIndex <= 0 then
-            values.[endIndex]
+            queryValues.[endIndex]
         else
-            values.[endIndex] - values.[startIndex - 1]
+            queryValues.[endIndex] - queryValues.[startIndex - 1]
 
-    static member Create func array = RangeQueryArray(array, func)
+    static member Create (func, array) = RangeQueryArray(array, func)
 
     module RangeQuery =
         let create<'a> (func : 'a -> double) (array : 'a array) = 
-            RangeQueryArray<'a>.Create (func) (array)
+            RangeQueryArray<'a>.Create (func, array)

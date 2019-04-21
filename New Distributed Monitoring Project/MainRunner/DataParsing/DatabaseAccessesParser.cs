@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics;
 using MoreLinq;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
@@ -99,6 +101,7 @@ namespace DataParsing
                 if (didChange[node] == false)
                     newVectors[node][didntChangeIndex] = 1.0;
 
+            Debug.Assert(newVectors.All(v => v.IndexedValues.Count > 0));
             return newVectors;
         }
     }
