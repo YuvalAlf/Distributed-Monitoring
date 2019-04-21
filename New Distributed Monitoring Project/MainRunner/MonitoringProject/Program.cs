@@ -24,7 +24,7 @@ namespace MonitoringProject
             double epsilon = 0.2;
            // double epsilon = 0.05;
             var vectorLength = 100000;
-            foreach (var numOfNodes in new[] {2})
+            foreach (var numOfNodes in new[] {2, 4,8,16})
             {
                 Console.WriteLine(numOfNodes);
                 EntropyRunner.RunDatabaseAccesses(random, numOfNodes, epsilon, vectorLength, databaseAccessesPath, resultDir);
