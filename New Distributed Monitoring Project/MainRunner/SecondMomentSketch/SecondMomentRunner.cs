@@ -29,7 +29,7 @@ namespace SecondMomentSketch
         {
             var vectorLength = width * height;
             var iterations   = 1000;
-            var epsilonValue = 300;
+            var epsilonValue = 1000;
             var epsilon      = new AdditiveEpsilon(epsilonValue);
             var fileName =
                 $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
@@ -40,7 +40,7 @@ namespace SecondMomentSketch
             {
                 var initVectors =
                     ArrayUtils.Init(numOfNodes,
-                                    _ => ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-1, 1)).ToVector());
+                                    _ => ArrayUtils.Init(vectorLength, __ => (double) 0.0).ToVector());
 
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                       epsilon, secondMomentFunction.MonitoredFunction);
@@ -48,8 +48,10 @@ namespace SecondMomentSketch
                 for (int i = 0; i < iterations; i++)
                 {
                     var changes = ArrayUtils.Init(numOfNodes,
-                                                  _ => ArrayUtils
-                                                      .Init(vectorLength, __ => (double) rnd.Next(-1, 1)).ToVector());
+                                                  nodeIndex => 
+                                                      nodeIndex == 0 ? 
+                                                          ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-1, 3)).ToVector()
+                                                          : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
                     multiRunner.Run(changes, rnd, false)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>) resultCsvFile.WriteLine);

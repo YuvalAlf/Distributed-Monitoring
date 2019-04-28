@@ -35,11 +35,10 @@ namespace MonitoringProject
            
             // InnerProductRunner.RunRandomly(random, numOfNodes, epsilon, vectorLength, resultDir);
 
-
-            var width = 16;
-            var height = 15;
-          //  SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, resultDir);
-            SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, additiveEpsilon, width, height, databaseAccessesPath, resultDir);
+            var values = new[] {(10, 11), (20, 21), (30, 31), (40, 41), (50, 51), (60, 61)};
+            foreach (var (width, height) in values)
+                SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, resultDir);
+                // SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, additiveEpsilon, width, height, databaseAccessesPath, resultDir);
         }
     }
 }

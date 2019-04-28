@@ -35,13 +35,14 @@ namespace SecondMomentSketch.Hashing
 
             int hashFunction(int itemId)
             {
-                var value1    = new BigInteger(itemId);
-                var value2    = value1 * value1;
-                var value3    = value2 * value1;
-                var value4    = value3 * value1;
-                var polynom   = randomNum0 + randomNum1 * value1 + randomNum2 * value2 + randomNum3 * value3 + randomNum4 * value4;
+                var value1 = (Int64) (itemId);
+                var value2 = (value1 * value1) % LargePrimeNumber;
+                var value3 = (value2 * value1) % LargePrimeNumber;
+                var value4 = (value3 * value1) % LargePrimeNumber;
+                var polynom = randomNum0 + randomNum1 * value1 + randomNum2 * value2 + randomNum3 * value3 + randomNum4 * value4;
                 var hasedTo01 = (polynom % LargePrimeNumber) % 2;
                 return ((int) hasedTo01 * 2 - 1);
+
             }
 
             return hashFunction;
