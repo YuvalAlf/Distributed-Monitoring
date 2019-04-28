@@ -53,9 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArnonTextParser.cs" />
-    <Compile Include="DatabaseAccessesParser.cs" />
+    <Compile Include="Databse\DatabaseAccess.cs" />
+    <Compile Include="Databse\DatabaseData.cs" />
+    <Compile Include="Databse\TimedDatabaseAccess.cs" />
+    <Compile Include="Databse\DatabaseAccessesParser.cs" />
     <Compile Include="TextParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowedHistogram.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">

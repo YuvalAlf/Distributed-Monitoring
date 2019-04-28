@@ -86,6 +86,15 @@ namespace Utils.TypeUtils
                 yield return enumerator.Current;
         }
 
+        public static IEnumerable<T> Take<T>(this IEnumerator<T> enumerator, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+                if (enumerator.MoveNext())
+                    yield return enumerator.Current;
+                else
+                    throw new ArgumentException($"Enumerable doesnt have {amount} elements but {i} elements");
+        }
+
         public static HashSet<int> IndicesWhere<T>(this IEnumerable<T> @this, Predicate<T> predicate)
         {
             HashSet<int> set   = new HashSet<int>();

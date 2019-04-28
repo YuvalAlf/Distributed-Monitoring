@@ -56,6 +56,14 @@ namespace Utils.SparseTypes
             return array;
         }
 
+        public static Vector[] Init(int amount)
+        {
+            var vectors = new Vector[amount];
+            for (int i = 0; i < amount; i++)
+                vectors[i] = new Vector();
+            return vectors;
+        }
+
         #endregion
 
         #region Enumerable
@@ -144,6 +152,12 @@ namespace Utils.SparseTypes
         }
 
         public static Vector SumVector(Vector[] vectors)
+        {
+            var sumVector = new Vector();
+            vectors.ForEach(sumVector.AddInPlace);
+            return sumVector;
+        }
+        public static Vector SumVector(IEnumerable<Vector> vectors)
         {
             var sumVector = new Vector();
             vectors.ForEach(sumVector.AddInPlace);

@@ -46,10 +46,10 @@ namespace Monitoring.GeometricMonitoring.Running
             Vector[]          initVectors,
             int               numOfNodes,
             int               vectorLength,
-            GlobalVectorType  globalVectorType,
             EpsilonType       epsilon,
             MonitoredFunction monitoredFunction)
         {
+            var globalVectorType = monitoredFunction.GlobalVectorType;
             var runners = new Dictionary<MonitoringScheme, Runner>();
 
             void AddRunner<Server>(MonitoringScheme monitoringScheme, Server server)

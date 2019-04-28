@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataParsing;
+using DataParsing.Databse;
 using MathNet.Numerics;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring.Epsilon;
@@ -24,7 +25,6 @@ namespace Entropy
     {
         public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, string[] textFilesPathes)
         {
-            var globalVectorType   = GlobalVectorType.Average;
             var epsilon            = new MultiplicativeEpsilon(0.012);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 16384;
@@ -44,7 +44,7 @@ namespace Entropy
                 {
                     var entropy = new EntropyFunction(vectorLength);
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector() / windowSize);
-                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                           epsilon, entropy.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(c => c.Map(v => v / windowSize)).Take(amountOfIterations);
                     multiRunner.RunAll(changes, rnd, false)
@@ -56,11 +56,10 @@ namespace Entropy
             Process.Start(resultPath);
         }
 
-        public static void RunDatabaseAccesses(Random rnd, int numOfNodes, double epsilonValue, int maxVectorLength, string databaseAccessesPath, string resultDir)
+        public static void RunDatabaseAccesses(Random rnd, int numOfNodes, int window, double epsilonValue, int maxVectorLength, string databaseAccessesPath, string resultDir)
         {
-            var globalVectorType = GlobalVectorType.Average;
             var epsilon = new MultiplicativeEpsilon(epsilonValue);
-            var fileName = $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Epsilon_{epsilonValue}_MaxVector_{maxVectorLength}.csv";
+            var fileName = $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Window_{window}_Epsilon_{epsilonValue}_MaxVector_{maxVectorLength}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
             var hashUser = new Func<int, int>(userId => userId % numOfNodes);
             var maxIterations = 100000;
@@ -69,24 +68,20 @@ namespace Entropy
             {
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
-                Process.Start(@"C:\Program Files\Sublime Text 3\sublime_text.exe", resultPath);
 
-                using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength))
+                using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength, window, numOfNodes, hashUser))
                 {
-                    bool didEnd;
-                    var vectorLength = databaseReader.VectorLength + 1;
+                    bool didEnd = false;
+                    var vectorLength = databaseReader.VectorLength;
                     var entropy = new EntropyFunction(vectorLength);
-                    var initVectors = databaseReader.TakeStep(numOfNodes, hashUser, vectorLength - 1, out didEnd).Map(v => v / v.Sum());
-                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                    var initVectors = databaseReader.CurrentData();
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                           epsilon, entropy.MonitoredFunction);
-                    var lastStep = initVectors;
                     for (int i = 0; i < maxIterations; i++)
                     {
                         if (didEnd)
                             break;
-                        var step = databaseReader.TakeStep(numOfNodes, hashUser, vectorLength - 1, out didEnd).Map(v => v / v.Sum());
-                        var change = step.Zip(lastStep, (v1, v2) => v1 - v2).ToArray();
-                        lastStep = step;
+                        var change = databaseReader.TakeStep(out didEnd);
                         multiRunner.Run(change, rnd, false)
                                    .Select(r => r.AsCsvString())
                                    .ForEach((Action<string>)resultCsvFile.WriteLine);

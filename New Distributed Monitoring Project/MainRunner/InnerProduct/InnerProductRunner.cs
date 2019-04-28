@@ -31,8 +31,6 @@ namespace InnerProduct
         public static void RunRandomly(Random rnd, int numOfNodes, double epsilonValue, int vectorLength,
                                        string resultDir)
         {
-
-            var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(epsilonValue);
             var windowSize         = vectorLength * 2;
             var amountOfIterations = 1000;
@@ -47,7 +45,7 @@ namespace InnerProduct
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var innerProduct = new InnerProductFunction(vectorLength);
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => rnd.NextDouble() * 10).ToVector());
-                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                       epsilon, innerProduct.MonitoredFunction);
                 for (int i = 0; i < amountOfIterations; i++)
                 {
@@ -66,7 +64,6 @@ namespace InnerProduct
                                          string          resultDir,
                                          Func<int, bool> isLeft, string[] textFilesPathes)
         {
-            var globalVectorType   = GlobalVectorType.Sum;
             var epsilon            = new MultiplicativeEpsilon(0.08);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 20000;
@@ -90,7 +87,7 @@ namespace InnerProduct
                 {
                     var innerProduct = new InnerProductFunction(vectorLength);
                     var initVectors = stringDataParser.Histograms.Map(h => h.CountVector()).PadWithZeros(halfVectorLength, isLeft);
-                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                           epsilon, innerProduct.MonitoredFunction);
                     var changes = stringDataParser.AllCountVectors(stepSize).Select(ch => ch.PadWithZeros(halfVectorLength, isLeft))
                                                   .Take(amountOfIterations);

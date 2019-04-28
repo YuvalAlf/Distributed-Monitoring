@@ -24,7 +24,6 @@ namespace Sphere
             var numOfNodes = 20;
             var vectorLength  = 100;
             var iterations = 3000;
-            var globalVectorType = GlobalVectorType.Average;
             var epsilon = new AdditiveEpsilon(80.0);
             var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
             var resultPath = Path.Combine(resultDir, fileName);
@@ -45,8 +44,8 @@ namespace Sphere
                 resultCsvFile.AutoFlush = true;
                 resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var sphereFunction = new SphereFunction(vectorLength);
-                var initVectors = ArrayUtils.Init(numOfNodes, _ => new Vector());
-                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, globalVectorType,
+                var initVectors = Vector.Init(numOfNodes);
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                       epsilon, sphereFunction.MonitoredFunction);
                 multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Oracle(), new MonitoringScheme.Vector());
                 for (int i = 0; i < iterations; i++)

@@ -76,6 +76,7 @@
     <Compile Include="MathUtils\Line.cs" />
     <Compile Include="MathUtils\LineHalfPlane.cs" />
     <Compile Include="DataStructures\WindowedHistogram.cs" />
+    <Compile Include="MathUtils\PrimeNumbers.cs" />
     <Compile Include="MathUtils\RandomExtensions.cs" />
     <Compile Include="MathUtils\Sketches\DCTSketchFunction.cs" />
     <Compile Include="MathUtils\Sketches\PcaBuilder.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
     <Compile Include="TypeUtils\FuncUtils.cs" />
     <Compile Include="TypeUtils\IntUtils.cs" />
+    <Compile Include="TypeUtils\AutoFlushedTextFile.cs" />
     <Compile Include="TypeUtils\Serialization.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />

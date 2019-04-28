@@ -15,7 +15,7 @@ namespace Monitoring.Servers
     {
         private Vector[] CurrentChanges;
 
-        private void Init() => CurrentChanges = ArrayUtils.Init(NumOfNodes, _ => new Vector());
+        private void Init() => CurrentChanges = Vector.Init(NumOfNodes);
 
         public OracleServer(Vector[]             nodesVectors,     int         numOfNodes, int    vectorLength,
                             GlobalVectorType     globalVectorType, double      upperBound, double lowerBound,
