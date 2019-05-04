@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,9 +53,13 @@ namespace SecondMomentSketch
                                                       nodeIndex == 0 ? 
                                                           ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-1, 3)).ToVector()
                                                           : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
+                    var stop = new StrongBox<bool>(false);
                     multiRunner.Run(changes, rnd, false)
+                               .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 3))
                                .Select(r => r.AsCsvString())
-                               .ForEach((Action<string>) resultCsvFile.WriteLine);
+                               .ForEach(resultCsvFile.WriteLine);
+                    if (stop.Value)
+                        break;
                 }
             }
         }
@@ -82,7 +87,7 @@ namespace SecondMomentSketch
                 {
                     var changeCountVectors = databaseAccessesStatistics.GetChangeCountVectors();
                     var changeVectors = hashFunction.TransformToAMSSketch(changeCountVectors, vectorLength, hashFunctionsTable);
-                    multiRunner.Run(changeVectors, rnd, false)
+                    multiRunner.Run(changeVectors, rnd, true)
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
                 }

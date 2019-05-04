@@ -48,7 +48,8 @@ module TimedDataAccess =
         let vectors = Array.init numOfNodes (fun _ -> new Vector())
         let mutable node = -1
         for {TableId = tableId; UserId = userId} in data do
-            node <- (node + 1) % numOfNodes
+            //node <- (node + 1) % numOfNodes
+            node <- userId % numOfNodes
             vectors.[node].[tableId] <- vectors.[node].[tableId] + 1.0
         vectors
             

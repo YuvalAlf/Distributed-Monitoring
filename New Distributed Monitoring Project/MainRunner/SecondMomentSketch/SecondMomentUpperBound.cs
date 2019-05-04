@@ -33,11 +33,10 @@ namespace SecondMomentSketch
                 {
                     var rowValue = RowSquarredAverage(currentData, row);
                     if (rowValue <= 0.0)
-                        return Math.Sqrt(threshold * Width);
+                        return -Math.Sqrt(threshold * Width);
                     var rowData = GetRowValues(currentData, row).ToVector();
                     var closestData = rowData * Math.Sqrt(threshold / rowValue);
                     var value = closestData * closestData / Width;
-                    var t = threshold;
                     var mul = rowValue <= threshold ? -1 : 1;
                     return mul * closestData.DistL2FromVector()(rowData);
                 }
@@ -54,11 +53,10 @@ namespace SecondMomentSketch
                 {
                     var rowValue = RowSquarredAverage(currentData, row);
                     if (rowValue <= 0.0)
-                        return Math.Sqrt(threshold * Width);
+                        return -Math.Sqrt(threshold * Width);
                     var rowData = GetRowValues(currentData, row).ToVector();
                     var closestData = rowData * Math.Sqrt(threshold / rowValue);
                     var value = closestData * closestData / Width;
-                    var t = threshold;
                     var mul = rowValue <= threshold ? -1 : 1;
                     return mul * closestData.DistL2FromVector()(rowData);
                 }

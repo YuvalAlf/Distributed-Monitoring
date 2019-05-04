@@ -20,12 +20,11 @@ namespace MonitoringProject
         static void Main(string[] args)
         {
             var random = new Random(1631);
-            int numOfNodes = 4;
+            int numOfNodes = 5;
             double epsilon = 0.5;
-            double additiveEpsilon = 50000000;
+            double additiveEpsilon = 2000000000;
            // double epsilon = 0.05;
            // var vectorLength = 100000;
-            int window = 10;
             //foreach (var numOfNodes in new[] {2})
             {
                 //Console.WriteLine(numOfNodes);
@@ -35,10 +34,13 @@ namespace MonitoringProject
            
             // InnerProductRunner.RunRandomly(random, numOfNodes, epsilon, vectorLength, resultDir);
 
-            var values = new[] {(10, 11), (20, 21), (30, 31), (40, 41), (50, 51), (60, 61)};
-            foreach (var (width, height) in values)
-                SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, resultDir);
-                // SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, additiveEpsilon, width, height, databaseAccessesPath, resultDir);
+            //var values = new[] {(10, 11), (20, 21), (30, 31), (40, 41), (50, 51), (60, 61), (70, 71), (80, 81)};
+           // foreach (var (width, height) in values)
+            //    SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, resultDir);
+            var width = 10;
+            var height = 11;
+            foreach (var window in new []{5,10,15,20})
+                SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, additiveEpsilon, width, height, databaseAccessesPath, resultDir);
         }
     }
 }

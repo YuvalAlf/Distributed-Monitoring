@@ -33,6 +33,14 @@ namespace Utils.TypeUtils
 
             return vector;
         }
+        public static IEnumerable<T> SideEffect<T>(this IEnumerable<T> @this, Action<T> sideEffect)
+        {
+            foreach (var item in @this)
+            {
+                sideEffect(item);
+                yield return item;
+            }
+        }
 
         public static S[] Map<T, S>(this IEnumerable<T> @this, Func<T, S> map) => @this.Select(map).ToArray();
 
