@@ -65,11 +65,10 @@ namespace SecondMomentSketch
         }
 
         public static void RunDatabaseAccesses(Random rnd,          int    numOfNodes, int window,
-                                               double epsilonValue, int    width,
+                                               EpsilonType epsilon, int    width,
                                                int    height,       string databaseAccessesPath, string resultDir)
         {
             var vectorLength       = width * height;
-            var epsilon            = new AdditiveEpsilon(epsilonValue);
             var hashFunction       = FourwiseIndepandantFunction.Init(rnd);
             var hashFunctionsTable = HashFunctionTable.Init(numOfNodes, vectorLength, hashFunction);
             var fileName = $"F2_Width_{width}_Height_{height}_Window_{window}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";

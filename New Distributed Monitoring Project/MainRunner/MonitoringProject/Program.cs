@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Entropy;
 using InnerProduct;
+using Monitoring.GeometricMonitoring.Epsilon;
 using MoreLinq.Extensions;
 using SecondMomentSketch;
 using Sphere;
@@ -21,8 +22,7 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
             int numOfNodes = 5;
-            double epsilon = 0.5;
-            double additiveEpsilon = 2000000000;
+           // double epsilon = 0.5;
            // double epsilon = 0.05;
            // var vectorLength = 100000;
             //foreach (var numOfNodes in new[] {2})
@@ -35,12 +35,20 @@ namespace MonitoringProject
             // InnerProductRunner.RunRandomly(random, numOfNodes, epsilon, vectorLength, resultDir);
 
             //var values = new[] {(10, 11), (20, 21), (30, 31), (40, 41), (50, 51), (60, 61), (70, 71), (80, 81)};
-           // foreach (var (width, height) in values)
+            //var values = new[] {(10, 11), (20, 21), (30, 31), (40, 41), (50, 51), (60, 61), (70, 71), (80, 81)};
+            var values = new[] { (50, 51) };
+            //foreach (var (width, height) in values)
             //    SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, resultDir);
-            var width = 10;
-            var height = 11;
-            foreach (var window in new []{5,10,15,20})
-                SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, additiveEpsilon, width, height, databaseAccessesPath, resultDir);
+            //var width = 10;
+            //var height = 11;
+            var window = 30;
+            //double additiveEpsilon = 10000000 * window;
+            var epsilon = new MultiplicativeEpsilon(0.9);
+            foreach (var (width, height) in values)
+            {
+                SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, epsilon, width, height, databaseAccessesPath, resultDir);
+            }
+                
         }
     }
 }

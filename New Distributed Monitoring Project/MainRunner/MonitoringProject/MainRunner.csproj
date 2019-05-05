@@ -67,6 +67,10 @@
       <Project>{832F26B0-71BB-439E-80D7-7599D04C59A1}</Project>
       <Name>InnerProduct</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Monitoring\Monitoring.csproj">
+      <Project>{67BF272F-A613-49BF-9CEE-EF7F9DFCEC32}</Project>
+      <Name>Monitoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SecondMomentSketch\SecondMomentSketch.csproj">
       <Project>{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}</Project>
       <Name>SecondMomentSketch</Name>
