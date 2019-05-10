@@ -20,10 +20,10 @@ namespace SecondMomentSketch
             VectorCountsEnumerator = vectorCountsEnumerator;
         }
 
-        public static DatabaseAccessesStatistics Init(string databaseAccessesPath, int numOfNodes, int windowSize)
+        public static DatabaseAccessesStatistics Init(string databaseAccessesPath, int numOfNodes, int windowSize, Func<int, int, int, int> distributeFunc)
         {
             var vectorCountsEnumerator =
-                Parsing.TimedDataAccess.createVectorCountsSequence(numOfNodes, databaseAccessesPath)
+                Parsing.TimedDataAccess.createVectorCountsSequence(distributeFunc, numOfNodes, databaseAccessesPath)
                        .GetEnumerator();
             var window = WindowedStatistics.Init(vectorCountsEnumerator.Take(windowSize));
             return new DatabaseAccessesStatistics(window, vectorCountsEnumerator);

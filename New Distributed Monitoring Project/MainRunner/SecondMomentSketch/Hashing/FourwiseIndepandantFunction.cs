@@ -15,12 +15,8 @@ namespace SecondMomentSketch.Hashing
 
         public static FourwiseIndepandantFunction Init(Random rnd)
         {
-            while (true)
-            {
-                var randomNumber = rnd.Next(0x40000000, 0x7FFFFFFF);
-                if (randomNumber.IsPrime())
-                    return new FourwiseIndepandantFunction(randomNumber);
-            }
+            var prime = rnd.GenLargePrime();
+            return new FourwiseIndepandantFunction(prime);
         }
 
         public Func<int, int> GenerateHash(int nodeIndex, int amsVectorIndex)

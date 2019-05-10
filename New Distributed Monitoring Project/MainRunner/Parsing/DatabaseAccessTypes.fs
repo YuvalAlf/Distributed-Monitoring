@@ -44,20 +44,19 @@ module TimedDataAccess =
                     list <- []
         }
     
-    let accumalteVectorCounts (numOfNodes : int) (data : DatabaseAccess list) : Vector array =
+    let accumalteVectorCounts (distributeNodes : int * int * int -> int) (numOfNodes : int) (data : DatabaseAccess list) : Vector array =
         let vectors = Array.init numOfNodes (fun _ -> new Vector())
         let mutable node = -1
         for {TableId = tableId; UserId = userId} in data do
-            //node <- (node + 1) % numOfNodes
-            node <- userId % numOfNodes
+            node <- distributeNodes (node, userId, numOfNodes)
             vectors.[node].[tableId] <- vectors.[node].[tableId] + 1.0
         vectors
             
-    let createVectorCountsSequence (numOfNodes : int, csvPath : string) : (Vector[]) seq =
+    let createVectorCountsSequence (distributeNodes : Func<int, int, int, int>, numOfNodes : int, csvPath : string) : (Vector[]) seq =
         csvPath
         |> parseTimedDatabaseAccesses
         |> collectTimstampsOfData
-        |> Seq.map (accumalteVectorCounts numOfNodes)
+        |> Seq.map (accumalteVectorCounts distributeNodes.Invoke numOfNodes)
         
 
 

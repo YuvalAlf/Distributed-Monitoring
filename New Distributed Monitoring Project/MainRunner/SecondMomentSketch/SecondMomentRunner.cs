@@ -15,6 +15,7 @@ using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
+using Parsing;
 using SecondMomentSketch.Hashing;
 using Utils.MathUtils;
 using Utils.SparseTypes;
@@ -66,17 +67,18 @@ namespace SecondMomentSketch
 
         public static void RunDatabaseAccesses(Random rnd,          int    numOfNodes, int window,
                                                EpsilonType epsilon, int    width,
-                                               int    height,       string databaseAccessesPath, string resultDir)
+                                               int    height, UsersDistributing distributing,
+                                               string databaseAccessesPath, string resultDir)
         {
             var vectorLength       = width * height;
             var hashFunction       = FourwiseIndepandantFunction.Init(rnd);
             var hashFunctionsTable = HashFunctionTable.Init(numOfNodes, vectorLength, hashFunction);
-            var fileName = $"F2_Width_{width}_Height_{height}_Window_{window}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
+            var fileName = $"F2_Width_{width}_Height_{height}_Window_{window}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}_{distributing.Name}.csv";
             var resultPath           = Path.Combine(resultDir, fileName);
             var secondMomentFunction = new SecondMoment(width, height);
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
-            using (var databaseAccessesStatistics = DatabaseAccessesStatistics.Init(databaseAccessesPath, numOfNodes, window))
+            using (var databaseAccessesStatistics = DatabaseAccessesStatistics.Init(databaseAccessesPath, numOfNodes, window, distributing.DistributeFunc))
             {
                 var initCountVectors = databaseAccessesStatistics.InitCountVectors();
                 var initVectors = hashFunction.TransformToAMSSketch(initCountVectors, vectorLength, hashFunctionsTable);
