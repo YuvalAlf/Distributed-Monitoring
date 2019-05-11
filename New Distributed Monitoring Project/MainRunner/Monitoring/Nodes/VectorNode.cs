@@ -67,6 +67,6 @@ namespace Monitoring.Nodes
         }
 
         public static Communication FullSyncAdditionalCost(VectorNode[] nodes)
-            => new Communication(0, nodes.Length);
+            => new Communication(nodes.Sum(n => n.VectorLength), nodes.Length);
     }
 }

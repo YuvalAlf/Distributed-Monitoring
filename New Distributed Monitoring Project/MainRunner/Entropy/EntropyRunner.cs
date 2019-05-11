@@ -9,6 +9,7 @@ using DataParsing;
 using DataParsing.Databse;
 using MathNet.Numerics;
 using Monitoring.Data;
+using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
@@ -16,6 +17,8 @@ using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Monitoring.Servers;
 using MoreLinq;
+using SecondMomentSketch;
+using SecondMomentSketch.Hashing;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 
@@ -23,7 +26,7 @@ namespace Entropy
 {
     public static class EntropyRunner
     {
-        public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, string[] textFilesPathes)
+        /*public static void RunBagOfWords(Random rnd, int vectorLength, string wordsPath, string resultDir, string[] textFilesPathes)
         {
             var epsilon            = new MultiplicativeEpsilon(0.012);
             var numOfNodes         = textFilesPathes.Length;
@@ -54,42 +57,41 @@ namespace Entropy
             }
 
             Process.Start(resultPath);
-        }
+        }*/
 
-        public static void RunDatabaseAccesses(Random rnd, int numOfNodes, int window, double epsilonValue, int maxVectorLength, string databaseAccessesPath, string resultDir)
+        public static void RunDatabaseAccesses(Random      rnd, int numOfNodes,
+                                               int         window,
+                                               EpsilonType epsilon, int vectorLength,
+                                               UsersDistributing distributing,
+                                               string      databaseAccessesPath, string            resultDir)
         {
-            var epsilon = new MultiplicativeEpsilon(epsilonValue);
-            var fileName = $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Window_{window}_Epsilon_{epsilonValue}_MaxVector_{maxVectorLength}.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
-            var hashUser = new Func<int, int>(userId => userId % numOfNodes);
-            var maxIterations = 100000;
+            var epsilonValue = epsilon.EpsilonValue;
+            var fileName =
+                $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Window_{window}_Epsilon_{epsilonValue}.csv";
+            var resultPath    = Path.Combine(resultDir, fileName);
+            var hashUser      = new Func<int, int>(userId => userId % numOfNodes);
+            var entropy = new EntropyFunction(vectorLength);
 
-            using (var resultCsvFile = File.CreateText(resultPath))
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            using (var databaseAccessesStatistics = DatabaseAccessesStatistics.Init(databaseAccessesPath, numOfNodes, window, distributing.DistributeFunc))
             {
-                resultCsvFile.AutoFlush = true;
-                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
-
-                using (var databaseReader = DatabaseAccessesParser.Init(databaseAccessesPath, maxVectorLength, window, numOfNodes, hashUser))
+                var initProbabilityVectors = databaseAccessesStatistics.InitProbabilityVectors();
+                if (!initProbabilityVectors.All(v => v.Sum().AlmostEqual(1.0, 0.000001)))
+                    throw new Exception();
+                var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, vectorLength,
+                                                      epsilon, entropy.MonitoredFunction);
+                while (databaseAccessesStatistics.TakeStep())
                 {
-                    bool didEnd = false;
-                    var vectorLength = databaseReader.VectorLength;
-                    var entropy = new EntropyFunction(vectorLength);
-                    var initVectors = databaseReader.CurrentData();
-                    var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                          epsilon, entropy.MonitoredFunction);
-                    for (int i = 0; i < maxIterations; i++)
-                    {
-                        if (didEnd)
-                            break;
-                        var change = databaseReader.TakeStep(out didEnd);
-                        multiRunner.Run(change, rnd, false)
-                                   .Select(r => r.AsCsvString())
-                                   .ForEach((Action<string>)resultCsvFile.WriteLine);
-                    }
+                    var changeProbabilityVectors = databaseAccessesStatistics.GetChangeProbabilityVectors();
+
+                    if (!changeProbabilityVectors.All(v => v.Sum().AlmostEqual(0.0, 0.000001)))
+                        throw new Exception();
+                    multiRunner.Run(changeProbabilityVectors, rnd, true)
+                               .Select(r => r.AsCsvString())
+                               .ForEach(resultCsvFile.WriteLine);
                 }
             }
-
-            Process.Start(resultPath);
         }
+   
     }
 }

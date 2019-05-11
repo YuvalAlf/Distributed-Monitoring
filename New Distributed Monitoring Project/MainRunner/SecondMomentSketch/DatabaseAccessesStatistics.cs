@@ -46,5 +46,9 @@ namespace SecondMomentSketch
         {
             VectorCountsEnumerator?.Dispose();
         }
+
+        public Vector[] InitProbabilityVectors() => Window.CurrentNodesProbabilityVectors();
+
+        public Vector[] GetChangeProbabilityVectors() => Window.GetChangeProbabilityVectors();
     }
 }

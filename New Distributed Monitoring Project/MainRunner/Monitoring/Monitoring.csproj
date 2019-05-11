@@ -70,6 +70,7 @@
     <Compile Include="GeometricMonitoring\MonitoringType\Vector.cs" />
     <Compile Include="GeometricMonitoring\Running\MultiRunner.cs" />
     <Compile Include="GeometricMonitoring\Running\Runner.cs" />
+    <Compile Include="GeometricMonitoring\UsersDistributing.cs" />
     <Compile Include="GeometricMonitoring\VectorType\AverageVectorType.cs" />
     <Compile Include="GeometricMonitoring\VectorType\GlobalVectorType.cs" />
     <Compile Include="GeometricMonitoring\Epsilon\EpsilonType.cs" />

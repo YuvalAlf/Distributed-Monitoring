@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.Random;
-using Utils.MathUtils;
 
-namespace SecondMomentSketch.Hashing
+namespace Monitoring.GeometricMonitoring
 {
     public sealed class UsersDistributing
     {
-        public string Name { get; }
+        public string                   Name           { get; }
         public Func<int, int, int, int> DistributeFunc { get; }
 
         public UsersDistributing(string name, Func<int, int, int, int> distributeFunc)
         {
-            Name = name;
+            Name           = name;
             DistributeFunc = distributeFunc;
         }
 

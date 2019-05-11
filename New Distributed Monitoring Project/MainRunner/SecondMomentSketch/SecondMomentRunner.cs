@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Random;
 using Monitoring.Data;
+using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Epsilon;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;

@@ -72,6 +72,10 @@
       <Project>{67BF272F-A613-49BF-9CEE-EF7F9DFCEC32}</Project>
       <Name>Monitoring</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SecondMomentSketch\SecondMomentSketch.csproj">
+      <Project>{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}</Project>
+      <Name>SecondMomentSketch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{EF4A65C0-B74C-4BC7-B47D-FB59297FFA9E}</Project>
       <Name>Utils</Name>

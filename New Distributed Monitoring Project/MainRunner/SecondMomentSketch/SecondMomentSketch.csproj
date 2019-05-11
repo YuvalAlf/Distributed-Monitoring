@@ -58,7 +58,6 @@
     <Compile Include="Hashing\FourwiseIndepandantFunction.cs" />
     <Compile Include="Hashing\HashFunctionTable.cs" />
     <Compile Include="Hashing\HashGenerator.cs" />
-    <Compile Include="Hashing\UsersDistributing.cs" />
     <Compile Include="SecondMomentFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecondMomentLowerBound.cs" />
