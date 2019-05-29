@@ -67,7 +67,7 @@ namespace SecondMomentSketch
                     return distances.Max();
             }
             
-            return ConvexBoundBuilder.Create(UpperBoundFunction, value => value <= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, UpperBoundFunction, value => value <= threshold)
                                      .WithDistanceNorm(2, DistanceL2)
                                      .WithDistanceNorm(0, DistanceL_Inf)
                                      .ToConvexBound();

@@ -9,13 +9,15 @@ namespace Monitoring.GeometricMonitoring
     public delegate Either<Vector, double> ClosestPointFromPoint(Vector givenPoint, int node);
     public sealed class ConvexBound
     {
+        public Func<Vector, double> MonitoredFunction { get; }
         public Func<Vector, double> Compute { get; }
         public Predicate<double> IsInBound { get; }
         private Dictionary<norm, ClosestPointFromPoint> GetClosestPointOfNorm { get; }
         public IEnumerable<int> Norms => GetClosestPointOfNorm.Keys;
 
-        public ConvexBound(Func<Vector, double> compute, Predicate<double> isInBound, Dictionary<int, ClosestPointFromPoint> getClosestPointOfNorm)
+        public ConvexBound(Func<Vector, double> monitoredFunction, Func<Vector, double> compute, Predicate<double> isInBound, Dictionary<int, ClosestPointFromPoint> getClosestPointOfNorm)
         {
+            MonitoredFunction = monitoredFunction;
             Compute = compute;
             IsInBound = isInBound;
             GetClosestPointOfNorm = getClosestPointOfNorm;

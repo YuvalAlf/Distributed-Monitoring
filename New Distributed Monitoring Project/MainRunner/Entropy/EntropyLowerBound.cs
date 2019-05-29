@@ -21,7 +21,7 @@ namespace Entropy
                 return initVector;
             }
 
-            return ConvexBoundBuilder.Create(LowerBoundEntropy, value => value >= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, LowerBoundEntropy, value => value >= threshold)
                                      .WithDistanceNorm(1, DistanceL1).ToConvexBound();
         }
 

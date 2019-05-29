@@ -67,7 +67,7 @@ namespace Entropy
         {
             var epsilonValue = epsilon.EpsilonValue;
             var fileName =
-                $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Window_{window}_Epsilon_{epsilonValue}.csv";
+                $"Entropy_Database_Accesses_Nodes_{numOfNodes}_Window_{window}_Epsilon_{epsilonValue}_{distributing.Name}.csv";
             var resultPath    = Path.Combine(resultDir, fileName);
             var hashUser      = new Func<int, int>(userId => userId % numOfNodes);
             var entropy = new EntropyFunction(vectorLength);

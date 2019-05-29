@@ -16,7 +16,7 @@ namespace Monitoring.Utils
         }
         private static ConvexBound ToConvexBound(this LineHalfPlane @this, Func<double, double, bool> isInBoundCheck)
         {
-            return ConvexBoundBuilder.Create(@this.Compute, val => isInBoundCheck(val, @this.Threshold))
+            return ConvexBoundBuilder.Create(@this.Compute, @this.Compute, val => isInBoundCheck(val, @this.Threshold))
                 .WithDistanceNorm(1, @this.ClosestPointL1)
                 .WithDistanceNorm(2, @this.ClosestPointL2)
                 .ToConvexBound();

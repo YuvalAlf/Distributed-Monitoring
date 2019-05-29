@@ -61,11 +61,13 @@ namespace Monitoring.GeometricMonitoring.Running
 
             var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
             var vectorServer = NodeServer<VectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, VectorNode.ResolveNodes, VectorNode.Create);
+            var oracleVectorServer = NodeServer<OracleVectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, OracleVectorNode.ResolveNodes, OracleVectorNode.Create);
             var oracleServer = OracleServer.Create          (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
             var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
             
             AddRunner(new MonitoringScheme.Value(),  valueServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
+            AddRunner(new MonitoringScheme.OracleVector(), oracleVectorServer);
             AddRunner(new MonitoringScheme.Oracle(), oracleServer);
             AddRunner(new MonitoringScheme.Naive(),  naiveServer);
            

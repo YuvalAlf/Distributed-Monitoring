@@ -19,7 +19,7 @@ namespace Sphere
             if (threshold <= 0)
             {
                 ClosestPointFromPoint closestPoint = (pt, nodeId) => double.MaxValue;
-                return ConvexBoundBuilder.Create(_ => double.NegativeInfinity, _ => true)
+                return ConvexBoundBuilder.Create(MonitoredFunction.Function, _ => double.NegativeInfinity, _ => true)
                                          .WithDistanceNorm(1, closestPoint)
                                          .WithDistanceNorm(2, closestPoint)
                                          .ToConvexBound();

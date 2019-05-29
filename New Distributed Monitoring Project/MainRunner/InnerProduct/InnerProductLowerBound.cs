@@ -55,7 +55,7 @@ namespace InnerProduct
                          .Select(GetXY).MinBy(vector.DistL2FromVector()).First();
             }
 
-            return ConvexBoundBuilder.Create(ConvexFunc, val => val >= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, ConvexFunc, val => val >= threshold)
                                      .WithDistanceNorm(2, ClosestPointFromVector).ToConvexBound();
         }
     }
