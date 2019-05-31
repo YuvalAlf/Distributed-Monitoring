@@ -1,14 +1,15 @@
-﻿namespace Monitoring.GeometricMonitoring.Epsilon
+﻿namespace Monitoring.GeometricMonitoring.Approximation
 {
-    public sealed class ThresholdEpsilon : EpsilonType
+    public sealed class ThresholdApproximation : ApproximationType
     {
-        public double Threshold => EpsilonValue;
+        public double Threshold { get; }
 
-        public ThresholdEpsilon(double epsilonValue) : base(epsilonValue)
+        public ThresholdApproximation(double threshold)
         {
+            Threshold = threshold;
         }
 
-        public override string AsString() => "Threshold " + Threshold;
+        public override string AsString() => "Threshold" + Threshold;
 
         public override (double lowerThresh, double upperThresh) Calc(double currentValue)
         {

@@ -6,7 +6,7 @@ using System.Linq;
 using DataParsing;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
@@ -15,6 +15,7 @@ using Monitoring.Servers;
 using MoreLinq;
 using Utils.MathUtils.Sketches;
 using Utils.SparseTypes;
+using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace InnerProduct
@@ -28,15 +29,20 @@ namespace InnerProduct
             return vectors.Select((v, i) => isLeft(i) ? PadRight(v) : PadLeft(v)).ToArray();
         }
 
-        public static void RunRandomly(Random rnd, int numOfNodes, EpsilonType epsilon, int vectorLength,
+        public static void RunRandomly(Random rnd, int numOfNodes, ApproximationType approximation, int vectorLength, int iterations,
                                        string resultDir)
         {
             var windowSize         = vectorLength * 2;
-            var amountOfIterations = 200;
             var stepSize           = windowSize / 5;
-            var fileName =
-                $"RandomInnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
+            var resultPath =
+                PathBuilder.Create(resultDir, "InnerProduct")
+                           .AddProperty("Dataset",      "Random")
+                           .AddProperty("Nodes",        numOfNodes.ToString())
+                           .AddProperty("VectorLength", vectorLength.ToString())
+                           .AddProperty("Window",       windowSize.ToString())
+                           .AddProperty("Iterations",   iterations.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             {
@@ -45,8 +51,8 @@ namespace InnerProduct
                     ArrayUtils.Init(numOfNodes,
                                     _ => ArrayUtils.Init(vectorLength, __ => rnd.NextDouble() * 10).ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      epsilon, innerProduct.MonitoredFunction);
-                for (int i = 0; i < amountOfIterations; i++)
+                                                      approximation, innerProduct.MonitoredFunction);
+                for (int i = 0; i < iterations; i++)
                 {
                     var changes =
                         ArrayUtils.Init(numOfNodes,
@@ -61,10 +67,10 @@ namespace InnerProduct
 
 
         public static void RunBagOfWords(Random          rnd, int vectorLength, string wordsPath,
+                                         ApproximationType approximation,
                                          string          resultDir,
                                          Func<int, bool> isLeft, string[] textFilesPathes)
         {
-            var epsilon            = new MultiplicativeEpsilon(0.08);
             var numOfNodes         = textFilesPathes.Length;
             var windowSize         = 20000;
             var amountOfIterations = 2000;
@@ -72,9 +78,15 @@ namespace InnerProduct
             var halfVectorLength   = vectorLength / 2;
             var optionalWords      = File.ReadLines(wordsPath).Take(halfVectorLength).ToArray();
             var optionalStrings    = new SortedSet<string>(optionalWords, StringComparer.OrdinalIgnoreCase);
-            var fileName =
-                $"InnerProduct_VecSize_{vectorLength}_WindowSize_{windowSize}_Iters_{amountOfIterations}_StepSize_{stepSize}_Nodes_{textFilesPathes.Length}_Epsilon_{epsilon.EpsilonValue}.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
+            var resultPath =
+                PathBuilder.Create(resultDir, "InnerProduct")
+                           .AddProperty("Dataset",      "BagOfWords")
+                           .AddProperty("Nodes",        numOfNodes.ToString())
+                           .AddProperty("VectorLength", vectorLength.ToString())
+                           .AddProperty("Window",       windowSize.ToString())
+                           .AddProperty("Iterations",   amountOfIterations.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             using (var stringDataParser =
@@ -85,7 +97,7 @@ namespace InnerProduct
                 var initVectors = stringDataParser.Histograms.Map(h => h.CountVector())
                                                   .PadWithZeros(halfVectorLength, isLeft);
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      epsilon, innerProduct.MonitoredFunction);
+                                                      approximation, innerProduct.MonitoredFunction);
                 var changes = stringDataParser.AllCountVectors(stepSize)
                                               .Select(ch => ch.PadWithZeros(halfVectorLength, isLeft))
                                               .Take(amountOfIterations);

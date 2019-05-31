@@ -17,7 +17,7 @@ namespace Monitoring.GeometricMonitoring.Running
 
         public static MonitoringRunner<ServerType> Create(ServerType server, MonitoringScheme monitoringScheme)
         {
-            var accumalatedResult = AccumaltedResult.Init(server.Epsilon, server.NumOfNodes, server.VectorLength, monitoringScheme);
+            var accumalatedResult = AccumaltedResult.Init(server.Approximation, server.NumOfNodes, server.VectorLength, monitoringScheme);
             return new MonitoringRunner<ServerType>(server, accumalatedResult);
         }
 

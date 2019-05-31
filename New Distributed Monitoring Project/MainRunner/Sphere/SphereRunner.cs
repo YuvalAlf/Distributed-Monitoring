@@ -7,26 +7,29 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
 using Utils.SparseTypes;
+using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace Sphere
 {
     public static class SphereRunner
     {
-        public static void Run(Random rnd, string resultDir)
+        public static void Run(Random rnd, int numOfNodes, int vectorLength, int iterations, ApproximationType approximation, string resultDir)
         {
-            var numOfNodes = 20;
-            var vectorLength  = 100;
-            var iterations = 3000;
-            var epsilon = new AdditiveEpsilon(80.0);
-            var fileName   = $"Sphere_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
-            var resultPath = Path.Combine(resultDir, fileName);
+            var resultPath =
+                PathBuilder.Create(resultDir, "Sphere")
+                           .AddProperty("Data",          "Random")
+                           .AddProperty("VectorLength",  vectorLength.ToString())
+                           .AddProperty("Iterations",    iterations.ToString())
+                           .AddProperty("Nodes",         numOfNodes.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
 
             Vector[] GetChange()
             {
@@ -39,14 +42,12 @@ namespace Sphere
                 return ArrayUtils.Init(numOfNodes, _ => GenerateChange());
             }
 
-            using (var resultCsvFile = File.CreateText(resultPath))
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             {
-                resultCsvFile.AutoFlush = true;
-                resultCsvFile.WriteLine(AccumaltedResult.Header(numOfNodes));
                 var sphereFunction = new SphereFunction(vectorLength);
                 var initVectors = Vector.Init(numOfNodes);
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      epsilon, sphereFunction.MonitoredFunction);
+                                                      approximation, sphereFunction.MonitoredFunction);
                 multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.Distance(2), new MonitoringScheme.Oracle(), new MonitoringScheme.Vector());
                 for (int i = 0; i < iterations; i++)
                     multiRunner.Run(GetChange(), rnd, false)
@@ -54,7 +55,6 @@ namespace Sphere
                                .ForEach((Action<string>)resultCsvFile.WriteLine);
 
             }
-            Process.Start(resultPath);
         }
     }
 }

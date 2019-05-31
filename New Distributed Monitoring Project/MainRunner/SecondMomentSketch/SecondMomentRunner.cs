@@ -11,7 +11,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Random;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
@@ -20,6 +20,7 @@ using Parsing;
 using SecondMomentSketch.Hashing;
 using Utils.MathUtils;
 using Utils.SparseTypes;
+using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace SecondMomentSketch
@@ -27,16 +28,21 @@ namespace SecondMomentSketch
 
     public static class SecondMomentRunner
     {
-        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes,
+        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, ApproximationType approximation,
                                        string resultDir)
         {
             var vectorLength = width * height;
             var iterations   = 1000;
-            var epsilonValue = 1000;
-            var epsilon      = new AdditiveEpsilon(epsilonValue);
-            var fileName =
-                $"F2_VecSize_{vectorLength}_Iters_{iterations}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}.csv";
-            var resultPath           = Path.Combine(resultDir, fileName);
+            var resultPath =
+                PathBuilder.Create(resultDir, "AMS_F2")
+                           .AddProperty("Dataset",       "Random")
+                           .AddProperty("Nodes",         numOfNodes.ToString())
+                           .AddProperty("VectorLength",  vectorLength.ToString())
+                           .AddProperty("Width",        width.ToString())
+                           .AddProperty("Height",        height.ToString())
+                           .AddProperty("Iterations",    iterations.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
             var secondMomentFunction = new SecondMoment(width, height);
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
@@ -46,7 +52,7 @@ namespace SecondMomentSketch
                                     _ => ArrayUtils.Init(vectorLength, __ => (double) 0.0).ToVector());
 
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      epsilon, secondMomentFunction.MonitoredFunction);
+                                                      approximation, secondMomentFunction.MonitoredFunction);
 
                 for (int i = 0; i < iterations; i++)
                 {
@@ -67,16 +73,25 @@ namespace SecondMomentSketch
         }
 
         public static void RunDatabaseAccesses(Random rnd,          int    numOfNodes, int window,
-                                               EpsilonType epsilon, int    width,
+                                               ApproximationType approximation, int    width,
                                                int    height, UsersDistributing distributing,
                                                string databaseAccessesPath, string resultDir)
         {
             var vectorLength       = width * height;
             var hashFunction       = FourwiseIndepandantFunction.Init(rnd);
             var hashFunctionsTable = HashFunctionTable.Init(numOfNodes, vectorLength, hashFunction);
-            var fileName = $"F2_Width_{width}_Height_{height}_Window_{window}_Nodes_{numOfNodes}_Epsilon_{epsilon.EpsilonValue}_{distributing.Name}.csv";
-            var resultPath           = Path.Combine(resultDir, fileName);
             var secondMomentFunction = new SecondMoment(width, height);
+            var resultPath =
+                PathBuilder.Create(resultDir, "AMS_F2")
+                           .AddProperty("Dataset",       "DatabaseAccesses")
+                           .AddProperty("Nodes",         numOfNodes.ToString())
+                           .AddProperty("VectorLength",  vectorLength.ToString())
+                           .AddProperty("Width",         width.ToString())
+                           .AddProperty("Height",        height.ToString())
+                           .AddProperty("Window",        window.ToString())
+                           .AddProperty("Distributing",        distributing.Name)
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             using (var databaseAccessesStatistics = DatabaseAccessesStatistics.Init(databaseAccessesPath, numOfNodes, window, distributing.DistributeFunc))
@@ -84,7 +99,7 @@ namespace SecondMomentSketch
                 var initCountVectors = databaseAccessesStatistics.InitCountVectors();
                 var initVectors = hashFunction.TransformToAMSSketch(initCountVectors, vectorLength, hashFunctionsTable);
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      epsilon, secondMomentFunction.MonitoredFunction);
+                                                      approximation, secondMomentFunction.MonitoredFunction);
                 while (databaseAccessesStatistics.TakeStep())
                 {
                     var changeCountVectors = databaseAccessesStatistics.GetChangeCountVectors();

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using Monitoring.GeometricMonitoring;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Utils.TypeUtils;
 
@@ -20,15 +20,15 @@ namespace Monitoring.Data
 
         public int LoopIndex { get; }
 
-        public EpsilonType Epsilon { get; }
+        public ApproximationType Approximation { get; }
         public int NumOfNodes { get; }
         public int VectorLength { get; }
         public MonitoringScheme MonitoringScheme { get; }
 
-        public static AccumaltedResult Init(EpsilonType epsilon, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme) 
-            => new AccumaltedResult(0, 0, 0, 0, 0, 0, new[]{0.0}, 0, epsilon, numOfNodes, vectorLength, monitoringScheme);
+        public static AccumaltedResult Init(ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme) 
+            => new AccumaltedResult(0, 0, 0, 0, 0, 0, new[]{0.0}, 0, approximation, numOfNodes, vectorLength, monitoringScheme);
 
-        public AccumaltedResult(int bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, EpsilonType epsilon, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
+        public AccumaltedResult(int bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
         {
             Bandwidth = bandwidth;
             NumberOfMessages = numberOfMessages;
@@ -38,7 +38,7 @@ namespace Monitoring.Data
             LowerBound = lowerBound;
             NodesFunctionValues = nodesFunctionValues;
             LoopIndex = loopIndex;
-            Epsilon = epsilon;
+            Approximation = approximation;
             NumOfNodes = numOfNodes;
             VectorLength = vectorLength;
             MonitoringScheme = monitoringScheme;
@@ -49,7 +49,7 @@ namespace Monitoring.Data
                .ConcatCsv("Monitoring Scheme")
                .ConcatCsv("Vector Length")
                .ConcatCsv("# Nodes")
-               .ConcatCsv("Epsilon")
+               .ConcatCsv("Approximation")
                .ConcatCsv("Bandwidth")
                .ConcatCsv("# Messages")
                .ConcatCsv("# Full Syncs")
@@ -65,7 +65,7 @@ namespace Monitoring.Data
                 .ConcatCsv(MonitoringScheme.AsString())
                 .ConcatCsv(VectorLength.ToString())
                 .ConcatCsv(NumOfNodes.ToString())
-                .ConcatCsv(Epsilon.AsString())
+                .ConcatCsv(Approximation.AsString())
                 .ConcatCsv(Bandwidth.ToString())
                 .ConcatCsv(NumberOfMessages.ToString())
                 .ConcatCsv(NumberOfFullSyncs.ToString())
@@ -84,7 +84,7 @@ namespace Monitoring.Data
                 singleResult.LowerBound,
                 singleResult.NodesFunctionValues,
                 this.LoopIndex + 1,
-                this.Epsilon,
+                this.Approximation,
                 this.NumOfNodes,
                 this.VectorLength,
                 this.MonitoringScheme);

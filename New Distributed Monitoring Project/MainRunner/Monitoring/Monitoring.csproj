@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Data\AccumaltedResult.cs" />
     <Compile Include="Data\CommunicationPrice.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\MultiplicativeUpperLowerEpsilon.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\OracleVector.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SkechedChangeDistance.cs" />
@@ -62,9 +63,9 @@
     <Compile Include="Data\SingleResult.cs" />
     <Compile Include="GeometricMonitoring\ConvexBound.cs" />
     <Compile Include="GeometricMonitoring\ConvexBoundBuilder.cs" />
-    <Compile Include="GeometricMonitoring\Epsilon\AdditiveEpsilon.cs" />
-    <Compile Include="GeometricMonitoring\Epsilon\MultiplicativeEpsilon.cs" />
-    <Compile Include="GeometricMonitoring\Epsilon\ThresholdEpsilon.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\AdditiveApproximation.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\MultiplicativeApproximation.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\ThresholdApproximation.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Distance.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Oracle.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Value.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="GeometricMonitoring\UsersDistributing.cs" />
     <Compile Include="GeometricMonitoring\VectorType\AverageVectorType.cs" />
     <Compile Include="GeometricMonitoring\VectorType\GlobalVectorType.cs" />
-    <Compile Include="GeometricMonitoring\Epsilon\EpsilonType.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\ApproximationType.cs" />
     <Compile Include="GeometricMonitoring\MonitoredFunction.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\MonitoringScheme.cs" />
     <Compile Include="GeometricMonitoring\VectorType\SumVectorType.cs" />

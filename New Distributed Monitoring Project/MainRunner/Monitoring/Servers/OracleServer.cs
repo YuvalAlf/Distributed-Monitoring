@@ -3,7 +3,7 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq;
 using Utils.SparseTypes;
@@ -19,9 +19,9 @@ namespace Monitoring.Servers
 
         public OracleServer(Vector[]             nodesVectors,     int         numOfNodes, int    vectorLength,
                             GlobalVectorType     globalVectorType, double      upperBound, double lowerBound,
-                            Func<Vector, double> function,         EpsilonType epsilonType)
+                            Func<Vector, double> function,         ApproximationType approximation)
             : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function,
-                   epsilonType)
+                   approximation)
         {
             Init();
         }
@@ -34,8 +34,8 @@ namespace Monitoring.Servers
             if (FunctionValue <= UpperBound && FunctionValue >= LowerBound)
                 return (this, Communication.Zero, false);
 
-            var (lowerBound, upperBound) = base.Epsilon.Calc(FunctionValue);
-            var newOracleServer = new OracleServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Epsilon);
+            var (lowerBound, upperBound) = base.Approximation.Calc(FunctionValue);
+            var newOracleServer = new OracleServer(NodesVectors, NumOfNodes, VectorLength, GlobalVectorType, upperBound, lowerBound, Function, Approximation);
 
             var messages  = 2 * NumOfNodes;
            // var bandwidth = CurrentChanges.Sum(c => c.CountNonZero()) + NumOfNodes * CurrentChanges.SumVector().CountNonZero();
@@ -49,14 +49,14 @@ namespace Monitoring.Servers
             int numOfNodes,
             int vectorLength,
             GlobalVectorType globalVectorType,
-            EpsilonType epsilon,
+            ApproximationType approximation,
             MonitoredFunction monitoredFunction)
         {
             initVectors = initVectors.Map(v => v.Clone());
             var globalVector = globalVectorType.GetValue(initVectors);
-            var (lowerBound, upperBound) = epsilon.Calc(monitoredFunction.Function(globalVector));
+            var (lowerBound, upperBound) = approximation.Calc(monitoredFunction.Function(globalVector));
 
-            return new OracleServer(initVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, monitoredFunction.Function, epsilon);
+            return new OracleServer(initVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, monitoredFunction.Function, approximation);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Utils.SparseTypes;
@@ -26,15 +26,16 @@ namespace Monitoring.Servers
         public Func<Vector[], NodeServer<NodeType>> ReCreate { get; }
 
         public NodeServer(Vector[]                             nodesVectors,
-                          int                                          numOfNodes, int vectorLength,
-                          GlobalVectorType                             globalVectorType,
-                          double                                       upperBound, double lowerBound,
+                          int                                  numOfNodes, int vectorLength,
+                          GlobalVectorType                     globalVectorType,
+                          double                               upperBound, double lowerBound,
                           Func<Vector, double>                 function,
-                          EpsilonType                                  epsilon, NodeType[] upperNodes,
-                          NodeType[]                                   lowerNodes,
-                          ResolveNodesFunction<NodeType>               resolveNodes,
+                          ApproximationType                    approximation, NodeType[] upperNodes,
+                          NodeType[]                           lowerNodes,
+                          ResolveNodesFunction<NodeType>       resolveNodes,
                           Func<Vector[], NodeServer<NodeType>> reCreate)
-            : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function, epsilon)
+            : base(nodesVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, function,
+                   approximation)
         {
             UpperNodes   = upperNodes;
             LowerNodes   = lowerNodes;
@@ -80,23 +81,23 @@ namespace Monitoring.Servers
             int numOfNodes, 
             int vectorLength, 
             GlobalVectorType globalVectorType,
-            EpsilonType epsilon, 
+            ApproximationType approximation, 
             MonitoredFunction monitoredFunction,
             ResolveNodesFunction<NodeType> resolveNodes, 
             Func<Vector, ConvexBound, int, int, NodeType> createNode)
         {
             initVectors = initVectors.Map(v => v.Clone());
             var globalVector = globalVectorType.GetValue(initVectors);
-            var (lowerBound, upperBound) = epsilon.Calc(monitoredFunction.Function(globalVector));
+            var (lowerBound, upperBound) = approximation.Calc(monitoredFunction.Function(globalVector));
             var upperConvexBound = monitoredFunction.UpperBound(globalVector, upperBound);
             var lowerConvexBound = monitoredFunction.LowerBound(globalVector, lowerBound);
             var upperNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), upperConvexBound, i, vectorLength));
             var lowerNodes = ArrayUtils.Init(numOfNodes, i => createNode(globalVector.Clone(), lowerConvexBound, i, vectorLength));
             NodeServer<NodeType> ReCreate(Vector[] newInitVectors)
-                => Create(newInitVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, resolveNodes, createNode);
+                => Create(newInitVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, resolveNodes, createNode);
 
             return new NodeServer<NodeType>(initVectors, numOfNodes, vectorLength, globalVectorType, upperBound, lowerBound, monitoredFunction.Function,
-                epsilon, upperNodes, lowerNodes, resolveNodes, ReCreate);
+                approximation, upperNodes, lowerNodes, resolveNodes, ReCreate);
         }
     }
 }

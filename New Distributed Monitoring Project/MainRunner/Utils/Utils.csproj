@@ -87,6 +87,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SparseTypes\Matrix.cs" />
     <Compile Include="SparseTypes\Vector.cs" />
+    <Compile Include="TextualUtils\PathBuilder.cs" />
     <Compile Include="TypeUtils\ArrayUtils.cs" />
     <Compile Include="TypeUtils\DictionaryUtils.cs" />
     <Compile Include="TypeUtils\Either.cs" />

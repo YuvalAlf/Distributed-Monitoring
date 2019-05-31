@@ -1,7 +1,7 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.VectorType;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
@@ -22,9 +22,9 @@ namespace Monitoring.Servers
         public double UpperBound { get; }
         public double LowerBound { get; }
         public Func<Vector, double> Function { get; }
-        public EpsilonType Epsilon { get; }
+        public ApproximationType Approximation { get; }
 
-        protected AbstractServer(Vector[] nodesVectors, int numOfNodes, int vectorLength, GlobalVectorType globalVectorType, double upperBound, double lowerBound, Func<Vector, double> function, EpsilonType epsilon)
+        protected AbstractServer(Vector[] nodesVectors, int numOfNodes, int vectorLength, GlobalVectorType globalVectorType, double upperBound, double lowerBound, Func<Vector, double> function, ApproximationType approximation)
         {
             NodesVectors = nodesVectors;
             NumOfNodes = numOfNodes;
@@ -33,7 +33,7 @@ namespace Monitoring.Servers
             UpperBound = upperBound;
             LowerBound = lowerBound;
             Function = function;
-            Epsilon = epsilon;
+            Approximation = approximation;
         }
 
         public (InheritedType, SingleResult) Change(Vector[] changeMatrix, Random rnd)

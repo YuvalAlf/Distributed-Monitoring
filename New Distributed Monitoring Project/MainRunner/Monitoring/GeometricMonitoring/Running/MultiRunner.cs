@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
-using Monitoring.GeometricMonitoring.Epsilon;
+using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
@@ -46,7 +46,7 @@ namespace Monitoring.GeometricMonitoring.Running
             Vector[]          initVectors,
             int               numOfNodes,
             int               vectorLength,
-            EpsilonType       epsilon,
+            ApproximationType       approximation,
             MonitoredFunction monitoredFunction)
         {
             var globalVectorType = monitoredFunction.GlobalVectorType;
@@ -59,11 +59,11 @@ namespace Monitoring.GeometricMonitoring.Running
                 runners[monitoringScheme] = runner;
             }
 
-            var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
-            var vectorServer = NodeServer<VectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, VectorNode.ResolveNodes, VectorNode.Create);
-            var oracleVectorServer = NodeServer<OracleVectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, OracleVectorNode.ResolveNodes, OracleVectorNode.Create);
-            var oracleServer = OracleServer.Create          (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
-            var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction);
+            var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
+            var vectorServer = NodeServer<VectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, VectorNode.ResolveNodes, VectorNode.Create);
+            var oracleVectorServer = NodeServer<OracleVectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, OracleVectorNode.ResolveNodes, OracleVectorNode.Create);
+            var oracleServer = OracleServer.Create          (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction);
+            var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction);
             
             AddRunner(new MonitoringScheme.Value(),  valueServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
@@ -73,7 +73,7 @@ namespace Monitoring.GeometricMonitoring.Running
            
             foreach (var distanceNorm in monitoredFunction.Norms)
             {
-                var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, epsilon, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
+                var distanceServer = NodeServer<DistanceNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, DistanceNode.ResolveNodes, DistanceNode.CreateNorm(distanceNorm));
                 AddRunner(new MonitoringScheme.Distance(distanceNorm), distanceServer);
             }
 

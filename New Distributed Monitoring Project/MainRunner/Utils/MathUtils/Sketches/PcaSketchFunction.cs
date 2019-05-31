@@ -11,34 +11,34 @@ using Utils.TypeUtils;
 
 namespace Utils.MathUtils.Sketches
 {
-   /* [Serializable]
-    public sealed class PcaSketchFunction : SketchFunction
-    {
-        private MultivariateLinearRegression Pca { get; }
-        private MultivariateLinearRegression InversePca { get; }
+    /* [Serializable]
+     public sealed class PcaSketchFunction : SketchFunction
+     {
+         private MultivariateLinearRegression Pca { get; }
+         private MultivariateLinearRegression InversePca { get; }
 
-        public PcaSketchFunction(MultivariateLinearRegression pca, MultivariateLinearRegression inversePca)
-        {
-            Pca = pca;
-            InversePca = inversePca;
-        }
+         public PcaSketchFunction(MultivariateLinearRegression pca, MultivariateLinearRegression inversePca)
+         {
+             Pca = pca;
+             InversePca = inversePca;
+         }
 
-        public override (Vector<double> sketch, Vector<double> epsilon, InvokedIndices indices) Sketch(Vector<double> vector, int dimension)
-        {
-            var indices = new HashSet<int>();
-            var pcaVector = Pca.Transform(vector.ToArray());
-            var sketchArray = new double[vector.Count];
-            var sketchData = pcaVector.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
-            foreach (var indexValuePair in sketchData)
-            {
-                indices.Add(indexValuePair.Key);
-                sketchArray[indexValuePair.Key] = indexValuePair.Value;
-            }
+         public override (Vector<double> sketch, Vector<double> approximation, InvokedIndices indices) Sketch(Vector<double> vector, int dimension)
+         {
+             var indices = new HashSet<int>();
+             var pcaVector = Pca.Transform(vector.ToArray());
+             var sketchArray = new double[vector.Count];
+             var sketchData = pcaVector.Index().PartialSortBy(dimension / 2, pair => -Math.Abs(pair.Value));
+             foreach (var indexValuePair in sketchData)
+             {
+                 indices.Add(indexValuePair.Key);
+                 sketchArray[indexValuePair.Key] = indexValuePair.Value;
+             }
 
-            var sketchVector = InversePca.Transform(sketchArray).ToVector();
-            var epsilon = vector - sketchVector;
-            var mse = epsilon.Sum(x => x * x);
-            return (sketchVector, epsilon, new InvokedIndices(indices));
-        }
-    }*/
+             var sketchVector = InversePca.Transform(sketchArray).ToVector();
+             var approximation = vector - sketchVector;
+             var mse = approximation.Sum(x => x * x);
+             return (sketchVector, approximation, new InvokedIndices(indices));
+         }
+     }*/
 }
