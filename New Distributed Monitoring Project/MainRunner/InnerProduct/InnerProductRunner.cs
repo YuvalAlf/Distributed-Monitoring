@@ -13,9 +13,9 @@ using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
 using Monitoring.Servers;
 using MoreLinq;
+using Utils.AiderTypes;
 using Utils.MathUtils.Sketches;
 using Utils.SparseTypes;
-using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace InnerProduct

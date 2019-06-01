@@ -19,8 +19,8 @@ using Monitoring.Servers;
 using MoreLinq;
 using SecondMomentSketch;
 using SecondMomentSketch.Hashing;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
-using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace Entropy

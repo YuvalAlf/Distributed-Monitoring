@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Utils.TypeUtils
 {
-    public static class Serialization
+    public static class SerializationUtils
     {
         private static readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 

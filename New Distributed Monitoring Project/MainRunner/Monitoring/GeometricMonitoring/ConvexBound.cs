@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 using norm = System.Int32;

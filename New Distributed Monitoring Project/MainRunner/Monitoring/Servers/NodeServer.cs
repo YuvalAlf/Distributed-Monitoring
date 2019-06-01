@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 
@@ -60,6 +62,8 @@ namespace Monitoring.Servers
             return (newServerAllResolved, lowerCommunication.Add(upperCommunication), isFullSync1 || isFullSync2);
         }
 
+        private readonly Lazy<MethodInfo> fullSyncCost = new Lazy<MethodInfo>(() => typeof(NodeType).GetMethod("FullSyncAdditionalCost"));
+
         public (NodeServer<NodeType>, Communication, bool isFullSync) Resolve(NodeType[] nodes, Random rnd)
         {
             var result = this.ResolveNodes(this, nodes, rnd);
@@ -67,7 +71,7 @@ namespace Monitoring.Servers
             if (result.IsChoice2)
             {
                 var parameters = new []{nodes as object};
-                var additionalCost = typeof(NodeType).GetMethod("FullSyncAdditionalCost").Invoke(null, parameters) as Communication;
+                var additionalCost = fullSyncCost.Value.Invoke(null, parameters) as Communication;
                 return (this.ReCreate(this.NodesVectors), additionalCost.Add(result.GetChoice2), true);
             }
                 

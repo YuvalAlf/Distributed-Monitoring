@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Utils.MathUtils
 {
-    public static class RandomExtensions
+    public static class RandomUtils
     {
         public static int GenLargePrime(this Random rnd)
         {

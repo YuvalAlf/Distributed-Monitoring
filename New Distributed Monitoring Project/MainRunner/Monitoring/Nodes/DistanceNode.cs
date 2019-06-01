@@ -5,6 +5,7 @@ using MathNet.Numerics.LinearAlgebra;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Servers;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 

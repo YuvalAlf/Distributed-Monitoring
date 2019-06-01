@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Utils.TextualUtils
+namespace Utils.AiderTypes
 {
     public sealed class PathBuilder
     {
@@ -13,7 +10,7 @@ namespace Utils.TextualUtils
         public string FileTitle { get; }
         public List<(string, string)> FileProperties { get; }
 
-        public PathBuilder(string directoryPath, string fileTitle, List<(string, string)> fileProperties)
+        private PathBuilder(string directoryPath, string fileTitle, List<(string, string)> fileProperties)
         {
             DirectoryPath = directoryPath;
             FileTitle = fileTitle;

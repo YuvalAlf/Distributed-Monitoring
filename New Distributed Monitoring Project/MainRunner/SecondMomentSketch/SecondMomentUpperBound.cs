@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 

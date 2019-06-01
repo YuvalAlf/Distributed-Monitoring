@@ -2,6 +2,7 @@
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using Monitoring.GeometricMonitoring;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 

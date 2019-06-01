@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Servers;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 
@@ -35,7 +36,6 @@ namespace Monitoring.Nodes
         public static Either<(NodeServer<OracleVectorNode>, Communication), Communication> ResolveNodes
             (NodeServer<OracleVectorNode> server, OracleVectorNode[] nodes, Random rnd)
         {
-
             var convexFunction = nodes[0].ConvexBound;
             var monitoredFunction = nodes[0].MonitoredFunction;
             var violatedNodesIndices = nodes.IndicesWhere(n => !convexFunction.IsInBound(n.FunctionValue));

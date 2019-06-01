@@ -9,6 +9,7 @@ using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.Servers;
 using MoreLinq;
+using Utils.AiderTypes;
 using Utils.MathUtils;
 using Utils.MathUtils.Sketches;
 using Utils.SparseTypes;

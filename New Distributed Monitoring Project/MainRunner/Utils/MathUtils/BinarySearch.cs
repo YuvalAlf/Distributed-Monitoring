@@ -2,7 +2,7 @@
 
 namespace Utils.MathUtils
 {
-    public static class BinarySearch
+    /*public static class BinarySearch
     {
         public static double FindWhere(double            minValue,
                                        double            maxValue,
@@ -55,5 +55,5 @@ namespace Utils.MathUtils
                 }
             }
         }
-    }
+    }*/
 }

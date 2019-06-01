@@ -18,9 +18,9 @@ using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
 using Parsing;
 using SecondMomentSketch.Hashing;
+using Utils.AiderTypes;
 using Utils.MathUtils;
 using Utils.SparseTypes;
-using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace SecondMomentSketch

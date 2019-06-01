@@ -12,8 +12,8 @@ using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
 using MoreLinq.Extensions;
+using Utils.AiderTypes;
 using Utils.SparseTypes;
-using Utils.TextualUtils;
 using Utils.TypeUtils;
 
 namespace Sphere

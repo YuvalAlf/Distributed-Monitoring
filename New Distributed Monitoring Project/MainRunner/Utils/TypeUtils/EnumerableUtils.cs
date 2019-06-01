@@ -42,6 +42,13 @@ namespace Utils.TypeUtils
             }
         }
 
+        public static S[] Map<T, S>(this T[] @this, Func<T, S> map)
+        {
+            S[] resultArray = new S[@this.Length];
+            for (int i = 0; i < @this.Length; i++)
+                resultArray[i] = map(@this[i]);
+            return resultArray;
+        }
         public static S[] Map<T, S>(this IEnumerable<T> @this, Func<T, S> map) => @this.Select(map).ToArray();
 
         public static IEnumerable<T> FinishAfter<T>(this IEnumerable<T> @this, int moreAfterFinish, Predicate<T> shouldFinish)
@@ -100,13 +107,14 @@ namespace Utils.TypeUtils
                 if (enumerator.MoveNext())
                     yield return enumerator.Current;
                 else
-                    throw new ArgumentException($"Enumerable doesnt have {amount} elements but {i} elements");
+                    break;
+                    //throw new ArgumentException($"Enumerable doesnt have {amount} elements but {i} elements");
         }
 
         public static HashSet<int> IndicesWhere<T>(this IEnumerable<T> @this, Predicate<T> predicate)
         {
-            HashSet<int> set   = new HashSet<int>();
-            int          index = 0;
+            var set   = new HashSet<int>();
+            var index = 0;
             foreach (var item in @this)
             {
                 if (predicate(item))

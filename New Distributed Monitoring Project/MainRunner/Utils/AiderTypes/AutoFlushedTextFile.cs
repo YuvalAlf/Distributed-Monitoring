@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using File = System.IO.File;
 
-namespace Utils.TypeUtils
+namespace Utils.AiderTypes
 {
     public sealed class AutoFlushedTextFile : IDisposable
     {
@@ -18,7 +14,7 @@ namespace Utils.TypeUtils
         public AutoFlushedTextFile(StreamWriter stream, string filePath)
         {
             Stream = stream;
-            this.FilePath = filePath;
+            FilePath = filePath;
         }
 
         public void WriteLine(string line) => Stream.WriteLine(line);
