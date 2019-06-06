@@ -18,10 +18,22 @@ namespace MonitoringProject
     {
         public static readonly string resultDir = @"C:\Users\Yuval\Desktop";
         public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
-      //  public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\trimmed.csv";
+        public static readonly string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Downloads\MilanoPhoneActivity";
+        //  public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\trimmed.csv";
 
 
-        private static void RunSecondMomentSketch(Random random)
+
+        private static void RunMilanoPhonesSecondMomentSketch(Random random)
+        {
+            int numOfNodes     = 5;
+            var values         = new[] { (10, 11) };
+            var window         = 10;
+            var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
+            foreach (var (width, height) in values)
+                SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, phoneActivitiesBaseFolder, resultDir);
+        }
+
+        private static void RunDatabaseSecondMomentSketch(Random random)
         {
             int numOfNodes     = 10;
             var values         = new[] { (30, 31) };
@@ -49,12 +61,13 @@ namespace MonitoringProject
             int iterations = 500;
             InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
         }
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var random = new Random(1631);
-           // RunEntropy(random);
-           // RunSecondMomentSketch(random);
-            RunInnerProduct(random);
+            RunMilanoPhonesSecondMomentSketch(random);
+            // RunEntropy(random);
+            // RunDatabaseSecondMomentSketch(random);
+            //  RunInnerProduct(random);
         }
 
     }

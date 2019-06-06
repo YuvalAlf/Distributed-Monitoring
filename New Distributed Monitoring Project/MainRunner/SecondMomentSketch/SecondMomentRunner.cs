@@ -110,5 +110,41 @@ namespace SecondMomentSketch
                 }
             }
         }
+
+        public static void RunMilanoPhoneActivity(Random            rnd,           int numOfNodes, int window,
+                                                  ApproximationType approximation, int width,
+                                                  int               height,
+                                                  string            phoneActivityDir, string resultDir)
+        {
+            var vectorLength         = width * height;
+            var hashFunction         = FourwiseIndepandantFunction.Init(rnd);
+            var hashFunctionsTable   = HashFunctionTable.Init(numOfNodes, vectorLength, hashFunction);
+            var secondMomentFunction = new SecondMoment(width, height);
+            var resultPath =
+                PathBuilder.Create(resultDir, "AMS_F2")
+                           .AddProperty("Dataset",       "MilanoPhoneActivity")
+                           .AddProperty("Nodes",         numOfNodes.ToString())
+                           .AddProperty("VectorLength",  vectorLength.ToString())
+                           .AddProperty("Width",         width.ToString())
+                           .AddProperty("Height",        height.ToString())
+                           .AddProperty("Window",        window.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
+
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            {
+                var phonesActivityDataParser = PhonesActivityDataParser.Create(phoneActivityDir);
+                var phonesActivityWindowManger = PhonesActivityWindowManger.Init(window, numOfNodes, vectorLength, hashFunctionsTable, phonesActivityDataParser);
+                var initVectors = phonesActivityWindowManger.GetCurrentVectors();
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
+                while (phonesActivityWindowManger.TakeStep())
+                {
+                    var changeVectors = phonesActivityWindowManger.GetChangeVector();
+                    multiRunner.Run(changeVectors, rnd, true)
+                               .Select(r => r.AsCsvString())
+                               .ForEach(resultCsvFile.WriteLine);
+                }
+            }
+        }
     }
 }

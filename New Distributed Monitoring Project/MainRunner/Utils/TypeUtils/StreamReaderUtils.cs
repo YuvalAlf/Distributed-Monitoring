@@ -38,5 +38,17 @@ namespace Utils.TypeUtils
                         break;
                 }
         }
+
+        public static IEnumerable<string> ReadLines(this Stream stream)
+        {
+            string line;
+            using (var reader = new StreamReader(stream))
+                while ((line = reader.ReadLine()) != null)
+                    yield return line;
+        }
+
+
+        public static bool IsEOF(this BinaryReader binaryReader) 
+            => (binaryReader.BaseStream.Position == binaryReader.BaseStream.Length);
     }
 }
