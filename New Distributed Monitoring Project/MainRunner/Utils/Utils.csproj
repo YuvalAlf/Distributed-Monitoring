@@ -67,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AiderTypes\PhoneActivityEntry.cs" />
+    <Compile Include="AiderTypes\TaxiTrips\PaymentType.cs" />
+    <Compile Include="AiderTypes\TaxiTrips\TaxiTripEntry.cs" />
+    <Compile Include="AiderTypes\TaxiTrips\TaxiVendor.cs" />
     <Compile Include="DataStructures\ChunckedHistogram.cs" />
     <Compile Include="DataStructures\DataChunck.cs" />
     <Compile Include="MathUtils\BinarySearch.cs" />
@@ -94,11 +97,13 @@
     <Compile Include="TypeUtils\DictionaryUtils.cs" />
     <Compile Include="AiderTypes\Either.cs" />
     <Compile Include="TypeUtils\EnumerableUtils.cs" />
+    <Compile Include="TypeUtils\FloatUtils.cs" />
     <Compile Include="TypeUtils\FuncUtils.cs" />
     <Compile Include="TypeUtils\IntUtils.cs" />
     <Compile Include="AiderTypes\AutoFlushedTextFile.cs" />
     <Compile Include="TypeUtils\Maybe.cs" />
     <Compile Include="TypeUtils\SerializationUtils.cs" />
+    <Compile Include="TypeUtils\SortedSetUtils.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
     <Compile Include="TypeUtils\ValueTupleUtils.cs" />
