@@ -59,6 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MilanoDataParsingUnitTests.cs" />
     <Compile Include="TaxiTripsParsing.cs" />
+    <Compile Include="HorizontalGeographicalDistributingUnitTests.cs" />
+    <Compile Include="GridGeographicalDistributingUnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

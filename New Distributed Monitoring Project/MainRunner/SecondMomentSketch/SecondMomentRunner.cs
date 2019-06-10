@@ -15,6 +15,7 @@ using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using Monitoring.GeometricMonitoring.VectorType;
+using Monitoring.Utils.DataDistributing;
 using MoreLinq.Extensions;
 using Parsing;
 using SecondMomentSketch.Hashing;
@@ -113,7 +114,7 @@ namespace SecondMomentSketch
 
         public static void RunMilanoPhoneActivity(Random            rnd,           int numOfNodes, int window,
                                                   ApproximationType approximation, int width,
-                                                  int               height,
+                                                  int               height, GeographicalDistributing distributingMethod,
                                                   string            phoneActivityDir, string resultDir)
         {
             var vectorLength         = width * height;
@@ -128,13 +129,14 @@ namespace SecondMomentSketch
                            .AddProperty("Width",         width.ToString())
                            .AddProperty("Height",        height.ToString())
                            .AddProperty("Window",        window.ToString())
+                           .AddProperty("Distributing",  distributingMethod.Name)
                            .AddProperty("Approximation", approximation.AsString())
                            .ToPath("csv");
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             {
                 var phonesActivityDataParser = PhonesActivityDataParser.Create(phoneActivityDir);
-                var phonesActivityWindowManger = PhonesActivityWindowManger.Init(window, numOfNodes, vectorLength, hashFunctionsTable, phonesActivityDataParser);
+                var phonesActivityWindowManger = PhonesActivityWindowManger.Init(window, numOfNodes, vectorLength, hashFunctionsTable, phonesActivityDataParser, distributingMethod);
                 var initVectors = phonesActivityWindowManger.GetCurrentVectors();
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
                 while (phonesActivityWindowManger.TakeStep())

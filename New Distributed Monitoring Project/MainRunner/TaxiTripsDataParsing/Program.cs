@@ -17,6 +17,15 @@ namespace TaxiTripsDataParsing
             var baseDir = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013";
             var outputFile = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\result.bin";
 
+            /*using (var read = new BinaryReader(File.OpenRead(outputFile)))
+            {
+                foreach (var taxiTripEntry in TaxiTripEntry.FromBinary(read))
+                {
+                    Console.WriteLine(taxiTripEntry.DropoffTime.ToString("F"));
+                }
+            }
+            return;*/
+
             using (var binOutputFile = File.Create(outputFile, 4096, FileOptions.SequentialScan))
             using (var binaryWriter = new BinaryWriter(binOutputFile))
             using (var cachedWriter = CachedMinWriter<TaxiTripEntry>.Create(cacheSize, t => t.ToBinary(binaryWriter)))

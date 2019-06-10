@@ -91,6 +91,9 @@
     <Compile Include="Servers\NaiveServer.cs" />
     <Compile Include="Servers\NodeServer.cs" />
     <Compile Include="Servers\OracleServer.cs" />
+    <Compile Include="Utils\DataDistributing\GeographicalDistributing.cs" />
+    <Compile Include="Utils\DataDistributing\GridDistributing.cs" />
+    <Compile Include="Utils\DataDistributing\HorizontalDistributing.cs" />
     <Compile Include="Utils\LineHalfPlaneConvexBoundUtils.cs" />
   </ItemGroup>
   <ItemGroup />

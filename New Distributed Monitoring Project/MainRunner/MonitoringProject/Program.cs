@@ -6,6 +6,7 @@ using Entropy;
 using InnerProduct;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
+using Monitoring.Utils.DataDistributing;
 using MoreLinq.Extensions;
 using SecondMomentSketch;
 using SecondMomentSketch.Hashing;
@@ -25,12 +26,13 @@ namespace MonitoringProject
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
-            int numOfNodes     = 8;
-            var values         = new[] { (10, 11) };
+            int numOfNodes     = 9;
+            var values         = new[] { (7, 7) };
             var window         = 24;
+            var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
             var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
             foreach (var (width, height) in values)
-                SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, phoneActivitiesBaseFolder, resultDir);
+                SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, distributingMethod, phoneActivitiesBaseFolder, resultDir);
         }
 
         private static void RunDatabaseSecondMomentSketch(Random random)

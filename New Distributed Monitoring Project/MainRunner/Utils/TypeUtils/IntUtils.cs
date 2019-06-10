@@ -16,5 +16,14 @@ namespace Utils.TypeUtils
                 num *= 2;
             return num;
         }
+
+        public static int ToRange(this int @this, int min, int max)
+        {
+            if (@this < min)
+                return min;
+            if (@this > max)
+                return max;
+            return @this;
+        }
     }
 }

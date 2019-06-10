@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Monitoring.Utils.DataDistributing;
 using Parsing;
 using SecondMomentSketch.Hashing;
 using Utils.SparseTypes;
@@ -19,33 +20,33 @@ namespace SecondMomentSketch
         private HashFunctionTable[] HashFunctionTable { get; }
         private PhonesActivityDataParser DataParser { get; set; }
         private bool ended = false;
+        private GeographicalDistributing DistributingMethod { get; }
         private Lazy<WindowedStatistics> Window { get; }
 
         public Vector[] GetChangeVector() => Window.Value.GetChangeCountVectors();
         public Vector[] GetCurrentVectors() => Window.Value.CurrentNodesCountVectors();
 
-        public PhonesActivityWindowManger(int numOfNodes, int amsVectorLength, HashFunctionTable[] hashFunctionTable, PhonesActivityDataParser dataParser, Lazy<WindowedStatistics> window)
+        public PhonesActivityWindowManger(int numOfNodes, int amsVectorLength, HashFunctionTable[] hashFunctionTable, PhonesActivityDataParser dataParser, Lazy<WindowedStatistics> window, GeographicalDistributing distributingMethod)
         {
             NumOfNodes = numOfNodes;
             AmsVectorLength = amsVectorLength;
             HashFunctionTable = hashFunctionTable;
             DataParser = dataParser;
             Window = window;
+            DistributingMethod = distributingMethod;
         }
 
         public Vector[] GetNextAmsVectors()
         {
-            const double maxValue = 10000;
             var (maybeNewDataParser, timestampPhoneActivities) =  DataParser.NextTimestamp().ToValueTuple();
             if (maybeNewDataParser.IsNone)
                 ended = true;
             else
                 DataParser = maybeNewDataParser.ValueUnsafe;
             Vector[] amsVectors = Vector.Init(NumOfNodes);
-            double partsInANode = maxValue / NumOfNodes;
             foreach (var phoneActivity in timestampPhoneActivities.Invoke())
             {
-                var node = (int)((phoneActivity.From - 1) / partsInANode);
+                var node = DistributingMethod.NodeOf(phoneActivity.From);
                 Debug.Assert(node < NumOfNodes);
                 var nodeHashes = HashFunctionTable[node];
                 for (int index = 0; index < AmsVectorLength; index++)
@@ -65,11 +66,11 @@ namespace SecondMomentSketch
             return true;
         }
 
-        public static PhonesActivityWindowManger Init(int window, int numOfNodes, int amsVectorLength, HashFunctionTable[] hashFunctionTable, PhonesActivityDataParser phonesActivityDataParser)
+        public static PhonesActivityWindowManger Init(int window, int numOfNodes, int amsVectorLength, HashFunctionTable[] hashFunctionTable, PhonesActivityDataParser phonesActivityDataParser, GeographicalDistributing distributingMethod)
         {
             StrongBox<PhonesActivityWindowManger> phonesActivityWindowManager = new StrongBox<PhonesActivityWindowManger>(null);
             var lazyWindow = new Lazy<WindowedStatistics>(() => WindowedStatistics.Init(ArrayUtils.Init(window, _ => phonesActivityWindowManager.Value.GetNextAmsVectors())));
-            phonesActivityWindowManager.Value = new PhonesActivityWindowManger(numOfNodes, amsVectorLength, hashFunctionTable, phonesActivityDataParser, lazyWindow);
+            phonesActivityWindowManager.Value = new PhonesActivityWindowManger(numOfNodes, amsVectorLength, hashFunctionTable, phonesActivityDataParser, lazyWindow, distributingMethod);
             return phonesActivityWindowManager.Value;
         }
     }
