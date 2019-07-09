@@ -27,11 +27,12 @@ namespace MonitoringProject
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
             int numOfNodes     = 9;
-            var values         = new[] { (7, 7) };
+            var dimensions     = new[] { (25, 25), (30, 30)};
             var window         = 24;
             var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
-            var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
-            foreach (var (width, height) in values)
+            //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
+            var approximation  = new ThresholdApproximation(2700000);
+            foreach (var (width, height) in dimensions)
                 SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, distributingMethod, phoneActivitiesBaseFolder, resultDir);
         }
 

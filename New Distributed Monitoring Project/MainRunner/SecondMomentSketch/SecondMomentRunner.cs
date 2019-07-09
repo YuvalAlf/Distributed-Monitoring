@@ -141,10 +141,14 @@ namespace SecondMomentSketch
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
                 while (phonesActivityWindowManger.TakeStep())
                 {
+                    var shouldEnd = new StrongBox<bool>(false);
                     var changeVectors = phonesActivityWindowManger.GetChangeVector();
                     multiRunner.Run(changeVectors, rnd, true)
+                               .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
+                    if (shouldEnd.Value)
+                        break;
                 }
             }
         }
