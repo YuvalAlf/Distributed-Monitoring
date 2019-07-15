@@ -68,8 +68,10 @@
   <ItemGroup>
     <Compile Include="AiderTypes\PhoneActivityEntry.cs" />
     <Compile Include="AiderTypes\TaxiTrips\PaymentType.cs" />
+    <Compile Include="AiderTypes\TaxiTrips\PaymentTypeUtils.cs" />
     <Compile Include="AiderTypes\TaxiTrips\TaxiTripEntry.cs" />
     <Compile Include="AiderTypes\TaxiTrips\TaxiVendor.cs" />
+    <Compile Include="AiderTypes\TaxiTrips\TaxiVendorUtils.cs" />
     <Compile Include="DataStructures\ChunckedHistogram.cs" />
     <Compile Include="DataStructures\DataChunck.cs" />
     <Compile Include="MathUtils\BinarySearch.cs" />

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
-using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 using norm = System.Int32;
 namespace Monitoring.GeometricMonitoring
 {
-    public delegate Either<Vector, double> ClosestPointFromPoint(Vector givenPoint, int node);
     public sealed class ConvexBound
     {
         public Func<Vector, double> MonitoredFunction { get; }

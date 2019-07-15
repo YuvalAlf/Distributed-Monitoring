@@ -59,7 +59,7 @@
     <Compile Include="Hashing\HashFunctionTable.cs" />
     <Compile Include="Hashing\HashGenerator.cs" />
     <Compile Include="PhonesActivityWindowManger.cs" />
-    <Compile Include="SecondMomentFunction.cs" />
+    <Compile Include="SecondMoment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecondMomentLowerBound.cs" />
     <Compile Include="SecondMomentRunner.cs" />

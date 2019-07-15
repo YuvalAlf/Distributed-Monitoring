@@ -8,17 +8,11 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.VectorType;
 using Monitoring.Nodes;
-using Utils.AiderTypes;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 
 namespace Monitoring.Servers
 {
-    public delegate Either<(NodeServer<TNode>, Communication), Communication> ResolveNodesFunction<TNode>
-        (NodeServer<TNode> server, TNode[] nodes, Random rnd)
-        where TNode: AbstractNode;
-
-
     public sealed class NodeServer<NodeType> : AbstractServer<NodeServer<NodeType>>
         where NodeType : AbstractNode
     {

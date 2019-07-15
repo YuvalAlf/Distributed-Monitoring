@@ -53,8 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\AccumaltedResult.cs" />
-    <Compile Include="Data\CommunicationPrice.cs" />
-    <Compile Include="GeometricMonitoring\Approximation\MultiplicativeUpperLowerEpsilon.cs" />
+    <Compile Include="Data\Communication.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\MultiplicativeUpperLowerApproximation.cs" />
+    <Compile Include="GeometricMonitoring\ClosestPointFromPoint.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\OracleVector.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SkechedChangeDistance.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\DistanceNode.cs" />
     <Compile Include="Nodes\OracleVectorNode.cs" />
-    <Compile Include="Nodes\SkechedChangeDistanceNode.cs" />
+    <Compile Include="Nodes\SketchedChangeDistanceNode.cs" />
     <Compile Include="Nodes\SketchedChangeValueNode.cs" />
     <Compile Include="Nodes\ValueNode.cs" />
     <Compile Include="Nodes\VectorNode.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Servers\NaiveServer.cs" />
     <Compile Include="Servers\NodeServer.cs" />
     <Compile Include="Servers\OracleServer.cs" />
+    <Compile Include="Servers\ResolveNodesFunction.cs" />
     <Compile Include="Utils\DataDistributing\GeographicalDistributing.cs" />
     <Compile Include="Utils\DataDistributing\GridDistributing.cs" />
     <Compile Include="Utils\DataDistributing\HorizontalDistributing.cs" />

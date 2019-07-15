@@ -56,7 +56,6 @@ namespace SecondMomentSketch
             return amsVectors;
         }
 
-
         public bool TakeStep()
         {
             if (ended)

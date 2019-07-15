@@ -23,5 +23,8 @@ namespace Utils.MathUtils
             var n = -m * x + y;
             return new Line(m, n);
         }
+
+        public static Line OfTwoPoints(double x1, double y1, double x2, double y2) 
+            => Line.OfPointAndGradient((y2 - y1) / (x2 - x1), x1, y1);
     }
 }

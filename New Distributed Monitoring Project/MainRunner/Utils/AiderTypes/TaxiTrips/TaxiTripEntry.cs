@@ -117,5 +117,41 @@ namespace Utils.AiderTypes.TaxiTrips
                 .Bind(tipAmount => fareTokens[10].TryParseFloat()
                 .Map(totalAmount => new TaxiTripEntry(pickupLongtitude, pickupLatitude, dropoffLongtitude, dropoffLatitude, passengerCount, pickupDateTime, dropoffDateTime, paymentType, vendor, tripDistance, tripTime, tipAmount, fareAmount, totalAmount))))))))))))))))))))));
         }
+
+        public static string CsvHeader()
+        {
+            return "PickupLongtitude"
+                  .ConcatCsv("PickupLatitude")
+                  .ConcatCsv("DropoffLongtitude")
+                  .ConcatCsv("DropoffLatitude")
+                  .ConcatCsv("NumOfPassangers")
+                  .ConcatCsv("PickupTime")
+                  .ConcatCsv("DropoffTime")
+                  .ConcatCsv("PaymentType")
+                  .ConcatCsv("TaxiVendor")
+                  .ConcatCsv("TripDistance")
+                  .ConcatCsv("TripTime")
+                  .ConcatCsv("Tip")
+                  .ConcatCsv("FareAmount")
+                  .ConcatCsv("TotalPayment");
+        }
+
+        public string AsCsv()
+        {
+            return PickupLongtitude.ToString()
+                  .ConcatCsv(PickupLatitude.ToString())
+                  .ConcatCsv(DropoffLongtitude.ToString())
+                  .ConcatCsv(DropoffLatitude.ToString())
+                  .ConcatCsv(NumOfPassangers.ToString())
+                  .ConcatCsv(PickupTime.ToString("F").Replace(',', ' '))
+                  .ConcatCsv(DropoffTime.ToString("F").Replace(',', ' '))
+                  .ConcatCsv(PaymentType.AsString())
+                  .ConcatCsv(TaxiVendor.AsString())
+                  .ConcatCsv(TripDistance.ToString())
+                  .ConcatCsv(TripTime.ToString())
+                  .ConcatCsv(Tip.ToString())
+                  .ConcatCsv(FareAmount.ToString())
+                  .ConcatCsv(TotalPayment.ToString());
+        }
     }
 }

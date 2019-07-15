@@ -61,6 +61,7 @@
     <Compile Include="TaxiTripsParsing.cs" />
     <Compile Include="HorizontalGeographicalDistributingUnitTests.cs" />
     <Compile Include="GridGeographicalDistributingUnitTests.cs" />
+    <Compile Include="CityRegionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -86,6 +87,10 @@
     <ProjectReference Include="..\Monitoring\Monitoring.csproj">
       <Project>{67bf272f-a613-49bf-9cee-ef7f9dfcec32}</Project>
       <Name>Monitoring</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TaxiTripsDataParsing\TaxiTripsDataParsing.csproj">
+      <Project>{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}</Project>
+      <Name>TaxiTripsDataParsing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{EF4A65C0-B74C-4BC7-B47D-FB59297FFA9E}</Project>

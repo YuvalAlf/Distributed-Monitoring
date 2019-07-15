@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Entropy;
@@ -11,6 +12,8 @@ using MoreLinq.Extensions;
 using SecondMomentSketch;
 using SecondMomentSketch.Hashing;
 using Sphere;
+using TaxiTripsDataParsing;
+using Utils.AiderTypes.TaxiTrips;
 using Utils.TypeUtils;
 
 namespace MonitoringProject
@@ -20,9 +23,8 @@ namespace MonitoringProject
         public static readonly string resultDir = @"C:\Users\Yuval\Desktop";
         public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
         public static readonly string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Desktop\Data\Milano Phone Activity\Data";
+        public static readonly string taxiBinDataPath = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\TaxiData.bin";
         //  public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\trimmed.csv";
-
-
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
@@ -64,14 +66,33 @@ namespace MonitoringProject
             int iterations = 500;
             InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
         }
+
+        private static void RunTaxiTripsInnerProduct(Random random)
+        {
+            const double minLat = 40.49; // NYC Coords
+            const double maxLat = 40.91;
+            const double minLong = -74.26;
+            const double maxLong = -73.66;
+            var nycCityRegion = new CityRegion(minLat, maxLat, minLong, maxLong);
+            int sqrtNumOfNodes     = 5;
+            int sqrtVectorLength    = 40;
+            var hoursInWindow      = 24;
+            var iterations = 500;
+            var splitter = new DataSplitter<TaxiTripEntry>(entry => entry.TaxiVendor == TaxiVendor.VTS, "Vendor");
+            var approximation  = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
+
+            InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation, sqrtVectorLength, splitter, nycCityRegion, taxiBinDataPath, resultDir);
+        }
         public static void Main(string[] args)
         {
             var random = new Random(1631);
-            RunMilanoPhonesSecondMomentSketch(random);
+
+            RunTaxiTripsInnerProduct(random);
+
+            //  RunMilanoPhonesSecondMomentSketch(random);
             // RunEntropy(random);
             // RunDatabaseSecondMomentSketch(random);
             //  RunInnerProduct(random);
         }
-
     }
 }
