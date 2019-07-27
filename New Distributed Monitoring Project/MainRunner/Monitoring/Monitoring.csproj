@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Data\AccumaltedResult.cs" />
     <Compile Include="Data\Communication.cs" />
+    <Compile Include="GeometricMonitoring\Approximation\CombinedApproximation.cs" />
     <Compile Include="GeometricMonitoring\Approximation\MultiplicativeUpperLowerApproximation.cs" />
     <Compile Include="GeometricMonitoring\ClosestPointFromPoint.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />

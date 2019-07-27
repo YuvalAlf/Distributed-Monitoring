@@ -10,7 +10,7 @@ namespace Monitoring.GeometricMonitoring.MonitoringType
 
             public Distance(int norm) => Norm = norm;
 
-            public override string AsString() => "Dist L" + Norm;
+            public override string AsString() => "Dist L" + (Norm != 0 ? Norm.ToString() : "-inf");
 
             public bool Equals(Distance other)
             {

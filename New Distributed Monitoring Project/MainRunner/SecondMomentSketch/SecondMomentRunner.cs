@@ -29,11 +29,10 @@ namespace SecondMomentSketch
 
     public static class SecondMomentRunner
     {
-        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, ApproximationType approximation,
+        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, int iterations, ApproximationType approximation,
                                        string resultDir)
         {
             var vectorLength = width * height;
-            var iterations   = 1000;
             var resultPath =
                 PathBuilder.Create(resultDir, "AMS_F2")
                            .AddProperty("Dataset",       "Random")
@@ -58,10 +57,10 @@ namespace SecondMomentSketch
                 for (int i = 0; i < iterations; i++)
                 {
                     var changes = ArrayUtils.Init(numOfNodes,
-                                                  nodeIndex => 
-                                                      nodeIndex == 0 ? 
-                                                          ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-1, 3)).ToVector()
-                                                          : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
+                                                  nodeIndex =>
+                                                      //nodeIndex == 0 ? 
+                                                      ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-1, 3)).ToVector());
+                                                         // : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
                     var stop = new StrongBox<bool>(false);
                     multiRunner.Run(changes, rnd, false)
                                .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 3))
@@ -144,11 +143,11 @@ namespace SecondMomentSketch
                     var shouldEnd = new StrongBox<bool>(false);
                     var changeVectors = phonesActivityWindowManger.GetChangeVector();
                     multiRunner.Run(changeVectors, rnd, true)
-                               .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
+                           //    .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
-                    if (shouldEnd.Value)
-                        break;
+                    //if (shouldEnd.Value)
+                      //  break;
                 }
             }
         }

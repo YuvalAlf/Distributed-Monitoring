@@ -24,15 +24,15 @@ namespace Utils.AiderTypes
             var stream = File.CreateText(textFilePath);
             stream.AutoFlush = true;
             stream.WriteLine(firstLile);
-            if (File.Exists(SublimePath))
-                Process.Start(SublimePath, textFilePath);
+           // if (File.Exists(SublimePath))
+           //     Process.Start(SublimePath, textFilePath);
             return new AutoFlushedTextFile(stream, textFilePath);
         }
 
         public void Dispose()
         {
             Stream.Dispose();
-            Process.Start(FilePath);
+          //  Process.Start(FilePath);
         }
     }
 }

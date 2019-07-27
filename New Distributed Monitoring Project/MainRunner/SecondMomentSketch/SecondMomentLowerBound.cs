@@ -57,8 +57,8 @@ namespace SecondMomentSketch
 
             Either<Vector, double> DistanceL2(Vector point, int nodeId)
             {
-                if (threshold <= 0.0)
-                    return double.PositiveInfinity;
+               // if (threshold <= 0.0)
+                    //return double.PositiveInfinity;
 
                 double DistanceOfRow(int row)
                 {
@@ -76,8 +76,8 @@ namespace SecondMomentSketch
             }
             Either<Vector, double> DistanceL_Inf(Vector point, int nodeId)
             {
-                if (threshold <= 0.0)
-                    return double.PositiveInfinity;
+             //   if (threshold <= 0.0)
+                   //return double.PositiveInfinity;
 
                 double DistanceOfRow(int row)
                 {

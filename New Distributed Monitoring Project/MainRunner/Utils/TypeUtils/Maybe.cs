@@ -35,6 +35,7 @@ namespace Utils.TypeUtils
         public abstract void Iter(Action<T> action);
         public abstract Maybe<S> Bind<S>(Func<T, Maybe<S>> bind);
         public abstract Maybe<S> Map<S>(Func<T, S> mapFunc);
+        public abstract T ValueOrError(string errorMessage);
 
         internal sealed class Some : Maybe<T>
         {
@@ -55,6 +56,8 @@ namespace Utils.TypeUtils
             public override Maybe<S> Bind<S>(Func<T, Maybe<S>> bind) => bind(ValueUnsafe);
 
             public override Maybe<S> Map<S>(Func<T, S> mapFunc) => new Maybe<S>.Some(mapFunc(ValueUnsafe));
+
+            public override T ValueOrError(string errorMessage) => ValueUnsafe;
         }
         internal sealed class None : Maybe<T>
         {
@@ -71,7 +74,8 @@ namespace Utils.TypeUtils
             public override Maybe<S> Bind<S>(Func<T, Maybe<S>> bind) => Maybe<S>.none;
 
             public override Maybe<S> Map<S>(Func<T, S> mapFunc) => Maybe<S>.none;
-        }
 
+            public override T ValueOrError(string errorMessage) => throw new Exception(errorMessage);
+        }
     }
 }

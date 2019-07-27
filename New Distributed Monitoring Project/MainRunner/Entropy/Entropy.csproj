@@ -72,6 +72,10 @@
       <Project>{67BF272F-A613-49BF-9CEE-EF7F9DFCEC32}</Project>
       <Name>Monitoring</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Parsing\Parsing.fsproj">
+      <Project>{1be5cdb3-20f9-4cdf-a3a7-7d7be41bfbf8}</Project>
+      <Name>Parsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SecondMomentSketch\SecondMomentSketch.csproj">
       <Project>{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}</Project>
       <Name>SecondMomentSketch</Name>

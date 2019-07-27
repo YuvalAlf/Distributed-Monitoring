@@ -51,15 +51,15 @@ namespace InnerProduct
                 var innerProduct = new InnerProductFunction(vectorLength);
                 var initVectors =
                     ArrayUtils.Init(numOfNodes,
-                                    _ => ArrayUtils.Init(vectorLength, __ => rnd.NextDouble() * 10).ToVector());
+                                    _ => ArrayUtils.Init(vectorLength, __ => (rnd.NextDouble() - 0.5) * 2).ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                       approximation, innerProduct.MonitoredFunction);
                 for (int i = 0; i < iterations; i++)
                 {
                     var changes =
                         ArrayUtils.Init(numOfNodes,
-                                        _ => ArrayUtils.Init(vectorLength, __ => rnd.NextDouble() - 0.5).ToVector());
-                    multiRunner.Run(changes, rnd, false)
+                                        index => ArrayUtils.Init(vectorLength, _ => index != 0 ? 0.0 : 0.2 * (rnd.NextDouble())).ToVector());
+                    multiRunner.Run(changes, rnd, true)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>) resultCsvFile.WriteLine);
                 }
