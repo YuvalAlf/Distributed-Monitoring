@@ -29,21 +29,22 @@ namespace Entropy
     public static class EntropyRunner
     {
 
-        public static void RunStocks(Random rnd, int numOfNodes, int window, DateTime startingDateTime, int minAmount , ApproximationType approximation,
-                                               string stocksDirPath, string resultDir)
+        public static void RunStocks(Random rnd, int numOfNodes, int window, DateTime startingDateTime,
+                                     int minAmountAtDay , ApproximationType approximation,
+                                     string stocksDirPath, string resultDir)
         {
             var resultPath =
                 PathBuilder.Create(resultDir, "Entropy")
                            .AddProperty("Dataset", "Stocks")
                            .AddProperty("Nodes", numOfNodes.ToString())
                            .AddProperty("Window", window.ToString())
-                           .AddProperty("StartingTime", startingDateTime.ToShortDateString())
-                           .AddProperty("MinAmountAtDay", minAmount.ToString())
+                           .AddProperty("StartingTime", startingDateTime.ToShortDateString().Replace('/','-'))
+                           .AddProperty("MinAmountAtDay", minAmountAtDay.ToString())
                            .AddProperty("Approximation", approximation.AsString())
                            .ToPath("csv");
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
-            using (var stocksProbabilityWindow = StocksProbabilityWindow.Init(stocksDirPath, startingDateTime, minAmount, numOfNodes, window))
+            using (var stocksProbabilityWindow = StocksProbabilityWindow.Init(stocksDirPath, startingDateTime, minAmountAtDay, numOfNodes, window))
             {
                 var vectorLength = stocksProbabilityWindow.VectorLength;
                 var entropy = new EntropyFunction(vectorLength);
@@ -52,6 +53,7 @@ namespace Entropy
                     throw new Exception();
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, vectorLength,
                                                       approximation, entropy.MonitoredFunction);
+                multiRunner.OnlySchemes(new MonitoringScheme.Oracle());
                 while (stocksProbabilityWindow.MoveNext())
                 {
                     var changeProbabilityVectors = stocksProbabilityWindow.CurrentChangeProbabilityVector();

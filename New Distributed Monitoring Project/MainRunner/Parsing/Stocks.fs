@@ -8,23 +8,26 @@ open Utils.AiderTypes
 open Parsings
 open Utils.SparseTypes
 
-type StockValue = { Time : DateTime
-                    Volume : int
+type StockValue = { Time      : DateTime
+                    Volume    : int64
                     OpenValue : float32 } with
     static member TryParse (line : string) : StockValue Option =
-        let tokens = line.Split ' '
+        let tokens = line.Split ','
         if tokens.Length <= 5 then
             None
         else
             optionWorkflow {
                 let! time = convert (DateTime.MinValue) (DateTime.TryParse) tokens.[0]
                 let! openValue = convert 0.0f (Single.TryParse) tokens.[1]
-                let! volume = convert 0 (Int32.TryParse) tokens.[5]
-                return {Time = time; Volume = volume; OpenValue = openValue}
+                let! volume = convert 0L (Int64.TryParse) tokens.[5]
+                return {Time = time.Date; Volume = volume; OpenValue = openValue}
             }
     
 [<Sealed>] 
 type ActiveStock(stream : StreamReader, currentStockValue : StockValue) =
+    let dateEquals (d1 : DateTime) (d2 : DateTime) =
+        d1.Day = d2.Day && d1.Month = d2.Month && d1.Year = d2.Year
+
     static member Init (path : string) =
         let stream = File.OpenText path
         stream.ReadLine() |> ignore
@@ -40,17 +43,16 @@ type ActiveStock(stream : StreamReader, currentStockValue : StockValue) =
             stream.Close()
             None
         else
-            let nextStockValue = StockValue.TryParse(stream.ReadLine()) |> Option.get
+            let line = stream.ReadLine()
+            let nextStockValue = StockValue.TryParse(line) |> Option.get
             Some (new ActiveStock(stream, nextStockValue))
 
     member this.MoveToDate (date : DateTime) : ActiveStock Option =
-        match this.MoveNext() with
-        | None -> None
-        | Some (activeStock) ->
-            if activeStock.CurrentStockValue.Time < date then
-                activeStock.MoveToDate date
-            else
-                Some activeStock
+        if this.CurrentStockValue.Time.Date >= date.Date then
+            Some this
+        else
+            this.MoveNext()
+            |> Option.bind (fun s -> s.MoveToDate(date))
 
     interface IDisposable with 
         member this.Dispose() =
@@ -59,13 +61,15 @@ type ActiveStock(stream : StreamReader, currentStockValue : StockValue) =
 type StocksManager (activeStocks : Map<string, ActiveStock>,
                     currentDate : DateTime,
                     minAmountAtDay : int) =
-    static member Init (stockFilePathes : string array, startingDate, minAmountAtDay : int) =
+    static member Init (stockFilesPathes : string array, startingDate : DateTime, minAmountAtDay : int) =
         let addStock (map : Map<string, ActiveStock>) (path : string) =
             let name = Path.GetFileNameWithoutExtension path
             let stock = ActiveStock.Init path
-            map.Add(name, stock)
+            match stock.MoveToDate startingDate with
+            | None -> map
+            | Some stockAtDate -> map.Add(name, stockAtDate)
         
-        let activeStocks = stockFilePathes |> Array.fold addStock (Map.empty)
+        let activeStocks = stockFilesPathes |> Array.fold addStock (Map.empty)
 
         new StocksManager (activeStocks, startingDate, minAmountAtDay)
 
@@ -73,17 +77,18 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
         if activeStocks.Count = 0 then
             None
         else
-            let nextDate = currentDate + (TimeSpan.FromDays 1.0)
-            let mutable newActiveStocks : Map<string, ActiveStock> = Map.empty
-            activeStocks
-            |> Map.iter (fun name activeStock ->
-                            match activeStock.MoveToDate nextDate with
-                            | Some newStock -> newActiveStocks <- newActiveStocks.Add(name, newStock)
-                            | _             -> ())
+            let nextDate = currentDate.AddDays 1.0
+            let addStock (map : Map<string, ActiveStock>) (name : string) (stock : ActiveStock) =
+                match stock.MoveToDate nextDate with
+                | None -> map
+                | Some stockAtDate -> map.Add(name, stockAtDate)
+
+            let newActiveStocks = activeStocks |> Map.fold addStock (Map.empty)
+
             let activeStocksAtDate =
                 newActiveStocks
                 |> Map.values
-                |> Seq.where (fun stock -> stock.IsAtDate currentDate)
+                |> Seq.where (fun stock -> stock.IsAtDate nextDate)
                 |> Seq.length
             
             let newStockManager = new StocksManager(newActiveStocks, nextDate, minAmountAtDay)
@@ -93,8 +98,9 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             else
                 newStockManager.MoveNext()
 
-    member this.ToProbabilityVectors (numOfNodes : int, stocksIndices : Map<string, int>) =
+    member this.ProbabilityVectors (numOfNodes : int, stocksIndices : Map<string, int>) =
         let vectors = Vector.Init (numOfNodes)
+        
         activeStocks
         |> Map.toSeq
         |> Seq.where (fun (n, s) -> s.IsAtDate currentDate)
@@ -109,7 +115,7 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
         if amount = 0 then
             (this, [])
         else
-            let probabilityVector = this.ToProbabilityVectors(numOfNodes, stocksIndices)
+            let probabilityVector = this.ProbabilityVectors(numOfNodes, stocksIndices)
             let nextManager = this.MoveNext() |> Option.get
             let (resultManager, vectors) = nextManager.GetProbabilityVectors(numOfNodes, stocksIndices, amount - 1)
             (resultManager, probabilityVector :: vectors)
@@ -120,8 +126,8 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             |> Map.iter (fun _ stock -> (stock :> IDisposable).Dispose())
 
 
-type StocksProbabilityWindow(stocksIndices : Map<string, int>, stocksManager : StocksManager, window : WindowedStatistics) =
-    let mutable stocksManager = Some(stocksManager)
+type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksManager : StocksManager, window : WindowedStatistics, numOfNodes : int) =
+    let mutable stocksManager = Some(initialStocksManager)
 
     static member Init (dirPath : string, startingDate : DateTime, minAmountAtDay : int, numOfNodes : int, windowSize : int) : StocksProbabilityWindow =
         let files = Directory.EnumerateFiles (dirPath) |> Seq.toArray
@@ -134,7 +140,7 @@ type StocksProbabilityWindow(stocksIndices : Map<string, int>, stocksManager : S
         let (stocksManager, initProbabilityVectors) = initStocksManager.GetProbabilityVectors (numOfNodes, stocksIndices, windowSize)
         let window = WindowedStatistics.Init(initProbabilityVectors)
 
-        StocksProbabilityWindow(stocksIndices, stocksManager, window)
+        new StocksProbabilityWindow(stocksIndices, stocksManager, window, numOfNodes)
     
     member this.CurrentProbabilityVector () : Vector[] = window.CurrentNodesProbabilityVectors()
     member this.CurrentChangeProbabilityVector () : Vector[] = window.GetChangeProbabilityVectors()
@@ -145,13 +151,13 @@ type StocksProbabilityWindow(stocksIndices : Map<string, int>, stocksManager : S
             stocksManager <- manager.MoveNext()
             match stocksManager with
             | None -> false
-            | _    -> true
+            | Some stock ->
+                window.Move(stock.ProbabilityVectors(numOfNodes, stocksIndices))
+                true
 
     member this.VectorLength = stocksIndices |> Map.count
 
     interface IDisposable with
         member this.Dispose () = 
-            match stocksManager with
-            | None -> ()
-            | Some manager -> (manager :> IDisposable).Dispose()
+            (initialStocksManager :> IDisposable).Dispose()
     

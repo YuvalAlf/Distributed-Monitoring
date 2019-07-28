@@ -26,7 +26,7 @@ module Map =
         |> Seq.map snd
 
 module Seq =
-    let evenChuncks (numOfChuncks : int) (sequence : (string * int) seq) : (string * double * int) seq =
+    let evenChuncks (numOfChuncks : int) (sequence : (string * int64) seq) : (string * double * int) seq =
         let array = sequence |> Seq.toArray
         let elementCount = array.Length
         let chunckBaseSize = elementCount / numOfChuncks
@@ -34,7 +34,7 @@ module Seq =
         let chunckSize = chunckBaseSize + reminder
         seq {
             for chunck = 0 to numOfChuncks - 1 do    
-                for i = 0 to chunckBaseSize do
+                for i = 0 to chunckBaseSize - 1 do
                     let str, value = array.[chunckBaseSize * chunck + i]
                     yield (str, double(value), chunck)
             for i = 1 to reminder do
