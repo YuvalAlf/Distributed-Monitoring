@@ -7,6 +7,7 @@ namespace Utils.AiderTypes
 {
     public sealed class AutoFlushedTextFile : IDisposable
     {
+        private const bool ShowFiles = true;
         private string FilePath { get; }
         private StreamWriter Stream { get; }
         public static string SublimePath = @"C:\Program Files\Sublime Text 3\sublime_text.exe";
@@ -24,7 +25,7 @@ namespace Utils.AiderTypes
             var stream = File.CreateText(textFilePath);
             stream.AutoFlush = true;
             stream.WriteLine(firstLile);
-            if (File.Exists(SublimePath))
+            if (ShowFiles && File.Exists(SublimePath))
                 Process.Start(SublimePath, textFilePath);
             return new AutoFlushedTextFile(stream, textFilePath);
         }
@@ -32,7 +33,8 @@ namespace Utils.AiderTypes
         public void Dispose()
         {
             Stream.Dispose();
-            Process.Start(FilePath);
+            if (ShowFiles)
+                Process.Start(FilePath);
         }
     }
 }

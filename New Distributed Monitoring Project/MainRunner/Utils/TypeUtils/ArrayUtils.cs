@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
+using Utils.AiderTypes.TaxiTrips;
 using Utils.SparseTypes;
 
 namespace Utils.TypeUtils
@@ -32,5 +33,10 @@ namespace Utils.TypeUtils
 
         public static T[] Init<T>(int arraySize, Func<int, T> createFunc) =>
             Enumerable.Range(0, arraySize).Select(createFunc).ToArray();
+
+        public static T[] Init<T>(params T[] array)
+        {
+            return array;
+        }
     }
 }

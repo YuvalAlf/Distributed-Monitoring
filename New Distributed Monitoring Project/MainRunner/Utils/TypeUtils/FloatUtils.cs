@@ -12,5 +12,8 @@ namespace Utils.TypeUtils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool InRange(this float @this, float min, float max)
             => @this >= min && @this <= max;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool InRange(this double @this, double min, double max)
+            => @this >= min && @this <= max;
     }
 }

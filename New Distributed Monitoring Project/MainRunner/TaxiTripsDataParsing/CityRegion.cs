@@ -23,6 +23,9 @@ namespace TaxiTripsDataParsing
             MaxLong = maxLong;
         }
 
+        public bool IsInBound(double latitude, double longtitude) 
+            => latitude.InRange(MinLat, MaxLat) && longtitude.InRange(MinLong, MaxLong);
+
         private Dictionary<int, (Line, Line)> Lines { get; } = new Dictionary<int, (Line, Line)>();
         public int Get(int sqrtAmount, double latatitude, double longtitude)
         {

@@ -47,6 +47,10 @@ namespace TaxiTripsDataParsing
             while (TaxiTrips.MoveNext())
             {
                 var (t1, t2) = TaxiTrips.Current;
+                if (!CityRegion.IsInBound(t1.PickupLatitude, t1.PickupLongtitude))
+                    continue;
+                if (!CityRegion.IsInBound(t1.DropoffLatitude, t1.DropoffLongtitude))
+                    continue;
                 var node = CityRegion.Get(SqrtNumOfNodes, t1.PickupLatitude, t1.PickupLongtitude);
                 var index = CityRegion.Get(SqrtVectorLength, t1.DropoffLatitude, t1.DropoffLongtitude);
                 if (Splitter.IsY(t1))

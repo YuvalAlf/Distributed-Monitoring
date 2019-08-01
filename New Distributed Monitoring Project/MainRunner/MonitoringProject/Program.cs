@@ -63,8 +63,8 @@ namespace MonitoringProject
         private static void RunStocksEntropy(Random random)
         {
             int numOfNodes     = 5;
-            var window         = 1;
-            var approximation = new MultiplicativeApproximation(0.05);
+            var window         = 4;
+            var approximation = new MultiplicativeApproximation(0.15);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int minAmountAtDay = 1000;
             EntropyRunner.RunStocks(random, numOfNodes, window, startingDateTime, minAmountAtDay, approximation, stocksDirPath, resultDir);
@@ -97,20 +97,32 @@ namespace MonitoringProject
 
         private static void RunTaxiTripsInnerProduct(Random random)
         {
-            const double minLat           = 40.49; // NYC Coords
-            const double maxLat           = 40.91;
-            const double minLong          = -74.26;
-            const double maxLong          = -73.66;
+            // NYC Coords
+            // Big Square
+                    /*const double minLat           = 40.49;
+                    const double maxLat           = 40.91;
+                    const double minLong          = -74.26;
+                    const double maxLong          = -73.66; */
+            // Small Square
+            const double minLat = 40.623;
+            const double maxLat = 40.846;
+            const double minLong = -74.04;
+            const double maxLong = -73.74;
+
             var          nycCityRegion    = new CityRegion(minLat, maxLat, minLong, maxLong);
             var          sqrtNumOfNodes   = 5;
-            var          sqrtVectorLength = 50;
+            var          sqrtVectorLength = 10;
             var          hoursInWindow    = 24;
-            var          iterations       = 500;
-            var splitter =
-                new DataSplitter<TaxiTripEntry>(entry => entry.Tip > 0, "Tip");
+            var          iterations       = 1000;
+            var tipSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.Tip > 0, "Tip");
+            var vendorSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.TaxiVendor == TaxiVendor.CMT, "Vendor");
+            var paymentSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.PaymentType == PaymentType.Cash, "PaymentType");
+            var passangersSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.NumOfPassangers > 1, "Passangers");
+            var splitters = ArrayUtils.Init(tipSplitter, vendorSplitter, paymentSplitter, passangersSplitter);
             var approximation = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
-
-            InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
+            
+            foreach (var splitter in splitters)
+                InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
                                             sqrtVectorLength, splitter, nycCityRegion, taxiBinDataPath, resultDir);
         }
 
@@ -122,13 +134,13 @@ namespace MonitoringProject
 
             //  RunRandomInnerProduct(random);
 
-            //  RunTaxiTripsInnerProduct(random);
+             // RunTaxiTripsInnerProduct(random);
 
             // RunRandomAms(random);
             //   RunMilanoPhonesSecondMomentSketch(random);
             // RunEntropy(random);
             // RunDatabaseSecondMomentSketch(random);
-            //  RunInnerProduct(random);
+           //   RunInnerProduct(random);
         }
 
     }

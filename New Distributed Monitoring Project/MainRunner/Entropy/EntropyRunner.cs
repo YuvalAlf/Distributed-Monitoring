@@ -53,7 +53,7 @@ namespace Entropy
                     throw new Exception();
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, vectorLength,
                                                       approximation, entropy.MonitoredFunction);
-                multiRunner.OnlySchemes(new MonitoringScheme.Oracle());
+                //multiRunner.OnlySchemes(new MonitoringScheme.Oracle());
                 while (stocksProbabilityWindow.MoveNext())
                 {
                     var changeProbabilityVectors = stocksProbabilityWindow.CurrentChangeProbabilityVector();
