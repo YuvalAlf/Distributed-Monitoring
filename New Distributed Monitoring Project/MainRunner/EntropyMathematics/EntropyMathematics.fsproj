@@ -53,6 +53,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="ClosestValueQuery.fs" />
     <Compile Include="FastCountSet.fs" />
     <Compile Include="RangeQueryArray.fs" />
     <Compile Include="Deque.fs" />

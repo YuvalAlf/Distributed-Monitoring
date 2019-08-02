@@ -62,6 +62,7 @@
     <Compile Include="HorizontalGeographicalDistributingUnitTests.cs" />
     <Compile Include="GridGeographicalDistributingUnitTests.cs" />
     <Compile Include="CityRegionTests.cs" />
+    <Compile Include="ClosestValueQueryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -71,6 +72,10 @@
     <ProjectReference Include="..\DataParsing\DataParsing.csproj">
       <Project>{40e7bef4-e1e8-4302-9998-397338cd3a46}</Project>
       <Name>DataParsing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntropyMathematics\EntropyMathematics.fsproj">
+      <Project>{20c8379f-435a-40cc-b7e5-d4aa353fe432}</Project>
+      <Name>EntropyMathematics</Name>
     </ProjectReference>
     <ProjectReference Include="..\Entropy\Entropy.csproj">
       <Project>{1edcd084-b5df-478e-855e-ba95ab0ed0f1}</Project>
