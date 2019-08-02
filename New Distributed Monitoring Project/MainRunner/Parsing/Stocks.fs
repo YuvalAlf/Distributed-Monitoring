@@ -7,6 +7,7 @@ open Utils.TypeUtils
 open Utils.AiderTypes
 open Parsings
 open Utils.SparseTypes
+open EntropyMathematics
 
 type StockValue = { Time      : DateTime
                     Volume    : int64
@@ -60,8 +61,9 @@ type ActiveStock(stream : StreamReader, currentStockValue : StockValue) =
 
 type StocksManager (activeStocks : Map<string, ActiveStock>,
                     currentDate : DateTime,
-                    minAmountAtDay : int) =
-    static member Init (stockFilesPathes : string array, startingDate : DateTime, minAmountAtDay : int) =
+                    minAmountAtDay : int,
+                    stocksVolumeQuery : int64 Tree) =
+    static member Init (stockFilesPathes : string array, startingDate : DateTime, minAmountAtDay : int, stocksVolumeQuery : Tree<int64>) =
         let addStock (map : Map<string, ActiveStock>) (path : string) =
             let name = Path.GetFileNameWithoutExtension path
             let stock = ActiveStock.Init path
@@ -71,7 +73,7 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
         
         let activeStocks = stockFilesPathes |> Array.fold addStock (Map.empty)
 
-        new StocksManager (activeStocks, startingDate, minAmountAtDay)
+        new StocksManager (activeStocks, startingDate, minAmountAtDay, stocksVolumeQuery)
 
     member this.MoveNext() : StocksManager Option =
         if activeStocks.Count = 0 then
@@ -91,7 +93,7 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
                 |> Seq.where (fun stock -> stock.IsAtDate nextDate)
                 |> Seq.length
             
-            let newStockManager = new StocksManager(newActiveStocks, nextDate, minAmountAtDay)
+            let newStockManager = new StocksManager(newActiveStocks, nextDate, minAmountAtDay, stocksVolumeQuery)
 
             if activeStocksAtDate >= minAmountAtDay then
                 Some(newStockManager)
@@ -107,7 +109,9 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
         |> Seq.sortBy (fun (n, s) -> s.CurrentStockValue.OpenValue)
         |> Seq.map (fun (n, s) -> (n, s.CurrentStockValue.Volume))
         |> Seq.evenChuncks numOfNodes
-        |> Seq.iter (fun (name, value, node) -> vectors.[node].[stocksIndices.[name]] <- value)
+        |> Seq.map (fun (name, volume, node) -> (node, stocksVolumeQuery.GetClosestSmallerValueIndex(int64(volume))))
+        |> Seq.iter (fun (node, index) -> vectors.[node].[index] <- vectors.[node].[index] + 1.0)
+        //|> Seq.iter (fun (name, value, node) -> vectors.[node].[stocksIndices.[name]] <- value)
 
         vectors
     
@@ -126,21 +130,21 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             |> Map.iter (fun _ stock -> (stock :> IDisposable).Dispose())
 
 
-type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksManager : StocksManager, window : WindowedStatistics, numOfNodes : int) =
+type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksManager : StocksManager, window : WindowedStatistics, numOfNodes : int, closestValueQuery : Tree<int64>) =
     let mutable stocksManager = Some(initialStocksManager)
 
-    static member Init (dirPath : string, startingDate : DateTime, minAmountAtDay : int, numOfNodes : int, windowSize : int) : StocksProbabilityWindow =
+    static member Init (dirPath : string, startingDate : DateTime, minAmountAtDay : int, numOfNodes : int, windowSize : int, closestValueQuery : Tree<int64>) : StocksProbabilityWindow =
         let files = Directory.EnumerateFiles (dirPath) |> Seq.toArray
         let names = files |> Array.map (Path.GetFileNameWithoutExtension) |> Array.sort
         let stocksIndices = 
             names 
             |> Array.indexed 
             |> Array.fold (fun (map : Map<string, int>) (index, name) -> map.Add(name, index)) (Map.empty)
-        let initStocksManager = StocksManager.Init(files, startingDate, minAmountAtDay)
+        let initStocksManager = StocksManager.Init(files, startingDate, minAmountAtDay, closestValueQuery)
         let (stocksManager, initProbabilityVectors) = initStocksManager.GetProbabilityVectors (numOfNodes, stocksIndices, windowSize)
         let window = WindowedStatistics.Init(initProbabilityVectors)
 
-        new StocksProbabilityWindow(stocksIndices, stocksManager, window, numOfNodes)
+        new StocksProbabilityWindow(stocksIndices, stocksManager, window, numOfNodes, closestValueQuery)
     
     member this.CurrentProbabilityVector () : Vector[] = window.CurrentNodesProbabilityVectors()
     member this.CurrentChangeProbabilityVector () : Vector[] = window.GetChangeProbabilityVectors()

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Entropy;
+using EntropyMathematics;
 using InnerProduct;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
@@ -62,12 +63,18 @@ namespace MonitoringProject
         }
         private static void RunStocksEntropy(Random random)
         {
-            int numOfNodes     = 5;
-            var window         = 4;
-            var approximation = new MultiplicativeApproximation(0.15);
+            int numOfNodes     = 10;
+            var window         = 3;
+            var wantedVectorLength = 1000;
+            var minVolumeBucket = 100.0;
+            var maxVolumeBucket = 4.0 * 10E8;
+            var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
+            var closestValueQuery = ClosestValueQuery.InitExponential((long)minVolumeBucket, (long)maxVolumeBucket, mulFactor);
+            var approximation = new MultiplicativeApproximation(0.1);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int minAmountAtDay = 1000;
-            EntropyRunner.RunStocks(random, numOfNodes, window, startingDateTime, minAmountAtDay, approximation, stocksDirPath, resultDir);
+            var iterations = 1000;
+            EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime, minAmountAtDay, approximation, stocksDirPath, resultDir);
         }
 
         private static void RunRandomAms(Random random)

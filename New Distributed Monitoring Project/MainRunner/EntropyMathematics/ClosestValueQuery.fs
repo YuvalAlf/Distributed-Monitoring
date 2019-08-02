@@ -7,15 +7,14 @@ type Tree<'t when 't :> IComparable<'t>> = { Data : 't array
                                              CurrentIndex : int
                                              Right : Option<Tree<'t>>} with
     member tree.CurrentValue = tree.Data.[tree.CurrentIndex]
-    member tree.PreviousValue = tree.Data.[tree.CurrentIndex - 1]
-    member tree.GetClosestSmallerValue(value : 't) =
+    member tree.GetClosestSmallerValueIndex(value : 't) =
         let x = tree.CurrentValue
         match tree.Left, tree.CurrentValue.CompareTo(value), tree.Right with
-        | _,              0, _ -> value
-        | None,           d, _ when d > 0 -> tree.PreviousValue
-        | Some(leftNode), d, _ when d > 0 -> leftNode.GetClosestSmallerValue(value)
-        | _,              d, None when d < 0 -> tree.CurrentValue
-        | _,              d, Some(rightNode) when d < 0 -> rightNode.GetClosestSmallerValue(value)
+        | _,              0, _ -> tree.CurrentIndex
+        | None,           d, _ when d > 0 -> if tree.CurrentIndex = 0 then raise(IndexOutOfRangeException()) else tree.CurrentIndex - 1
+        | Some(leftNode), d, _ when d > 0 -> leftNode.GetClosestSmallerValueIndex(value)
+        | _,              d, None when d < 0 -> tree.CurrentIndex
+        | _,              d, Some(rightNode) when d < 0 -> rightNode.GetClosestSmallerValueIndex(value)
         | otherwise -> failwith "Programming Error"
 
     static member InitClosestValueQuery(values : 't array) : Tree<'t> =

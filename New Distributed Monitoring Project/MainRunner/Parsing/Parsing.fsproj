@@ -58,6 +58,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\EntropyMathematics\EntropyMathematics.fsproj">
+      <Name>EntropyMathematics</Name>
+      <Project>{20c8379f-435a-40cc-b7e5-d4aa353fe432}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Name>Utils</Name>
       <Project>{ef4a65c0-b74c-4bc7-b47d-fb59297ffa9e}</Project>

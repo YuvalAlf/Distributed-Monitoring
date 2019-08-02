@@ -59,6 +59,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EntropyMathematics\EntropyMathematics.fsproj">
+      <Project>{20C8379F-435A-40CC-B7E5-D4AA353FE432}</Project>
+      <Name>EntropyMathematics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Entropy\Entropy.csproj">
       <Project>{1EDCD084-B5DF-478E-855E-BA95AB0ED0F1}</Project>
       <Name>Entropy</Name>
