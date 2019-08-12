@@ -100,7 +100,7 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             else
                 newStockManager.MoveNext()
 
-    member this.ProbabilityVectors (numOfNodes : int, stocksIndices : Map<string, int>) =
+    member this.HistogramVectors (numOfNodes : int, stocksIndices : Map<string, int>) =
         let vectors = Vector.Init (numOfNodes)
         
         activeStocks
@@ -115,13 +115,13 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
 
         vectors
     
-    member this.GetProbabilityVectors (numOfNodes, stocksIndices, amount) : (StocksManager * Vector[] list) =
+    member this.GetHistogramVectors (numOfNodes, stocksIndices, amount) : (StocksManager * Vector[] list) =
         if amount = 0 then
             (this, [])
         else
-            let probabilityVector = this.ProbabilityVectors(numOfNodes, stocksIndices)
+            let probabilityVector = this.HistogramVectors(numOfNodes, stocksIndices)
             let nextManager = this.MoveNext() |> Option.get
-            let (resultManager, vectors) = nextManager.GetProbabilityVectors(numOfNodes, stocksIndices, amount - 1)
+            let (resultManager, vectors) = nextManager.GetHistogramVectors(numOfNodes, stocksIndices, amount - 1)
             (resultManager, probabilityVector :: vectors)
 
     interface IDisposable with
@@ -141,7 +141,7 @@ type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksMana
             |> Array.indexed 
             |> Array.fold (fun (map : Map<string, int>) (index, name) -> map.Add(name, index)) (Map.empty)
         let initStocksManager = StocksManager.Init(files, startingDate, minAmountAtDay, closestValueQuery)
-        let (stocksManager, initProbabilityVectors) = initStocksManager.GetProbabilityVectors (numOfNodes, stocksIndices, windowSize)
+        let (stocksManager, initProbabilityVectors) = initStocksManager.GetHistogramVectors (numOfNodes, stocksIndices, windowSize)
         let window = WindowedStatistics.Init(initProbabilityVectors)
 
         new StocksProbabilityWindow(stocksIndices, stocksManager, window, numOfNodes, closestValueQuery)
@@ -156,7 +156,7 @@ type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksMana
             match stocksManager with
             | None -> false
             | Some stock ->
-                window.Move(stock.ProbabilityVectors(numOfNodes, stocksIndices))
+                window.Move(stock.HistogramVectors(numOfNodes, stocksIndices))
                 true
 
     member this.VectorLength = stocksIndices |> Map.count
