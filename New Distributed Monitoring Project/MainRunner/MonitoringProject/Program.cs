@@ -61,20 +61,27 @@ namespace MonitoringProject
             var approximation = new MultiplicativeApproximation(0.02);
             EntropyRunner.RunDatabaseAccesses(random, numOfNodes, window, approximation, vectorLength, distrubteUsers, databaseAccessesPath, resultDir);
         }
+
         private static void RunStocksEntropy(Random random)
         {
-            int numOfNodes     = 3;
-            var window         = 5;
-            var wantedVectorLength = 500;
-            var minVolumeBucket = 100.0;
-            var maxVolumeBucket = 4.0 * 10E8;
-            var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
-            var closestValueQuery = ClosestValueQuery.InitExponential((long)minVolumeBucket, (long)maxVolumeBucket, mulFactor);
-            var approximation = new MultiplicativeApproximation(0.03);
+            //int      numOfNodes       = 5;
+            var      window           = 50;
+            var      minVolumeBucket  = 100.0;
+            var      maxVolumeBucket  = 4.0 * 10E8;
+            var      approximation    = new AdditiveApproximation(0.015);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
-            int minAmountAtDay = 1000;
-            var iterations = 1000;
-            EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime, minAmountAtDay, approximation, stocksDirPath, resultDir);
+            int      minAmountAtDay   = 1000;
+            var      iterations       = 2000;
+            var wantedVectorLength = 100;
+            //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
+            foreach (var numOfNodes in ArrayUtils.Init(30, 40))
+            {
+
+                var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
+                var closestValueQuery = ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
+                EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime,
+                                        minAmountAtDay, approximation, stocksDirPath, resultDir);
+            }
         }
 
         private static void RunRandomAms(Random random)
@@ -137,7 +144,7 @@ namespace MonitoringProject
             var chosenSplitter = vendorSplitter;
 
 
-            foreach (var sqrtVectorLength in ArrayUtils.Init(5, 10, 15, 20, 35, 60, 100, 180, 290))
+            foreach (var sqrtVectorLength in ArrayUtils.Init(128, 165))
                 InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
                                             sqrtVectorLength, chosenSplitter, nycCityRegion, taxiBinDataPath, resultDir);
         }
@@ -146,7 +153,7 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
 
-            //RunStocksEntropy(random);
+           // RunStocksEntropy(random);
 
              // RunRandomInnerProduct(random);
 

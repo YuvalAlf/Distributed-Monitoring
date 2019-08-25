@@ -36,7 +36,9 @@ type Tree<'t when 't :> IComparable<'t>> = { Data : 't array
             [|
                 yield 0L
                 let generator value =
-                    let nextValue = Math.Floor(double(value) * mulFactor) |> int64
+                    let mutable nextValue = Math.Floor(double(value) * mulFactor) |> int64
+                    if value = nextValue then
+                        nextValue <- nextValue + 1L
                     if value > max then None else Some(value, nextValue)
                 yield! (startValue |> Seq.unfold generator)
 
