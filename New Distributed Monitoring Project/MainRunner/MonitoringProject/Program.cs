@@ -32,7 +32,7 @@ namespace MonitoringProject
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
             int numOfNodes     = 9;
-            var dimensions     = new[] { (5,5)};
+            var dimensions     = new[] { (31, 41)};
             var window         = 24;
             var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
             //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
@@ -64,17 +64,18 @@ namespace MonitoringProject
 
         private static void RunStocksEntropy(Random random)
         {
-            //int      numOfNodes       = 5;
+            int      numOfNodes       = 5;
             var      window           = 50;
             var      minVolumeBucket  = 100.0;
             var      maxVolumeBucket  = 4.0 * 10E8;
-            var      approximation    = new AdditiveApproximation(0.015);
+            var      approximation    = new MultiplicativeApproximation(0.0045);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int      minAmountAtDay   = 1000;
             var      iterations       = 2000;
-            var wantedVectorLength = 100;
+            //var wantedVectorLength = 100;
             //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
-            foreach (var numOfNodes in ArrayUtils.Init(30, 40))
+            foreach (var wantedVectorLength in ArrayUtils.Init(3000, 3500))
+            //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
             {
 
                 var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
@@ -92,13 +93,18 @@ namespace MonitoringProject
             //var height = 21;
             foreach (var (width, height) in new[]
                                             {
-                                                /*(20, 1),
+                                                //(7,7)
+                                                //(20, 1),
                                                 (20, 5),
                                                 (20, 9),
                                                 (20, 17),
-                                                (20, 31),*/
+                                                (20, 31),
                                                 (20, 61),
                                                 (20, 101),
+                                                (20, 171),
+                                                (20, 251),
+                                                (20, 331),
+                                                (20, 371),
                                                 (20, 201),
                                                 (20, 401)
                                             })
@@ -114,6 +120,17 @@ namespace MonitoringProject
             int iterations = 800;
             var vectorLength = 100;
             InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
+        }
+
+        private static void RunRandomEntropy(Random random)
+        {
+            int numOfNodes = 10;
+            ApproximationType approximation = new MultiplicativeApproximation(0.17);
+            int iterations = 2000;
+            bool oneChanges = false;
+            //foreach(var vectorLength in ArrayUtils.Init(200, 500, 1000, 1700, 2400, 3500, 4200, 5000, 5800, 7000))
+            foreach(var vectorLength in ArrayUtils.Init(7000))
+                EntropyRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, oneChanges, resultDir);
         }
 
         private static void RunTaxiTripsInnerProduct(Random random)
@@ -153,17 +170,15 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
 
-           // RunStocksEntropy(random);
-
-             // RunRandomInnerProduct(random);
-
-              RunTaxiTripsInnerProduct(random);
-
-            // RunRandomAms(random);
-            //   RunMilanoPhonesSecondMomentSketch(random);
+            //RunRandomEntropy(random);
+            //   RunStocksEntropy(random);
+            // RunRandomInnerProduct(random);
+            //  RunTaxiTripsInnerProduct(random);
+             RunRandomAms(random);
+            // RunMilanoPhonesSecondMomentSketch(random);
             // RunEntropy(random);
             // RunDatabaseSecondMomentSketch(random);
-           //   RunInnerProduct(random);
+            //   RunInnerProduct(random);
         }
 
     }

@@ -64,7 +64,6 @@ namespace InnerProduct
                                .ForEach((Action<string>) resultCsvFile.WriteLine);
                 }
             }
-
         }
 
 

@@ -30,6 +30,57 @@ namespace Entropy
     public static class EntropyRunner
     {
 
+        public static void RunRandomly(Random rnd, int numOfNodes, ApproximationType approximation, int vectorLength, int iterations, bool oneChanges,
+                                       string resultDir)
+        {
+            var resultPath =
+                PathBuilder.Create(resultDir, "Entropy")
+                           .AddProperty("Dataset", "Random")
+                           .AddProperty("Nodes", numOfNodes.ToString())
+                           .AddProperty("VectorLength", vectorLength.ToString())
+                           .AddProperty("OneChanges", oneChanges.ToString())
+                           .AddProperty("Iterations", iterations.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
+
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            {
+                var sqrt = (int)Math.Sqrt(vectorLength);
+                var entropyFunction = new EntropyFunction(vectorLength);
+
+                Func<int, Vector> genVector = node => ArrayUtils.Init(vectorLength, (double)rnd.Next((1 + node) * sqrt)).ToVector().NormalizeInPlaceToSum(1.0);
+
+                var initVectors = ArrayUtils.Init(numOfNodes, genVector);
+                var globalVector = Vector.AverageVector(initVectors);
+
+                Vector getChangeVector(int node)
+                {
+                    if (oneChanges && node >= 1)
+                        return new Vector();
+
+                    var someVector = genVector(node);
+                    Vector changeVector = someVector - globalVector;
+                    if (!oneChanges)
+                        changeVector.DivideInPlace(numOfNodes);
+
+                    globalVector.AddInPlace(changeVector / numOfNodes);
+                    return changeVector;
+                }
+
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
+                                                      approximation, entropyFunction.MonitoredFunction);
+                for (int i = 0; i < iterations; i++)
+                {
+                    var changes = ArrayUtils.Init(numOfNodes, getChangeVector);
+                    multiRunner.Run(changes, rnd, true)
+                               .Select(r => r.AsCsvString())
+                               .ForEach((Action<string>)resultCsvFile.WriteLine);
+                }
+            }
+        }
+
+
+
         public static void RunStocks(Random rnd, int iterations, Tree<long> closestValueQuery, int numOfNodes, int window, DateTime startingDateTime,
                                      int minAmountAtDay , ApproximationType approximation,
                                      string stocksDirPath, string resultDir)

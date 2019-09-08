@@ -257,5 +257,11 @@ namespace Utils.SparseTypes
 
         #endregion
 
+        public Vector NormalizeInPlaceToSum(double newSum)
+        {
+            this.DivideInPlace(this.Sum() / newSum);
+            this.DivideInPlace(this.Sum() / newSum);
+            return this;
+        }
     }
 }
