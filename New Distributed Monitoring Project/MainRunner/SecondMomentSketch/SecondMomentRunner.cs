@@ -58,12 +58,13 @@ namespace SecondMomentSketch
                 {
                     var changes = ArrayUtils.Init(numOfNodes,
                                                   nodeIndex =>
-                                                      nodeIndex == 0 ? 
-                                                      ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-12, 13)).ToVector()
-                                                          : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
+                                                      // nodeIndex == 0 ? 
+                                                      ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-3, 4))
+                                                                .ToVector());
+                                                       //   : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
                     var stop = new StrongBox<bool>(false);
                     multiRunner.Run(changes, rnd, true)
-                               .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 3))
+                               .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 2))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
                     if (stop.Value)

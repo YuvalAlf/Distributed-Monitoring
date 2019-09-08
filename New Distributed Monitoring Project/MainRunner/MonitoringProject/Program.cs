@@ -89,27 +89,30 @@ namespace MonitoringProject
         {
             int               numOfNodes    = 16;
             int               iterations    = 10000;
+            //bool oneChanges = true;
             //var width = 21;
             //var height = 21;
             foreach (var (width, height) in new[]
                                             {
-                                                //(7,7)
-                                                //(20, 1),
-                                                (20, 5),
-                                                (20, 9),
-                                                (20, 17),
+                                                (20, 11),
                                                 (20, 31),
-                                                (20, 61),
-                                                (20, 101),
-                                                (20, 171),
-                                                (20, 251),
-                                                (20, 331),
-                                                (20, 371),
+                                                (20, 51),
+                                                (20, 71),
+                                                (20, 91),
+                                                (20, 111),
+                                                (20, 131),
+                                                (20, 161),
                                                 (20, 201),
-                                                (20, 401)
+                                                (20, 241),
+                                                (20, 281),
+                                                (20, 331),
+                                                (20, 381),
+                                                (20, 431),
+                                                (20, 451),
+                                                (20, 491)
                                             })
             {
-                ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0), new AdditiveApproximation(width * height * 40));
+                ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.3, 3.0)); //, new AdditiveApproximation(Math.Sqrt(width * height) * 100));
                 SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, iterations, approximation, resultDir);
             }
         }
