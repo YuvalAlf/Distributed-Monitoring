@@ -31,15 +31,21 @@ namespace MonitoringProject
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
-            int numOfNodes     = 9;
-            var dimensions     = new[] { (31, 41)};
+           // int numOfNodes     = 36;
+            var dimensions     = new[] { (9, 9)};
             var window         = 24;
-            var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
-            //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
-            //var approximation  = new ThresholdApproximation(2700000);
-            var approximation  = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0), new AdditiveApproximation(100000));
-            foreach (var (width, height) in dimensions)
-                SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, distributingMethod, phoneActivitiesBaseFolder, resultDir);
+            foreach (var numOfNodes in ArrayUtils.Init(16, 36, 64, 100, 144, 13 * 13, 14 * 14))
+            //foreach (var numOfNodes in ArrayUtils.Init(13*13, 14*14))
+            {
+                var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
+                //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
+                //var approximation  = new ThresholdApproximation(2700000);
+                var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
+                                                              new AdditiveApproximation(100000));
+                foreach (var (width, height) in dimensions)
+                    SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height,
+                                                              distributingMethod, phoneActivitiesBaseFolder, resultDir);
+            }
         }
 
         private static void RunDatabaseSecondMomentSketch(Random random)
@@ -64,40 +70,40 @@ namespace MonitoringProject
 
         private static void RunStocksEntropy(Random random)
         {
-            int      numOfNodes       = 5;
+            //int      numOfNodes       = 20;
             var      window           = 50;
             var      minVolumeBucket  = 100.0;
             var      maxVolumeBucket  = 4.0 * 10E8;
-            var      approximation    = new MultiplicativeApproximation(0.0045);
+            var      approximation    = new MultiplicativeApproximation(0.005);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int      minAmountAtDay   = 1000;
-            var      iterations       = 2000;
+            var      iterations       = 1000;
             //var wantedVectorLength = 100;
             //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
-            foreach (var wantedVectorLength in ArrayUtils.Init(3000, 3500))
-            //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
-            {
-
-                var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
-                var closestValueQuery = ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
-                EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime,
-                                        minAmountAtDay, approximation, stocksDirPath, resultDir);
-            }
+            foreach (var wantedVectorLength in ArrayUtils.Init(400))
+                foreach (var numOfNodes in ArrayUtils.Init(10, 40, 80, 120, 160, 200))
+                //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
+                {
+                    var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
+                    var closestValueQuery = ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
+                    EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime,
+                                            minAmountAtDay, approximation, stocksDirPath, resultDir);
+                }
         }
 
         private static void RunRandomAms(Random random)
         {
-            int               numOfNodes    = 16;
             int               iterations    = 10000;
             //bool oneChanges = true;
             //var width = 21;
             //var height = 21;
-            foreach (var (width, height) in new[]
+            foreach (var numOfNodes in ArrayUtils.Init(100))
+                foreach (var (width, height) in new[]
                                             {
-                                                (20, 11),
-                                                (20, 31),
+                                                //(20, 11),
+                                                //(20, 31),
                                                 (20, 51),
-                                                (20, 71),
+                                                /*(20, 71),
                                                 (20, 91),
                                                 (20, 111),
                                                 (20, 131),
@@ -109,7 +115,7 @@ namespace MonitoringProject
                                                 (20, 381),
                                                 (20, 431),
                                                 (20, 451),
-                                                (20, 491)
+                                                (20, 491)*/
                                             })
             {
                 ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.3, 3.0)); //, new AdditiveApproximation(Math.Sqrt(width * height) * 100));
@@ -151,7 +157,7 @@ namespace MonitoringProject
             const double maxLong = -73.74;*/
 
             var nycCityRegion    = new CityRegion(minLat, maxLat, minLong, maxLong);
-            var          sqrtNumOfNodes   = 5;
+            //var          sqrtNumOfNodes   = 5;
             //var          sqrtVectorLength = 10;
             var          hoursInWindow    = 24;
             var          iterations       = 750;
@@ -164,8 +170,9 @@ namespace MonitoringProject
             var chosenSplitter = vendorSplitter;
 
 
-            foreach (var sqrtVectorLength in ArrayUtils.Init(128, 165))
-                InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
+            foreach (var sqrtVectorLength in ArrayUtils.Init(22,70,100,122,141,158,173,187))
+                foreach (var sqrtNumOfNodes in ArrayUtils.Init(9))
+                    InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
                                             sqrtVectorLength, chosenSplitter, nycCityRegion, taxiBinDataPath, resultDir);
         }
 
@@ -173,15 +180,17 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
 
-            //RunRandomEntropy(random);
-            //   RunStocksEntropy(random);
+            // RunRandomEntropy(random);
+           //  RunStocksEntropy(random);
+
             // RunRandomInnerProduct(random);
-            //  RunTaxiTripsInnerProduct(random);
-             RunRandomAms(random);
-            // RunMilanoPhonesSecondMomentSketch(random);
+              RunTaxiTripsInnerProduct(random);
+
+            // RunRandomAms(random);
+           //  RunMilanoPhonesSecondMomentSketch(random);
+
             // RunEntropy(random);
-            // RunDatabaseSecondMomentSketch(random);
-            //   RunInnerProduct(random);
+           //  RunDatabaseSecondMomentSketch(random);
         }
 
     }

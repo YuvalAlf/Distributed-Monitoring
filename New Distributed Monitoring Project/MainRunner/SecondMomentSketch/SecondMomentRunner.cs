@@ -143,7 +143,7 @@ namespace SecondMomentSketch
                 {
                     var shouldEnd = new StrongBox<bool>(false);
                     var changeVectors = phonesActivityWindowManger.GetChangeVector();
-                    multiRunner.Run(changeVectors, rnd, true)
+                    multiRunner.Run(changeVectors, rnd, false)
                            //    .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);

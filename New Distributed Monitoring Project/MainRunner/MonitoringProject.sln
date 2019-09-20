@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MilanoPhonesDataParsing", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiTripsDataParsing", "TaxiTripsDataParsing\TaxiTripsDataParsing.csproj", "{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombineCsvs", "CombineCsvs\CombineCsvs.csproj", "{1C34597B-4414-413F-AE9F-A4CA7932415E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C34597B-4414-413F-AE9F-A4CA7932415E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C34597B-4414-413F-AE9F-A4CA7932415E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C34597B-4414-413F-AE9F-A4CA7932415E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C34597B-4414-413F-AE9F-A4CA7932415E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
