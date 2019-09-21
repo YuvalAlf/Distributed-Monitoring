@@ -37,10 +37,10 @@ module Seq =
                 for i = 0 to chunckBaseSize - 1 do
                     let str, value = array.[chunckBaseSize * chunck + i]
                     yield (str, double(value), chunck)
-            for i = 1 to reminder do
-                let str, value = array.[elementCount - i]
-                for chunck = 0 to numOfChuncks - 1 do
-                    yield (str, double(value) / double(numOfChuncks), chunck)
+          //  for i = 1 to reminder do
+           //     let str, value = array.[elementCount - i]
+           //     for chunck = 0 to numOfChuncks - 1 do
+            //        yield (str, double(value) / double(numOfChuncks), chunck)
         }
 
     

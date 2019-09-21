@@ -52,8 +52,9 @@ type ActiveStock(stream : StreamReader, currentStockValue : StockValue) =
         if this.CurrentStockValue.Time.Date >= date.Date then
             Some this
         else
-            this.MoveNext()
-            |> Option.bind (fun s -> s.MoveToDate(date))
+            match this.MoveNext() with
+            | Some(activeStock) -> activeStock.MoveToDate(date)
+            | None -> None
 
     interface IDisposable with 
         member this.Dispose() =
@@ -100,7 +101,7 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             else
                 newStockManager.MoveNext()
 
-    member this.HistogramVectors (numOfNodes : int, stocksIndices : Map<string, int>) =
+    member this.HistogramVectors (numOfNodes : int) =
         let vectors = Vector.Init (numOfNodes)
         
         activeStocks
@@ -111,17 +112,16 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
         |> Seq.evenChuncks numOfNodes
         |> Seq.map (fun (name, volume, node) -> (node, stocksVolumeQuery.GetClosestSmallerValueIndex(int64(volume))))
         |> Seq.iter (fun (node, index) -> vectors.[node].[index] <- vectors.[node].[index] + 1.0)
-        //|> Seq.iter (fun (name, value, node) -> vectors.[node].[stocksIndices.[name]] <- value)
 
         vectors
     
-    member this.GetHistogramVectors (numOfNodes, stocksIndices, amount) : (StocksManager * Vector[] list) =
+    member this.GetHistogramVectors (numOfNodes, amount) : (StocksManager * Vector[] list) =
         if amount = 0 then
             (this, [])
         else
-            let probabilityVector = this.HistogramVectors(numOfNodes, stocksIndices)
+            let probabilityVector = this.HistogramVectors(numOfNodes)
             let nextManager = this.MoveNext() |> Option.get
-            let (resultManager, vectors) = nextManager.GetHistogramVectors(numOfNodes, stocksIndices, amount - 1)
+            let (resultManager, vectors) = nextManager.GetHistogramVectors(numOfNodes, amount - 1)
             (resultManager, probabilityVector :: vectors)
 
     interface IDisposable with
@@ -130,21 +130,17 @@ type StocksManager (activeStocks : Map<string, ActiveStock>,
             |> Map.iter (fun _ stock -> (stock :> IDisposable).Dispose())
 
 
-type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksManager : StocksManager, window : WindowedStatistics, numOfNodes : int, closestValueQuery : Tree<int64>) =
+type StocksProbabilityWindow(initialStocksManager : StocksManager, window : WindowedStatistics, numOfNodes : int, closestValueQuery : Tree<int64>) =
     let mutable stocksManager = Some(initialStocksManager)
 
     static member Init (dirPath : string, startingDate : DateTime, minAmountAtDay : int, numOfNodes : int, windowSize : int, closestValueQuery : Tree<int64>) : StocksProbabilityWindow =
         let files = Directory.EnumerateFiles (dirPath) |> Seq.toArray
         let names = files |> Array.map (Path.GetFileNameWithoutExtension) |> Array.sort
-        let stocksIndices = 
-            names 
-            |> Array.indexed 
-            |> Array.fold (fun (map : Map<string, int>) (index, name) -> map.Add(name, index)) (Map.empty)
         let initStocksManager = StocksManager.Init(files, startingDate, minAmountAtDay, closestValueQuery)
-        let (stocksManager, initProbabilityVectors) = initStocksManager.GetHistogramVectors (numOfNodes, stocksIndices, windowSize)
+        let (stocksManager, initProbabilityVectors) = initStocksManager.GetHistogramVectors (numOfNodes, windowSize)
         let window = WindowedStatistics.Init(initProbabilityVectors)
 
-        new StocksProbabilityWindow(stocksIndices, stocksManager, window, numOfNodes, closestValueQuery)
+        new StocksProbabilityWindow(stocksManager, window, numOfNodes, closestValueQuery)
     
     member this.CurrentProbabilityVector () : Vector[] = window.CurrentNodesProbabilityVectors()
     member this.CurrentChangeProbabilityVector () : Vector[] = window.GetChangeProbabilityVectors()
@@ -156,10 +152,10 @@ type StocksProbabilityWindow(stocksIndices : Map<string, int>, initialStocksMana
             match stocksManager with
             | None -> false
             | Some stock ->
-                window.Move(stock.HistogramVectors(numOfNodes, stocksIndices))
+                window.Move(stock.HistogramVectors(numOfNodes))
                 true
 
-    member this.VectorLength = stocksIndices |> Map.count
+    member this.VectorLength = closestValueQuery.Count()
 
     interface IDisposable with
         member this.Dispose () = 

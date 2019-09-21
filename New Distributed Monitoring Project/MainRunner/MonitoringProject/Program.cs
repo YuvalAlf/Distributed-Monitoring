@@ -81,7 +81,7 @@ namespace MonitoringProject
             //var wantedVectorLength = 100;
             //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
             foreach (var wantedVectorLength in ArrayUtils.Init(400))
-                foreach (var numOfNodes in ArrayUtils.Init(10, 40, 80, 120, 160, 200))
+                foreach (var numOfNodes in ArrayUtils.Init(46))
                 //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
                 {
                     var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
@@ -181,10 +181,10 @@ namespace MonitoringProject
             var random = new Random(1631);
 
             // RunRandomEntropy(random);
-           //  RunStocksEntropy(random);
+             RunStocksEntropy(random);
 
             // RunRandomInnerProduct(random);
-              RunTaxiTripsInnerProduct(random);
+           //   RunTaxiTripsInnerProduct(random);
 
             // RunRandomAms(random);
            //  RunMilanoPhonesSecondMomentSketch(random);

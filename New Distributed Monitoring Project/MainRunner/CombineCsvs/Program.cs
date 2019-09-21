@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace CombineCsvs
 {
     public static class Program
     {
-        public const string SourceDir = @"C:\Users\Yuval\Desktop\Inner Product\Naive";
+        public const string SourceDir = @"C:\Users\Yuval\Desktop\Distributed Monitoring Thesis\Experiments\Entropy\# Nodes";
         public const string DestinationDir = @"C:\Users\Yuval\Desktop";
 
         public static int GetIterationNumber(this string line) => int.Parse(new string(line.TakeWhile(char.IsDigit).ToArray()));
@@ -21,7 +22,8 @@ namespace CombineCsvs
                                        .ToArray();
 
             var header = File.ReadAllLines(sourceFiles.First()).First();
-            using (var resultFile = File.CreateText(Path.Combine(DestinationDir, "combined.csv")))
+            var resultPath = Path.Combine(DestinationDir, "combined.csv");
+            using (var resultFile = File.CreateText(resultPath))
             {
                 resultFile.WriteLine(header);
                 foreach (var sourceFile in sourceFiles)
@@ -32,6 +34,8 @@ namespace CombineCsvs
                         resultFile.WriteLine(lines[i]);
                 }
             }
+
+            Process.Start(resultPath);
         }
     }
 }

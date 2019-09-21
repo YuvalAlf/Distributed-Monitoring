@@ -6,6 +6,12 @@ type Tree<'t when 't :> IComparable<'t>> = { Data : 't array
                                              Left : Option<Tree<'t>>
                                              CurrentIndex : int
                                              Right : Option<Tree<'t>>} with
+    member tree.Count () =
+        let getCount (treeOption : Tree<'t> option) = 
+            treeOption 
+            |> Option.map (fun t -> t.Count())
+            |> Option.defaultValue 0
+        1 + getCount(tree.Left) + getCount(tree.Right)
     member tree.CurrentValue = tree.Data.[tree.CurrentIndex]
     member tree.GetClosestSmallerValueIndex(value : 't) =
         let x = tree.CurrentValue
@@ -19,16 +25,16 @@ type Tree<'t when 't :> IComparable<'t>> = { Data : 't array
 
     static member InitClosestValueQuery(values : 't array) : Tree<'t> =
         let values = values |> Array.sortWith (fun x y -> (x :> IComparable<'t>).CompareTo(y))
-        let rec createTreeReq (startingIndex : int) (endingIndex : int) : Option<Tree<'t>> = 
+        let rec createTreeRec (startingIndex : int) (endingIndex : int) : Option<Tree<'t>> = 
             if startingIndex > endingIndex then
                 None
             else
                 let nodeIndex = startingIndex + (endingIndex - startingIndex) / 2
-                let left = createTreeReq startingIndex (nodeIndex - 1)
-                let right = createTreeReq (nodeIndex + 1) endingIndex
+                let left = createTreeRec startingIndex (nodeIndex - 1)
+                let right = createTreeRec (nodeIndex + 1) endingIndex
                 Some ({Data = values; Left = left; CurrentIndex = nodeIndex; Right = right})
 
-        createTreeReq 0 (values.Length - 1)
+        createTreeRec 0 (values.Length - 1)
         |> Option.get
 
     static member InitExponentialClosestValueQuery (startValue : int64, max : int64, mulFactor : double) =
