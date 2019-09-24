@@ -10,8 +10,8 @@ namespace CombineCsvs
 {
     public static class Program
     {
-        public const string SourceDir = @"C:\Users\Yuval\Desktop\Distributed Monitoring Thesis\Experiments\Entropy\# Nodes";
-        public const string DestinationDir = @"C:\Users\Yuval\Desktop";
+        public const string SourceDir = @"C:\Users\Yuval\Desktop\Synthetic Results\# Nodes\Inner Product";
+        public const string DestinationDir = SourceDir;
 
         public static int GetIterationNumber(this string line) => int.Parse(new string(line.TakeWhile(char.IsDigit).ToArray()));
 

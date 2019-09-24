@@ -29,13 +29,14 @@ namespace SecondMomentSketch
 
     public static class SecondMomentRunner
     {
-        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, int iterations, ApproximationType approximation,
+        public static void RunRandomly(Random rnd, int width, int height, int numOfNodes, int iterations, ApproximationType approximation, bool oneChanges,
                                        string resultDir)
         {
             var vectorLength = width * height;
             var resultPath =
                 PathBuilder.Create(resultDir, "AMS_F2")
                            .AddProperty("Dataset",       "Random")
+                           .AddProperty("OneChanges", oneChanges.ToString())
                            .AddProperty("Nodes",         numOfNodes.ToString())
                            .AddProperty("VectorLength",  vectorLength.ToString())
                            .AddProperty("Width",        width.ToString())
@@ -47,28 +48,33 @@ namespace SecondMomentSketch
 
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             {
-                var initVectors =
-                    ArrayUtils.Init(numOfNodes,
-                                    _ => ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-10, 11)).ToVector());
+                var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-4, 5)).ToVector());
 
-                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
-                                                      approximation, secondMomentFunction.MonitoredFunction);
+                var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
+
+                Func<int, Vector> ChangeGenerator() => nodeIndex =>
+                                                       {
+                                                           if (oneChanges)
+                                                           {
+                                                               if (nodeIndex != 0)
+                                                                   return new Vector();
+                                                               return ArrayUtils.Init(vectorLength, _ => (rnd.NextDouble() - 0.5) * numOfNodes / 5).ToVector();
+                                                           }
+                                                           else
+                                                               return ArrayUtils.Init(vectorLength, _ => (rnd.NextDouble() - 0.5) / 5).ToVector();
+                                                       };
 
                 for (int i = 0; i < iterations; i++)
                 {
-                    var changes = ArrayUtils.Init(numOfNodes,
-                                                  nodeIndex =>
-                                                      // nodeIndex == 0 ? 
-                                                      ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-3, 4))
-                                                                .ToVector());
-                                                       //   : ArrayUtils.Init(vectorLength, __ => 0.0).ToVector());
+                    var changes = ArrayUtils.Init(numOfNodes, ChangeGenerator());
+
                     var stop = new StrongBox<bool>(false);
                     multiRunner.Run(changes, rnd, true)
                                .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 2))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
-                    if (stop.Value)
-                        break;
+                   // if (stop.Value)
+                   //     break;
                 }
             }
         }

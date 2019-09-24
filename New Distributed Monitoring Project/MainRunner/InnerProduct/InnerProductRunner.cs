@@ -49,16 +49,12 @@ namespace InnerProduct
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             {
                 var innerProduct = new InnerProductFunction(vectorLength);
-                var initVectors =
-                    ArrayUtils.Init(numOfNodes,
-                                    _ => ArrayUtils.Init(vectorLength, __ => (rnd.NextDouble() - 0.5) * 2).ToVector());
+                var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (rnd.NextDouble() - 0.5) * numOfNodes).ToVector());
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength,
                                                       approximation, innerProduct.MonitoredFunction);
                 for (int i = 0; i < iterations; i++)
                 {
-                    var changes =
-                        ArrayUtils.Init(numOfNodes,
-                                        index => ArrayUtils.Init(vectorLength, _ => index != 0 ? 0.0 : 0.2 * (rnd.NextDouble())).ToVector());
+                    var changes = ArrayUtils.Init(numOfNodes, index => index != 0 ? new Vector() : ArrayUtils.Init(vectorLength, _ => rnd.NextDouble() * numOfNodes / 10).ToVector());
                     multiRunner.Run(changes, rnd, true)
                                .Select(r => r.AsCsvString())
                                .ForEach((Action<string>) resultCsvFile.WriteLine);

@@ -81,13 +81,13 @@ namespace Entropy
 
 
 
-        public static void RunStocks(Random rnd, int iterations, Tree<long> closestValueQuery, int numOfNodes, int window, DateTime startingDateTime,
+        public static void RunStocks(Random rnd, MonitoredFunction function, string cbName, int iterations, Tree<long> closestValueQuery, int numOfNodes, int window, DateTime startingDateTime,
                                      int minAmountAtDay , ApproximationType approximation,
                                      string stocksDirPath, string resultDir)
         {
             var vectorLength = closestValueQuery.Data.Length;
             var resultPath =
-                PathBuilder.Create(resultDir, "Entropy")
+                PathBuilder.Create(resultDir, "Entropy_" + cbName)
                            .AddProperty("Dataset", "Stocks")
                            .AddProperty("VectorLength", vectorLength.ToString())
                            .AddProperty("Nodes", numOfNodes.ToString())
@@ -100,13 +100,11 @@ namespace Entropy
             using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
             using (var stocksProbabilityWindow = StocksProbabilityWindow.Init(stocksDirPath, startingDateTime, minAmountAtDay, numOfNodes, window, closestValueQuery))
             {
-                var entropy = new EntropyFunction(vectorLength);
                 var initProbabilityVectors = stocksProbabilityWindow.CurrentProbabilityVector();
                 if (!initProbabilityVectors.All(v => v.Sum().AlmostEqual(1.0, 0.000001)))
                     throw new Exception();
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, vectorLength,
-                                                      approximation, entropy.MonitoredFunction);
-                //multiRunner.OnlySchemes(new MonitoringScheme.Oracle());
+                                                      approximation, function);
                 int i = 0;
                 while (stocksProbabilityWindow.MoveNext() && (i++ < iterations))
                 {
@@ -115,8 +113,8 @@ namespace Entropy
                     if (!changeProbabilityVectors.All(v => v.Sum().AlmostEqual(0.0, 0.000001)))
                         throw new Exception();
                     multiRunner.Run(changeProbabilityVectors, rnd, true)
-                               .Select(r => r.AsCsvString())
-                               .ForEach(resultCsvFile.WriteLine);
+                                .Select(r => r.AsCsvString())
+                                .ForEach(resultCsvFile.WriteLine);
                 }
             }
         }

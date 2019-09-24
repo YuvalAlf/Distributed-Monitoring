@@ -31,33 +31,23 @@ namespace MonitoringProject
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
-           // int numOfNodes     = 36;
-            var dimensions     = new[] { (9, 9)};
+            int numOfNodes     = 36;
+           // var dimensions     = new[] { (9, 9)};
             var window         = 24;
-            foreach (var numOfNodes in ArrayUtils.Init(16, 36, 64, 100, 144, 13 * 13, 14 * 14))
-            //foreach (var numOfNodes in ArrayUtils.Init(13*13, 14*14))
+           // foreach (var numOfNodes in ArrayUtils.Init(16, 36, 64, 100, 144, 13 * 13, 14 * 14))
+            //foreach (var numOfNodes in ArrayUtils.Init(10,20,26,31,36,40,43,46).Select(x => x * x))
             {
                 var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
                 //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
                 //var approximation  = new ThresholdApproximation(2700000);
                 var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
                                                               new AdditiveApproximation(100000));
-                foreach (var (width, height) in dimensions)
+                foreach (var (width, height) in ArrayUtils.Init(21, 45).Select(x => (x, 11)))
                     SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height,
                                                               distributingMethod, phoneActivitiesBaseFolder, resultDir);
             }
         }
-
-        private static void RunDatabaseSecondMomentSketch(Random random)
-        {
-            int numOfNodes     = 10;
-            var values         = new[] { (30, 31) };
-            var window         = 100;
-            var distrubteUsers = UsersDistributing.UnevenHashing();
-            var approximation        = new MultiplicativeApproximation(0.9);
-            foreach (var (width, height) in values)
-                SecondMomentRunner.RunDatabaseAccesses(random, numOfNodes, window, approximation, width, height, distrubteUsers, databaseAccessesPath, resultDir);
-        }
+        
         private static void RunDatabaseAccessesEntropy(Random random)
         {
             int numOfNodes     = 10;
@@ -80,55 +70,48 @@ namespace MonitoringProject
             var      iterations       = 1000;
             //var wantedVectorLength = 100;
             //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
-            foreach (var wantedVectorLength in ArrayUtils.Init(400))
-                foreach (var numOfNodes in ArrayUtils.Init(46))
-                //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
+            for (var wantedVectorLength = 100; wantedVectorLength <= 1200; wantedVectorLength += 100)
+                for (var numOfNodes = 20; numOfNodes <= 20; numOfNodes += 10)
+                    //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
                 {
                     var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
-                    var closestValueQuery = ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
-                    EntropyRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes, window, startingDateTime,
-                                            minAmountAtDay, approximation, stocksDirPath, resultDir);
+                    var closestValueQuery =
+                        ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
+                    var vectorLength = closestValueQuery.Data.Length;
+                    foreach (var (entropy, cbName) in
+                        ArrayUtils.Init((new EntropyFunction(vectorLength).MonitoredFunction, "RegularCB"),
+                                        (new SpecialCBEntropy(vectorLength).MonitoredFunction, "SmartCB")))
+                    {
+                        EntropyRunner.RunStocks(random, entropy, cbName, iterations, closestValueQuery, numOfNodes,
+                                                window, startingDateTime,
+                                                minAmountAtDay, approximation, stocksDirPath, resultDir);
+                    }
                 }
         }
 
         private static void RunRandomAms(Random random)
         {
-            int               iterations    = 10000;
-            //bool oneChanges = true;
-            //var width = 21;
-            //var height = 21;
-            foreach (var numOfNodes in ArrayUtils.Init(100))
-                foreach (var (width, height) in new[]
-                                            {
-                                                //(20, 11),
-                                                //(20, 31),
-                                                (20, 51),
-                                                /*(20, 71),
-                                                (20, 91),
-                                                (20, 111),
-                                                (20, 131),
-                                                (20, 161),
-                                                (20, 201),
-                                                (20, 241),
-                                                (20, 281),
-                                                (20, 331),
-                                                (20, 381),
-                                                (20, 431),
-                                                (20, 451),
-                                                (20, 491)*/
-                                            })
-            {
-                ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.3, 3.0)); //, new AdditiveApproximation(Math.Sqrt(width * height) * 100));
-                SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, iterations, approximation, resultDir);
-            }
+            int  iterations    = 2000;
+            bool oneChanges = true;
+            for (var numOfNodes = 25; numOfNodes <= 25; numOfNodes += 5)
+                for (var width = 21; width < 201; width += 10)
+                {
+                    var height = 20;
+
+                    ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.3, 3.0));
+                    SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, iterations, approximation, oneChanges, resultDir);
+                }
         }
+
         private static void RunRandomInnerProduct(Random random)
         {
-            int numOfNodes = 10;
             ApproximationType approximation = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
-            int iterations = 800;
+            int iterations = 1000;
             var vectorLength = 100;
-            InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
+            //var numOfNodes = 40;
+            //for (int vectorLength = 100; vectorLength <= 3000; vectorLength += 100)
+            for (int numOfNodes = 350; numOfNodes <= 400; numOfNodes += 10)
+                InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
         }
 
         private static void RunRandomEntropy(Random random)
@@ -138,7 +121,7 @@ namespace MonitoringProject
             int iterations = 2000;
             bool oneChanges = false;
             //foreach(var vectorLength in ArrayUtils.Init(200, 500, 1000, 1700, 2400, 3500, 4200, 5000, 5800, 7000))
-            foreach(var vectorLength in ArrayUtils.Init(7000))
+            foreach(var vectorLength in ArrayUtils.Init(500))
                 EntropyRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, oneChanges, resultDir);
         }
 
@@ -187,10 +170,7 @@ namespace MonitoringProject
            //   RunTaxiTripsInnerProduct(random);
 
             // RunRandomAms(random);
-           //  RunMilanoPhonesSecondMomentSketch(random);
-
-            // RunEntropy(random);
-           //  RunDatabaseSecondMomentSketch(random);
+             //   RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }
