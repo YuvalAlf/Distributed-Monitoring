@@ -5,15 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils.TypeUtils;
 
 namespace CombineCsvs
 {
     public static class Program
     {
-        public const string SourceDir = @"C:\Users\Yuval\Desktop\Synthetic Results\# Nodes\Inner Product";
+        public const string SourceDir = @"C:\Users\Yuval\Desktop\New Entropy Results After Bug Fix";
         public const string DestinationDir = SourceDir;
 
-        public static int GetIterationNumber(this string line) => int.Parse(new string(line.TakeWhile(char.IsDigit).ToArray()));
+        public static int GetIterationNumber(this string line) => new string(line.TakeWhile(char.IsDigit).ToArray()).TryParseInt().ValueOrElse(-1);
 
         public static void Main(string[] args)
         {
@@ -23,19 +24,32 @@ namespace CombineCsvs
 
             var header = File.ReadAllLines(sourceFiles.First()).First();
             var resultPath = Path.Combine(DestinationDir, "combined.csv");
+            int i = 0;
             using (var resultFile = File.CreateText(resultPath))
             {
                 resultFile.WriteLine(header);
                 foreach (var sourceFile in sourceFiles)
                 {
+                    Console.WriteLine(++i + "/" + sourceFiles.Length);
                     var lines = File.ReadAllLines(sourceFile);
-                    var token = lines.Last().GetIterationNumber();
-                    for (int i = lines.Length - 1; lines[i].GetIterationNumber() == token; i--)
-                        resultFile.WriteLine(lines[i]);
+                    //var releventIteration = lines.First(IsRelevent).GetIterationNumber();
+                    var releventIteration = lines.Last().GetIterationNumber();
+                    foreach (var line in lines.Where(l => l.GetIterationNumber() == releventIteration))
+                        resultFile.WriteLine(line);
+                        
                 }
+
             }
 
             Process.Start(resultPath);
+        }
+
+        private static bool IsRelevent(string line)
+        {
+            var tokens = line.Split(ArrayUtils.Init(','), StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length < 8)
+                return false;
+            return tokens[1].Equals("Oracle") && tokens[7].TryParseInt().Map(fullSyncs => fullSyncs == 10).ValueOrElse(false);
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Utils.TypeUtils
         public abstract Maybe<S> Bind<S>(Func<T, Maybe<S>> bind);
         public abstract Maybe<S> Map<S>(Func<T, S> mapFunc);
         public abstract T ValueOrError(string errorMessage);
+        public abstract T ValueOrElse(T @default);
 
         internal sealed class Some : Maybe<T>
         {
@@ -58,6 +59,8 @@ namespace Utils.TypeUtils
             public override Maybe<S> Map<S>(Func<T, S> mapFunc) => new Maybe<S>.Some(mapFunc(ValueUnsafe));
 
             public override T ValueOrError(string errorMessage) => ValueUnsafe;
+
+            public override T ValueOrElse(T @default) => ValueUnsafe;
         }
         internal sealed class None : Maybe<T>
         {
@@ -76,6 +79,8 @@ namespace Utils.TypeUtils
             public override Maybe<S> Map<S>(Func<T, S> mapFunc) => Maybe<S>.none;
 
             public override T ValueOrError(string errorMessage) => throw new Exception(errorMessage);
+
+            public override T ValueOrElse(T @default) => @default;
         }
     }
 }

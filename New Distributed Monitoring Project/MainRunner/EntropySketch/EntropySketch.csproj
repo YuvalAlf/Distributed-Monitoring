@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C08EB0F9-0490-494F-8C93-B0123D3DF0B4}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>MonitoringProject</RootNamespace>
-    <AssemblyName>MonitoringProject</AssemblyName>
+    <ProjectGuid>{C3EEA747-7B16-4CDD-8864-C72EEB10699B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntropySketch</RootNamespace>
+    <AssemblyName>EntropySketch</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,13 +31,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics, Version=4.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.8.0\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="MoreLinq, Version=3.1.1.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.3.1.1\lib\net451\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,52 +52,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="EntropySketchFunction.cs" />
+    <Compile Include="EntropySketchLowerBound.cs" />
+    <Compile Include="EntropySketchRunner.cs" />
+    <Compile Include="EntropySketchUpperBound.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EntropyMathematics\EntropyMathematics.fsproj">
       <Project>{20C8379F-435A-40CC-B7E5-D4AA353FE432}</Project>
       <Name>EntropyMathematics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EntropySketch\EntropySketch.csproj">
-      <Project>{C3EEA747-7B16-4CDD-8864-C72EEB10699B}</Project>
-      <Name>EntropySketch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Entropy\Entropy.csproj">
-      <Project>{1EDCD084-B5DF-478E-855E-BA95AB0ED0F1}</Project>
-      <Name>Entropy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InnerProduct\InnerProduct.csproj">
-      <Project>{832F26B0-71BB-439E-80D7-7599D04C59A1}</Project>
-      <Name>InnerProduct</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Monitoring\Monitoring.csproj">
       <Project>{67BF272F-A613-49BF-9CEE-EF7F9DFCEC32}</Project>
       <Name>Monitoring</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SecondMomentSketch\SecondMomentSketch.csproj">
-      <Project>{1A26BB8A-A77C-4916-A252-99A1ACD66FD0}</Project>
-      <Name>SecondMomentSketch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sphere\Sphere.csproj">
-      <Project>{72E2A90B-6BD0-4463-B662-256BA8C3059B}</Project>
-      <Name>Sphere</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TaxiTripsDataParsing\TaxiTripsDataParsing.csproj">
-      <Project>{BC2159FD-FBA3-4225-8B2D-E8A3D6F99B3D}</Project>
-      <Name>TaxiTripsDataParsing</Name>
+    <ProjectReference Include="..\Parsing\Parsing.fsproj">
+      <Project>{1BE5CDB3-20F9-4CDF-A3A7-7D7BE41BFBF8}</Project>
+      <Name>Parsing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{EF4A65C0-B74C-4BC7-B47D-FB59297FFA9E}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

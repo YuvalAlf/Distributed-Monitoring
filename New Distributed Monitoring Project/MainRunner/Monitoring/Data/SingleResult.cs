@@ -1,4 +1,5 @@
-﻿using Utils.TypeUtils;
+﻿using System;
+using Utils.TypeUtils;
 
 namespace Monitoring.Data
 {

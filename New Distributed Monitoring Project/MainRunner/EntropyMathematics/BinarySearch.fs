@@ -12,7 +12,10 @@ module BinarySearch =
             else
                 let movedData = move(data, step)
                 if not <| dataOk(movedData) then
-                    binaryStep(data, epsilon)
+                    if step = epsilon then
+                        data
+                    else
+                        binaryStep(data, epsilon)
                 else
                     binaryStep(movedData, step * 2.0)
         binaryStep (startingData, epsilon)

@@ -28,5 +28,13 @@ namespace Utils.MathUtils
                     return (first, second);
             }
         }
+        
+        public static double GenDoubleWithout(this Random @rnd, params double[] without)
+        {
+            var result = rnd.NextDouble();
+            if (without.Contains(result))
+                return @rnd.GenDoubleWithout(without);
+            return result;
+        }
     }
 }

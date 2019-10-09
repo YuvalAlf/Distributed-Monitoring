@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Entropy;
 using EntropyMathematics;
+using EntropySketch;
 using InnerProduct;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
@@ -22,7 +23,7 @@ namespace MonitoringProject
 {
     public static class Program
     {
-        public static readonly string resultDir = @"C:\Users\Yuval\Desktop";
+        public static readonly string resultDir = @"C:\Users\Yuval\Desktop\New Entropy Results After Bug Fix";
         public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
         public static readonly string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Desktop\Data\Milano Phone Activity\Data";
         public static readonly string taxiBinDataPath = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\TaxiData.bin";
@@ -42,7 +43,7 @@ namespace MonitoringProject
                 //var approximation  = new ThresholdApproximation(2700000);
                 var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
                                                               new AdditiveApproximation(100000));
-                foreach (var (width, height) in ArrayUtils.Init(21, 45).Select(x => (x, 11)))
+                foreach (var (width, height) in ArrayUtils.Init(73).Select(x => (x, 11)))
                     SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height,
                                                               distributingMethod, phoneActivitiesBaseFolder, resultDir);
             }
@@ -70,8 +71,8 @@ namespace MonitoringProject
             var      iterations       = 1000;
             //var wantedVectorLength = 100;
             //foreach (var wantedVectorLength in ArrayUtils.Init(50, 100, 200, 400, 800, 1300, 1600, 2000, 2400))
-            for (var wantedVectorLength = 100; wantedVectorLength <= 1200; wantedVectorLength += 100)
-                for (var numOfNodes = 20; numOfNodes <= 20; numOfNodes += 10)
+            for (var wantedVectorLength = 4000; wantedVectorLength <= 4000; wantedVectorLength += 100)
+                for (var numOfNodes = 30; numOfNodes <= 30; numOfNodes += 30)
                     //foreach (var numOfNodes in ArrayUtils.Init(30, 40))
                 {
                     var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / wantedVectorLength);
@@ -79,14 +80,40 @@ namespace MonitoringProject
                         ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket, mulFactor);
                     var vectorLength = closestValueQuery.Data.Length;
                     foreach (var (entropy, cbName) in
-                        ArrayUtils.Init((new EntropyFunction(vectorLength).MonitoredFunction, "RegularCB"),
-                                        (new SpecialCBEntropy(vectorLength).MonitoredFunction, "SmartCB")))
+                        ArrayUtils.Init((new EntropyFunction(vectorLength).MonitoredFunction, "RegularCB")))
+                                       // (new SpecialCBEntropy(vectorLength).MonitoredFunction, "SmartCB")))
                     {
                         EntropyRunner.RunStocks(random, entropy, cbName, iterations, closestValueQuery, numOfNodes,
                                                 window, startingDateTime,
                                                 minAmountAtDay, approximation, stocksDirPath, resultDir);
                     }
                 }
+        }
+
+        private static void RunStocksSketchEntropy(Random random)
+        {
+            //int      numOfNodes       = 20;
+            var      window           = 50;
+            var      minVolumeBucket  = 100.0;
+            var      maxVolumeBucket  = 4.0 * 10E8;
+            var      approximation    = new MultiplicativeApproximation(0.0022);
+            DateTime startingDateTime = new DateTime(2006, 1, 3);
+            int      minAmountAtDay   = 1000;
+            var      iterations       = 1000;
+            for (var baseVectorLength = 1000; baseVectorLength <= 1000; baseVectorLength += 100)
+                for (var numOfNodes = 10; numOfNodes <= 10; numOfNodes += 10)
+                    for (var reducedDimension = 100; reducedDimension <= 100; reducedDimension += 100)
+                    {
+                        var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / baseVectorLength);
+                        var closestValueQuery =
+                            ClosestValueQuery.InitExponential((long) minVolumeBucket, (long) maxVolumeBucket,
+                                                              mulFactor);
+                        var vectorLength = closestValueQuery.Data.Length;
+                        EntropySketchRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes,
+                                                      reducedDimension,
+                                                      window, startingDateTime,
+                                                      minAmountAtDay, approximation, stocksDirPath, resultDir);
+                    }
         }
 
         private static void RunRandomAms(Random random)
@@ -106,23 +133,29 @@ namespace MonitoringProject
         private static void RunRandomInnerProduct(Random random)
         {
             ApproximationType approximation = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
-            int iterations = 1000;
+            int iterations = 3000;
             var vectorLength = 100;
             //var numOfNodes = 40;
             //for (int vectorLength = 100; vectorLength <= 3000; vectorLength += 100)
-            for (int numOfNodes = 350; numOfNodes <= 400; numOfNodes += 10)
+            for (int numOfNodes = 260; numOfNodes <= 400; numOfNodes += 10)
                 InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
         }
 
         private static void RunRandomEntropy(Random random)
         {
-            int numOfNodes = 10;
-            ApproximationType approximation = new MultiplicativeApproximation(0.17);
-            int iterations = 2000;
+           // int numOfNodes = 10;
+            int iterations = 10000;
             bool oneChanges = false;
+            var vectorLength = 1000;
+            var collapseDimension = 500;
             //foreach(var vectorLength in ArrayUtils.Init(200, 500, 1000, 1700, 2400, 3500, 4200, 5000, 5800, 7000))
-            foreach(var vectorLength in ArrayUtils.Init(500))
-                EntropyRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, oneChanges, resultDir);
+           // for (var vectorLength = 50; vectorLength <= 2000; vectorLength += 50)
+            for (var numOfNodes = 10; numOfNodes <= 10; numOfNodes += 5)
+            {
+                var approximation = new MultiplicativeApproximation(0.05 / Math.Pow(numOfNodes, 0.5));
+                EntropyRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, collapseDimension, iterations, oneChanges, resultDir);
+            }
+                
         }
 
         private static void RunTaxiTripsInnerProduct(Random random)
@@ -163,14 +196,17 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
 
-            // RunRandomEntropy(random);
-             RunStocksEntropy(random);
+           //  RunRandomEntropy(random);
+           //  RunStocksEntropy(random);
+
+
+             RunStocksSketchEntropy(random);
 
             // RunRandomInnerProduct(random);
            //   RunTaxiTripsInnerProduct(random);
 
             // RunRandomAms(random);
-             //   RunMilanoPhonesSecondMomentSketch(random);
+           //     RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }

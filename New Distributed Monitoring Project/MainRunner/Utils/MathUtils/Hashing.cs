@@ -15,5 +15,11 @@ namespace Utils.MathUtils
             var output = hash.ComputeHash(input);
             return Math.Abs(BitConverter.ToInt32(output, 0));
         }
+        public static int ComputeHash(this HashAlgorithm hash, int a, int b)
+        {
+            var input  = BitConverter.GetBytes(a).Concat(BitConverter.GetBytes(b)).ToArray();
+            var output = hash.ComputeHash(input);
+            return Math.Abs(BitConverter.ToInt32(output, 0));
+        }
     }
 }

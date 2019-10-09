@@ -48,7 +48,7 @@ namespace Entropy
             var parameters    = initVector.Map(Dimension, pi => -Math.Log(pi + 0.000000001) - 1);
             var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
 
-            return lineHalfPlane.ToConvexUpperBound();
+            return lineHalfPlane.ToConvexUpperBound(MonitoredFunction.Function);
         }
 
 

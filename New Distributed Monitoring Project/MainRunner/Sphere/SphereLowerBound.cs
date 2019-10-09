@@ -34,7 +34,7 @@ namespace Sphere
             var parameters    = initialVector * 2;
             var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
 
-            return lineHalfPlane.ToConvexLowerBound();
+            return lineHalfPlane.ToConvexLowerBound(MonitoredFunction.Function);
         }
     }
 }
