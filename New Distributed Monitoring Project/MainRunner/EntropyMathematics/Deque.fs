@@ -14,7 +14,6 @@ type Deque<'T> =
         | OneValue (value, func) -> func value
         | Values (min, minIndex, data, maxIndex, max) ->
             (data.Func min) + (data.Func max) + data.ValueOfRange(minIndex, maxIndex)
-
     member deque.Head =
         match deque with
         | OneValue (value, _) -> value

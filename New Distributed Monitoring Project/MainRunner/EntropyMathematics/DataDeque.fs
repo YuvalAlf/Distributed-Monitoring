@@ -99,3 +99,17 @@ type DataDeque(dataPoints : (double * FastCountSet<index>) Deque) =
                 deque.ChangeMinValue(averageEntropy).CombineMax()
             else // Should almost never happen....
                 deque.CombineMin().CombineMax().IncreaseEntropy(averageEntropy, l1Distance - twiceApplicableL1Distance)
+
+    member deque.IncreaseEntropySketchValue (l1Distance : double) : DataDeque =
+        let (maxValue, maxAmount) = deque.MaxValuePair
+        if deque.IsSingle then
+            deque.ChangeMaxValue (maxValue - l1Distance / maxAmount)
+        else
+            let secondMaxValue = deque.SecondMaxValue
+            let maxDiff = maxValue - secondMaxValue
+            let maxL1DistanceSpace = maxDiff * maxAmount
+            if maxL1DistanceSpace >= l1Distance then
+                deque.ChangeMaxValue (maxValue - l1Distance / maxAmount)
+            else
+                deque.CombineMax().IncreaseEntropySketchValue(l1Distance - maxL1DistanceSpace)
+                

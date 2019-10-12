@@ -63,6 +63,9 @@
     <Compile Include="Entropy.fs" />
     <Compile Include="IncreaseEntropy.fs" />
     <Compile Include="DecreaseEntropy.fs" />
+    <Compile Include="SketchEntropyVector.fs" />
+    <Compile Include="DecreaseEntropySketch.fs" />
+    <Compile Include="IncreaseEntropySketch.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

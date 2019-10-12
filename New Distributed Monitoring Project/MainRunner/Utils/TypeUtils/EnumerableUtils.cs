@@ -8,6 +8,13 @@ namespace Utils.TypeUtils
 {
     public static class EnumerableUtils
     {
+        public static double LogSumExp(this IEnumerable<double> @this)
+        {
+            var vector = @this as double[] ?? @this.ToArray();
+            var max = vector.Max();
+            return max + Math.Log(vector.Sum(yi => Math.Exp(yi - max)));
+        }
+
         public static IEnumerator<(T,T)> Pairs<T>(this IEnumerable<T> @this)
         {
             using (var enumerator = @this.GetEnumerator())

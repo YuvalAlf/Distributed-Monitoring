@@ -22,12 +22,11 @@ namespace EntropySketch
         public EntropySketchFunction(int dimension)
         {
             Dimension         = dimension;
-            MonitoredFunction = new MonitoredFunction(ComputeEntropySketch, UpperBound, LowerBound, GlobalVectorType.Average);
+            MonitoredFunction = new MonitoredFunction(ComputeEntropySketch, UpperBound, LowerBound, GlobalVectorType.Average, 1);
         }
 
-        private double ComputeEntropySketch(Vector reducedVector)
-            => -Math.Log(1.0 / Dimension * reducedVector.Enumerate(Dimension).Sum(yi => Math.Exp(yi)));
-
+        public double ComputeEntropySketch(Vector reducedVector)
+            => Math.Log(Dimension) - reducedVector.Enumerate(Dimension).LogSumExp();
 
         private static HashAlgorithm Hash { get; } = MD5.Create();
 

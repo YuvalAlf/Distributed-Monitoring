@@ -2,6 +2,7 @@
 using System.Runtime.Remoting.Services;
 using Entropy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Utils.MathUtils;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
 
@@ -18,10 +19,10 @@ namespace UnitTests
             Assert.AreEqual(1.0, vector.Sum(), 0.000000001);
             var entropyFunction = new EntropyFunction(dimension);
             var entropy = entropyFunction.ComputeEntropy(vector);
-            Assert.AreEqual(expectedEntropy, entropy, EntropyFunction.Approximation);
+            Assert.AreEqual(expectedEntropy, entropy, Approximations.ApproximationEpsilon);
             var closestPoint = entropyFunction.ClosestL1PointFromAbove(threshold, vector);
             var closestPointEntropy = entropyFunction.ComputeEntropy(closestPoint);
-            Assert.AreEqual(threshold, closestPointEntropy, 2 * EntropyFunction.Approximation);
+            Assert.AreEqual(threshold, closestPointEntropy, 2 * Approximations.ApproximationEpsilon);
         }
 
         [TestMethod]
