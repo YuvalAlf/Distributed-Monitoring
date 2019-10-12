@@ -18,6 +18,6 @@ module DecreaseEntropySketch =
 
         let expThresh = Math.Exp(-desiredSketchEntropy)
 
-        Math.Log(sumOfRest + double(dimension) * expThresh) - point.[maxEntry]
+        Math.Log(double(dimension) * expThresh - sumOfRest) - point.[maxEntry]
 
 
