@@ -96,13 +96,13 @@ namespace MonitoringProject
             var      window           = 50;
             var      minVolumeBucket  = 100.0;
             var      maxVolumeBucket  = 4.0 * 10E8;
-            var      approximation    = new MultiplicativeApproximation(0.005);
+            var      approximation    = new MultiplicativeApproximation(0.0035);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int      minAmountAtDay   = 1000;
             var      iterations       = 1000;
-            for (var baseVectorLength = 500; baseVectorLength <= 500; baseVectorLength += 100)
-                for (var numOfNodes = 5; numOfNodes <= 5; numOfNodes += 10)
-                    for (var reducedDimension = 10; reducedDimension <= 10; reducedDimension += 10)
+            for (var baseVectorLength = 1000; baseVectorLength <= 1000; baseVectorLength += 100)
+                for (var numOfNodes = 10; numOfNodes <= 10; numOfNodes += 10)
+                    for (var reducedDimension = 100; reducedDimension <= 100; reducedDimension += 10)
                     {
                         var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / baseVectorLength);
                         var closestValueQuery =
@@ -200,13 +200,13 @@ namespace MonitoringProject
            //  RunStocksEntropy(random);
 
 
-             RunStocksSketchEntropy(random);
+           //  RunStocksSketchEntropy(random);
 
             // RunRandomInnerProduct(random);
            //   RunTaxiTripsInnerProduct(random);
 
             // RunRandomAms(random);
-           //     RunMilanoPhonesSecondMomentSketch(random);
+                RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }
