@@ -23,7 +23,7 @@ namespace MonitoringProject
 {
     public static class Program
     {
-        public static readonly string resultDir = @"C:\Users\Yuval\Desktop";
+        public static readonly string resultDir = @"C:\Users\Yuval\Desktop\AMS Synthetic";
         public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
         public static readonly string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Desktop\Data\Milano Phone Activity\Data";
         public static readonly string taxiBinDataPath = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\TaxiData.bin";
@@ -93,16 +93,16 @@ namespace MonitoringProject
         private static void RunStocksSketchEntropy(Random random)
         {
             //int      numOfNodes       = 20;
-            var      window           = 50;
+            var      window           = 100;
             var      minVolumeBucket  = 100.0;
             var      maxVolumeBucket  = 4.0 * 10E8;
             var      approximation    = new MultiplicativeApproximation(0.0035);
             DateTime startingDateTime = new DateTime(2006, 1, 3);
             int      minAmountAtDay   = 1000;
             var      iterations       = 1000;
-            for (var baseVectorLength = 1000; baseVectorLength <= 1000; baseVectorLength += 100)
-                for (var numOfNodes = 10; numOfNodes <= 10; numOfNodes += 10)
-                    for (var reducedDimension = 100; reducedDimension <= 100; reducedDimension += 10)
+            for (var baseVectorLength = 100; baseVectorLength <= 100; baseVectorLength += 100)
+                for (var numOfNodes = 80; numOfNodes <= 120; numOfNodes += 10)
+                    for (var reducedDimension = 200; reducedDimension <= 200; reducedDimension += 100)
                     {
                         var mulFactor = Math.Pow(maxVolumeBucket / minVolumeBucket, 1.0 / baseVectorLength);
                         var closestValueQuery =
@@ -110,22 +110,22 @@ namespace MonitoringProject
                                                               mulFactor);
                         var vectorLength = closestValueQuery.Data.Length;
                         EntropySketchRunner.RunStocks(random, iterations, closestValueQuery, numOfNodes,
-                                                      reducedDimension,
-                                                      window, startingDateTime,
+                                                      window, reducedDimension, startingDateTime,
                                                       minAmountAtDay, approximation, stocksDirPath, resultDir);
                     }
         }
 
         private static void RunRandomAms(Random random)
         {
-            int  iterations    = 2000;
+            int  iterations    = 10000;
             bool oneChanges = true;
-            for (var numOfNodes = 25; numOfNodes <= 25; numOfNodes += 5)
-                for (var width = 21; width < 201; width += 10)
+            for (var numOfNodes = 1001; numOfNodes <= 1001; numOfNodes += 2)
+                for (var width = 21; width <= 21; width += 10)
                 {
                     var height = 20;
 
-                    ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.3, 3.0));
+                    //ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0));
+                    ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.2, 5.0));
                     SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, iterations, approximation, oneChanges, resultDir);
                 }
         }
@@ -205,8 +205,8 @@ namespace MonitoringProject
             // RunRandomInnerProduct(random);
            //   RunTaxiTripsInnerProduct(random);
 
-            // RunRandomAms(random);
-                RunMilanoPhonesSecondMomentSketch(random);
+             RunRandomAms(random);
+             //   RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }

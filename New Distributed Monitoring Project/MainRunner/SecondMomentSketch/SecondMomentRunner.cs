@@ -51,6 +51,7 @@ namespace SecondMomentSketch
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-4, 5)).ToVector());
 
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
+                const int OracleFullSyncs = 2;
 
                 Func<int, Vector> ChangeGenerator() => nodeIndex =>
                                                        {
@@ -69,12 +70,12 @@ namespace SecondMomentSketch
                     var changes = ArrayUtils.Init(numOfNodes, ChangeGenerator());
 
                     var stop = new StrongBox<bool>(false);
-                    multiRunner.Run(changes, rnd, true)
-                               .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > 2))
+                    multiRunner.Run(changes, rnd, false)
+                               .SideEffect(r => stop.Value = stop.Value || (r.MonitoringScheme.Equals(new MonitoringScheme.Oracle()) && r.NumberOfFullSyncs > OracleFullSyncs))
                                .Select(r => r.AsCsvString())
                                .ForEach(resultCsvFile.WriteLine);
-                   // if (stop.Value)
-                   //     break;
+                    if (stop.Value)
+                        break;
                 }
             }
         }

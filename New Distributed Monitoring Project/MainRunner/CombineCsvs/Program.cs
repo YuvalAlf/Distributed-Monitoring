@@ -11,7 +11,7 @@ namespace CombineCsvs
 {
     public static class Program
     {
-        public const string SourceDir = @"C:\Users\Yuval\Desktop\New Entropy Results After Bug Fix";
+        public const string SourceDir = @"C:\Users\Yuval\Desktop\Entropy Sketch Results\Nodes";
         public const string DestinationDir = SourceDir;
 
         public static int GetIterationNumber(this string line) => new string(line.TakeWhile(char.IsDigit).ToArray()).TryParseInt().ValueOrElse(-1);
