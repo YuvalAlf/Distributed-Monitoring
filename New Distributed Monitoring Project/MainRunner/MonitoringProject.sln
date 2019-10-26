@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombineCsvs", "CombineCsvs\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntropySketch", "EntropySketch\EntropySketch.csproj", "{C3EEA747-7B16-4CDD-8864-C72EEB10699B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetCapturesParsing", "InternetCapturesParsing\InternetCapturesParsing.csproj", "{C36DACC0-21F6-46E9-8337-763571120E9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{C3EEA747-7B16-4CDD-8864-C72EEB10699B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3EEA747-7B16-4CDD-8864-C72EEB10699B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3EEA747-7B16-4CDD-8864-C72EEB10699B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C36DACC0-21F6-46E9-8337-763571120E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C36DACC0-21F6-46E9-8337-763571120E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C36DACC0-21F6-46E9-8337-763571120E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C36DACC0-21F6-46E9-8337-763571120E9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

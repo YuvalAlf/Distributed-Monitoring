@@ -23,12 +23,13 @@ namespace MonitoringProject
 {
     public static class Program
     {
-        public static readonly string resultDir = @"C:\Users\Yuval\Desktop\AMS Synthetic";
-        public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
-        public static readonly string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Desktop\Data\Milano Phone Activity\Data";
-        public static readonly string taxiBinDataPath = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\TaxiData.bin";
-        public static readonly string stocksDirPath = @"C:\Users\Yuval\Desktop\Data\Stock Values\Stocks";
-        //  public static readonly string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\trimmed.csv";
+        public const string resultDir                 = @"C:\Users\Yuval\Desktop";
+        public const string databaseAccessesPath      = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\TDADateSet.csv";
+        public const string phoneActivitiesBaseFolder = @"C:\Users\Yuval\Desktop\Data\Milano Phone Activity\Data";
+        public const string taxiBinDataPath           = @"C:\Users\Yuval\Desktop\Data\Taxi Data\Good Data\FOIL2013\TaxiData.bin";
+        public const string stocksDirPath             = @"C:\Users\Yuval\Desktop\Data\Stock Values\Stocks";
+        public const string ctuFilePath               = @"C:\Users\Yuval\Desktop\Data\CTUs Internet Traffic\ctu3.bin";
+        //  public const string databaseAccessesPath = @"C:\Users\Yuval\Desktop\Data\Traffic of Database Accesses\trimmed.csv";
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
@@ -88,6 +89,19 @@ namespace MonitoringProject
                                                 minAmountAtDay, approximation, stocksDirPath, resultDir);
                     }
                 }
+        }
+
+
+        private static void RunCtuSketchEntropy(Random random)
+        {
+            var numOfNodes             = 4;
+            var window                 = 12;
+            var approximation          = new MultiplicativeApproximation(0.2);
+            var maxIterations          = 500;
+            var reducedSketchDimension = 50;
+
+            EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
+                                       ctuFilePath, resultDir);
         }
 
         private static void RunStocksSketchEntropy(Random random)
@@ -199,13 +213,13 @@ namespace MonitoringProject
            //  RunRandomEntropy(random);
            //  RunStocksEntropy(random);
 
-
+            RunCtuSketchEntropy(random);
            //  RunStocksSketchEntropy(random);
 
             // RunRandomInnerProduct(random);
            //   RunTaxiTripsInnerProduct(random);
 
-             RunRandomAms(random);
+            // RunRandomAms(random);
              //   RunMilanoPhonesSecondMomentSketch(random);
         }
 

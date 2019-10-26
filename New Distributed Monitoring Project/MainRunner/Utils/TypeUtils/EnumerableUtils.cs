@@ -8,6 +8,8 @@ namespace Utils.TypeUtils
 {
     public static class EnumerableUtils
     {
+        public static string AsString(this IEnumerable<char> @this) => new string(@this.ToArray());
+
         public static double LogSumExp(this IEnumerable<double> @this)
         {
             var vector = @this as double[] ?? @this.ToArray();

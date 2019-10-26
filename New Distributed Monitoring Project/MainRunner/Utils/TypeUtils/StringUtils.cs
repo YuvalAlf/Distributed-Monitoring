@@ -24,6 +24,10 @@ namespace Utils.TypeUtils
         public static Maybe<DateTime> TryParseDateTime(this string @this) 
             => DateTime.TryParse(@this, out var result) == true ? Some(result) : None<DateTime>();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Maybe<byte> TryParseByte(this string @this)
+            => byte.TryParse(@this, out var result) == true ? Some(result) : None<byte>();
+
 
         public static string ConcatCsv(this string @this, string other) => @this + "," + other;
 

@@ -18,6 +18,39 @@ namespace EntropySketch
 {
     public static class EntropySketchRunner
     {
+
+        public static void RunCTU(Random rnd, int maxIterations, int numOfNodes, int window, int collapseDimension,
+                                     ApproximationType approximation, string ctuBinaryPath, string resultDir)
+        {
+            var resultPath =
+                PathBuilder.Create(resultDir, "EntropySketch")
+                           .AddProperty("Dataset", "CTU")
+                           .AddProperty("SketchDimension", collapseDimension.ToString())
+                           .AddProperty("Nodes", numOfNodes.ToString())
+                           .AddProperty("Window", window.ToString())
+                           .AddProperty("Approximation", approximation.AsString())
+                           .ToPath("csv");
+            var entropySketch = new EntropySketchFunction(collapseDimension);
+
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            using (var ctuProbabilityWindow = CtuProbabilityWindow.Init(ctuBinaryPath, numOfNodes, window))
+            {
+                var initProbabilityVectors = ctuProbabilityWindow.CurrentProbabilityVector().Map(entropySketch.CollapseProbabilityVector);
+                var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, collapseDimension,
+                                                      approximation, entropySketch.MonitoredFunction);
+                int i = 0;
+                while (ctuProbabilityWindow.MoveNext() && (i++ < maxIterations))
+                {
+                    var changeProbabilityVectors = ctuProbabilityWindow.CurrentChangeProbabilityVector()
+                                                                          .Map(entropySketch.CollapseProbabilityVector);
+
+                    multiRunner.Run(changeProbabilityVectors, rnd, false)
+                                .Select(r => r.AsCsvString())
+                                .ForEach(resultCsvFile.WriteLine);
+                }
+            }
+        }
+
         public static void RunStocks(Random rnd, int iterations, Tree<long> closestValueQuery, int numOfNodes, int window, int collapseDimension, DateTime startingDateTime,
                                      int minAmountAtDay, ApproximationType approximation,
                                      string stocksDirPath, string resultDir)
