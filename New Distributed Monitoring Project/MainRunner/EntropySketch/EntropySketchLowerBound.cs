@@ -26,7 +26,7 @@ namespace EntropySketch
                 return point;
             }
 
-            return ConvexBoundBuilder.Create(MonitoredFunction.Function, ComputeEntropySketch, value => value >= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, ComputeEntropySketch, ConvexBound.Type.LoweBound, threshold)
                                      .WithDistanceNorm(1, DistanceL1)
                                      .ToConvexBound();
         }

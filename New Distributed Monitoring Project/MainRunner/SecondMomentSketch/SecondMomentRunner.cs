@@ -51,6 +51,7 @@ namespace SecondMomentSketch
                 var initVectors = ArrayUtils.Init(numOfNodes, _ => ArrayUtils.Init(vectorLength, __ => (double) rnd.Next(-4, 5)).ToVector());
 
                 var multiRunner = MultiRunner.InitAll(initVectors, numOfNodes, vectorLength, approximation, secondMomentFunction.MonitoredFunction);
+               // multiRunner.OnlySchemes(new MonitoringScheme.Value(), new MonitoringScheme.FunctionMonitoring(), new MonitoringScheme.Oracle());
                 const int OracleFullSyncs = 2;
 
                 Func<int, Vector> ChangeGenerator() => nodeIndex =>
@@ -140,7 +141,7 @@ namespace SecondMomentSketch
                            .AddProperty("Approximation", approximation.AsString())
                            .ToPath("csv");
 
-            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes) + ",F2"))
             {
                 var phonesActivityDataParser = PhonesActivityDataParser.Create(phoneActivityDir);
                 var phonesActivityWindowManger = PhonesActivityWindowManger.Init(window, numOfNodes, vectorLength, hashFunctionsTable, phonesActivityDataParser, distributingMethod);
@@ -150,9 +151,11 @@ namespace SecondMomentSketch
                 {
                     var shouldEnd = new StrongBox<bool>(false);
                     var changeVectors = phonesActivityWindowManger.GetChangeVector();
+                    var averageVector = Vector.AverageVector(phonesActivityWindowManger.Window.Value.CurrentNodesCountVectors());
+                    var f2Value = averageVector.IndexedValues.Values.Sum(x => x * x);
                     multiRunner.Run(changeVectors, rnd, false)
                            //    .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
-                               .Select(r => r.AsCsvString())
+                               .Select(r => r.AsCsvString() + "," + f2Value)
                                .ForEach(resultCsvFile.WriteLine);
                     //if (shouldEnd.Value)
                       //  break;

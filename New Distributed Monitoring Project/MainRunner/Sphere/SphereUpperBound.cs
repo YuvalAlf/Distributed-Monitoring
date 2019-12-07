@@ -26,7 +26,7 @@ namespace Sphere
                                                      return result;
                                                  };
 
-            return ConvexBoundBuilder.Create(MonitoredFunction.Function, Compute, value => value <= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, Compute, ConvexBound.Type.UpperBound, threshold)
                                      .WithDistanceNorm(2, closestPoint)
                                      .ToConvexBound();
         }

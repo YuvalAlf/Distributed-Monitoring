@@ -16,7 +16,7 @@ namespace Monitoring.Nodes
     {
         public ConvexBound ConvexBound { get; }
         public Func<Vector, double> MonitoredFunction => ConvexBound.MonitoredFunction;
-        public double FunctionValue    { get; private set; }
+        public double FunctionValue { get; private set; }
 
         public OracleVectorNode(Vector referencePoint, ConvexBound convexBound, int nodeId, int vectorLength) 
             : base(referencePoint, nodeId, vectorLength)
@@ -38,7 +38,7 @@ namespace Monitoring.Nodes
         {
             var convexFunction = nodes[0].ConvexBound;
             var monitoredFunction = nodes[0].MonitoredFunction;
-            var violatedNodesIndices = nodes.IndicesWhere(n => !convexFunction.IsInBound(n.FunctionValue));
+            var violatedNodesIndices = nodes.IndicesWhere(n => !n.ConvexBound.IsInBound(n.FunctionValue));
             if (violatedNodesIndices.Count == 0)
                 return (server, Communication.Zero);
 

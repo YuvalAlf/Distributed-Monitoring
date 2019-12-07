@@ -21,7 +21,7 @@ namespace SecondMomentSketch
         private PhonesActivityDataParser DataParser { get; set; }
         private bool ended = false;
         private GeographicalDistributing DistributingMethod { get; }
-        private Lazy<WindowedStatistics> Window { get; }
+        public Lazy<WindowedStatistics> Window { get; }
 
         public Vector[] GetChangeVector() => Window.Value.GetChangeCountVectors();
         public Vector[] GetCurrentVectors() => Window.Value.CurrentNodesCountVectors();

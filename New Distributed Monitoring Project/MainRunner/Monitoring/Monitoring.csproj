@@ -57,6 +57,7 @@
     <Compile Include="GeometricMonitoring\Approximation\CombinedApproximation.cs" />
     <Compile Include="GeometricMonitoring\Approximation\MultiplicativeUpperLowerApproximation.cs" />
     <Compile Include="GeometricMonitoring\ClosestPointFromPoint.cs" />
+    <Compile Include="GeometricMonitoring\MonitoringType\FunctionMonitoring.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\Naive.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\OracleVector.cs" />
     <Compile Include="GeometricMonitoring\MonitoringType\SkechedChangeDistance.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="GeometricMonitoring\VectorType\SumVectorType.cs" />
     <Compile Include="Nodes\AbstractNode.cs" />
     <Compile Include="Nodes\DistanceNode.cs" />
+    <Compile Include="Nodes\FunctionNode.cs" />
     <Compile Include="Nodes\OracleVectorNode.cs" />
     <Compile Include="Nodes\SketchedChangeDistanceNode.cs" />
     <Compile Include="Nodes\SketchedChangeValueNode.cs" />

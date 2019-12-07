@@ -33,7 +33,7 @@ namespace MonitoringProject
 
         private static void RunMilanoPhonesSecondMomentSketch(Random random)
         {
-            int numOfNodes     = 36;
+            int numOfNodes     = 2;
            // var dimensions     = new[] { (9, 9)};
             var window         = 24;
            // foreach (var numOfNodes in ArrayUtils.Init(16, 36, 64, 100, 144, 13 * 13, 14 * 14))
@@ -44,7 +44,7 @@ namespace MonitoringProject
                 //var approximation  = new ThresholdApproximation(2700000);
                 var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
                                                               new AdditiveApproximation(100000));
-                foreach (var (width, height) in ArrayUtils.Init(73).Select(x => (x, 11)))
+                foreach (var (width, height) in ArrayUtils.Init(1,3,5,11,21).Select(x => (x, 11)))
                     SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height,
                                                               distributingMethod, phoneActivitiesBaseFolder, resultDir);
             }
@@ -95,12 +95,11 @@ namespace MonitoringProject
         private static void RunCtuSketchEntropy(Random random)
         {
             var numOfNodes             = 4;
-            var window                 = 12;
-            var approximation          = new MultiplicativeApproximation(0.2);
-            var maxIterations          = 500;
-            var reducedSketchDimension = 50;
-
-            EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
+            var window                 = 6;
+            var approximation          = new AdditiveApproximation(1.5);
+            var maxIterations          = 100;
+            foreach (var reducedSketchDimension in ArrayUtils.Init(50))
+                EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
                                        ctuFilePath, resultDir);
         }
 
@@ -131,15 +130,15 @@ namespace MonitoringProject
 
         private static void RunRandomAms(Random random)
         {
-            int  iterations    = 10000;
+            int  iterations    = 4000;
             bool oneChanges = true;
-            for (var numOfNodes = 1001; numOfNodes <= 1001; numOfNodes += 2)
+            for (var numOfNodes = 41; numOfNodes <= 41; numOfNodes += 2)
                 for (var width = 21; width <= 21; width += 10)
                 {
-                    var height = 20;
+                    var height = 21;
 
                     //ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0));
-                    ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.2, 5.0));
+                    ApproximationType approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0));
                     SecondMomentRunner.RunRandomly(random, width, height, numOfNodes, iterations, approximation, oneChanges, resultDir);
                 }
         }
@@ -148,10 +147,10 @@ namespace MonitoringProject
         {
             ApproximationType approximation = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
             int iterations = 3000;
-            var vectorLength = 100;
+            var vectorLength = 1000;
             //var numOfNodes = 40;
             //for (int vectorLength = 100; vectorLength <= 3000; vectorLength += 100)
-            for (int numOfNodes = 260; numOfNodes <= 400; numOfNodes += 10)
+            for (int numOfNodes = 71; numOfNodes <= 71; numOfNodes += 10)
                 InnerProductRunner.RunRandomly(random, numOfNodes, approximation, vectorLength, iterations, resultDir);
         }
 
@@ -200,7 +199,7 @@ namespace MonitoringProject
             var chosenSplitter = vendorSplitter;
 
 
-            foreach (var sqrtVectorLength in ArrayUtils.Init(22,70,100,122,141,158,173,187))
+            foreach (var sqrtVectorLength in ArrayUtils.Init(/*22, 50, 70, 86, 100, 111, 122, 132, 141,*/ 150, 158, 165, 173, 180, 187, 193, 200))
                 foreach (var sqrtNumOfNodes in ArrayUtils.Init(9))
                     InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
                                             sqrtVectorLength, chosenSplitter, nycCityRegion, taxiBinDataPath, resultDir);
@@ -213,14 +212,14 @@ namespace MonitoringProject
            //  RunRandomEntropy(random);
            //  RunStocksEntropy(random);
 
-            RunCtuSketchEntropy(random);
+           // RunCtuSketchEntropy(random);
            //  RunStocksSketchEntropy(random);
 
             // RunRandomInnerProduct(random);
-           //   RunTaxiTripsInnerProduct(random);
+            //  RunTaxiTripsInnerProduct(random);
 
-            // RunRandomAms(random);
-             //   RunMilanoPhonesSecondMomentSketch(random);
+           //  RunRandomAms(random);
+                RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }

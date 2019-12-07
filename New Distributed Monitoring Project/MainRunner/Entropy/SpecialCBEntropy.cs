@@ -48,7 +48,7 @@ namespace Entropy
             var parameters    = initVector.Map(Dimension, pi => -Math.Log(pi + 0.000000001) - 1);
             var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
 
-            return lineHalfPlane.ToConvexUpperBound(MonitoredFunction.Function);
+            return lineHalfPlane.ToConvexUpperBound(MonitoredFunction.Function, threshold);
         }
 
 
@@ -85,7 +85,7 @@ namespace Entropy
             double LowerBoundEntropy(Vector vector) 
                 => vector.IndexedValues.Sum(kv => LowerBoundEntropyToValue(kv.Key, kv.Value));
 
-            return ConvexBoundBuilder.Create(MonitoredFunction.Function, LowerBoundEntropy, value => value >= threshold)
+            return ConvexBoundBuilder.Create(MonitoredFunction.Function, LowerBoundEntropy, ConvexBound.Type.LoweBound, threshold)
                                   // .WithDistanceNorm(1, DistanceL1)
                                      .ToConvexBound();
         }

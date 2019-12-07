@@ -10,19 +10,21 @@ namespace Monitoring.GeometricMonitoring
     {
         private Func<Vector, double> MonitoredFunction { get; }
         private Func<Vector, double> Compute { get; }
-        private Predicate<double> IsInBound { get; }
+        public double Threshold { get; }
+        public ConvexBound.Type Type { get; }
         private Dictionary<norm, ClosestPointFromPoint> GetClosestPointOfNorm { get; }
 
-        private ConvexBoundBuilder(Func<Vector, double> monitoredFunction, Func<Vector, double> compute, Predicate<double> isInBound, Dictionary<int, ClosestPointFromPoint> getClosestPointOfNorm)
+        private ConvexBoundBuilder(Func<Vector, double> monitoredFunction, Func<Vector, double> compute, Dictionary<int, ClosestPointFromPoint> getClosestPointOfNorm, double threshold, ConvexBound.Type type)
         {
             MonitoredFunction = monitoredFunction;
             Compute = compute;
-            IsInBound = isInBound;
             GetClosestPointOfNorm = getClosestPointOfNorm;
+            Threshold = threshold;
+            Type = type;
         }
 
-        public static ConvexBoundBuilder Create(Func<Vector, double> monitoredFuntion, Func<Vector, double> computeFunction, Predicate<double> isInBound) 
-            => new ConvexBoundBuilder(monitoredFuntion, computeFunction, isInBound, new Dictionary<int, ClosestPointFromPoint>(2));
+        public static ConvexBoundBuilder Create(Func<Vector, double> monitoredFuntion, Func<Vector, double> computeFunction, ConvexBound.Type type, double threhsold) 
+            => new ConvexBoundBuilder(monitoredFuntion, computeFunction, new Dictionary<int, ClosestPointFromPoint>(2), threhsold, type);
 
         public ConvexBoundBuilder WithDistanceNorm(int norm, ClosestPointFromPoint closestPointFunction)
         {
@@ -30,6 +32,6 @@ namespace Monitoring.GeometricMonitoring
             return this;
         }
 
-        public ConvexBound ToConvexBound() => new ConvexBound(MonitoredFunction, Compute, IsInBound, GetClosestPointOfNorm);
+        public ConvexBound ToConvexBound() => new ConvexBound(MonitoredFunction, Compute, GetClosestPointOfNorm, Threshold, Type);
     }
 }

@@ -60,12 +60,14 @@ namespace Monitoring.GeometricMonitoring.Running
             }
 
             var valueServer  = NodeServer<ValueNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, ValueNode.ResolveNodes, ValueNode.Create);
+            var fgmServer  = NodeServer<FunctionNode>.Create (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, FunctionNode.ResolveNodes, FunctionNode.Create);
             var vectorServer = NodeServer<VectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, VectorNode.ResolveNodes, VectorNode.Create);
             var oracleVectorServer = NodeServer<OracleVectorNode>.Create(initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction, OracleVectorNode.ResolveNodes, OracleVectorNode.Create);
             var oracleServer = OracleServer.Create          (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction);
             var naiveServer  = NaiveServer.Create           (initVectors, numOfNodes, vectorLength, globalVectorType, approximation, monitoredFunction);
             
             AddRunner(new MonitoringScheme.Value(),  valueServer);
+            AddRunner(new MonitoringScheme.FunctionMonitoring(),  fgmServer);
             AddRunner(new MonitoringScheme.Vector(), vectorServer);
             AddRunner(new MonitoringScheme.OracleVector(), oracleVectorServer);
             AddRunner(new MonitoringScheme.Oracle(), oracleServer);

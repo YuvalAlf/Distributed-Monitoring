@@ -13,6 +13,7 @@ using MoreLinq.Extensions;
 using Parsing;
 using Utils.AiderTypes;
 using Utils.TypeUtils;
+using Utils.SparseTypes;
 
 namespace EntropySketch
 {
@@ -32,20 +33,24 @@ namespace EntropySketch
                            .ToPath("csv");
             var entropySketch = new EntropySketchFunction(collapseDimension);
 
-            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes) + ",Entropy"))
             using (var ctuProbabilityWindow = CtuProbabilityWindow.Init(ctuBinaryPath, numOfNodes, window))
             {
                 var initProbabilityVectors = ctuProbabilityWindow.CurrentProbabilityVector().Map(entropySketch.CollapseProbabilityVector);
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, collapseDimension,
                                                       approximation, entropySketch.MonitoredFunction);
                 int i = 0;
+                
                 while (ctuProbabilityWindow.MoveNext() && (i++ < maxIterations))
                 {
+                    var entropy = Vector.AverageVector(ctuProbabilityWindow.CurrentProbabilityVector())
+                                        .IndexedValues.Select(p => p.Value).Sum(v => - v * Math.Log(v));
+
                     var changeProbabilityVectors = ctuProbabilityWindow.CurrentChangeProbabilityVector()
                                                                           .Map(entropySketch.CollapseProbabilityVector);
 
                     multiRunner.Run(changeProbabilityVectors, rnd, false)
-                                .Select(r => r.AsCsvString())
+                                .Select(r => r.AsCsvString() + "," + entropy.ToString())
                                 .ForEach(resultCsvFile.WriteLine);
                 }
             }

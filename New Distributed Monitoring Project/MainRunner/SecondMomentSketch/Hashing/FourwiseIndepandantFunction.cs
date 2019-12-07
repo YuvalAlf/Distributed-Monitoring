@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using MathNet.Numerics.Random;
 using Utils.MathUtils;
 using Utils.SparseTypes;
 using Utils.TypeUtils;
@@ -53,7 +54,7 @@ namespace SecondMomentSketch.Hashing
                                         foreach (var valuePair in countVector.IndexedValues)
                                         {
                                             var itemId = valuePair.Key;
-                                            var value = valuePair.Value;
+                                            var value  = valuePair.Value;
 
                                             for (int i = 0; i < vectorLength; i++)
                                                 amsVector[i] += value * hashFunctionTable[i](itemId);

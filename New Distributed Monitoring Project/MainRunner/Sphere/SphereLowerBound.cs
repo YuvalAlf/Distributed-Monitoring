@@ -19,7 +19,7 @@ namespace Sphere
             if (threshold <= 0)
             {
                 ClosestPointFromPoint closestPoint = (pt, nodeId) => double.MaxValue;
-                return ConvexBoundBuilder.Create(MonitoredFunction.Function, _ => double.NegativeInfinity, _ => true)
+                return ConvexBoundBuilder.Create(MonitoredFunction.Function, Compute, ConvexBound.Type.LoweBound, double.NegativeInfinity)
                                          .WithDistanceNorm(1, closestPoint)
                                          .WithDistanceNorm(2, closestPoint)
                                          .ToConvexBound();
@@ -34,7 +34,7 @@ namespace Sphere
             var parameters    = initialVector * 2;
             var lineHalfPlane = LineHalfPlane.Create(parameters, constantPart, threshold, Dimension);
 
-            return lineHalfPlane.ToConvexLowerBound(MonitoredFunction.Function);
+            return lineHalfPlane.ToConvexLowerBound(MonitoredFunction.Function, threshold);
         }
     }
 }

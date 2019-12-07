@@ -28,14 +28,14 @@ type DataDeque(dataPoints : (double * FastCountSet<index>) Deque) =
         |> Deque.replaceMax (secondMaxValue, FastCountSet.Union maxIndices secondMaxIndices)
         |> DataDeque
     member deque.ChangeMinValue(newMinValue) =
-        if abs(deque.SecondMinValue - newMinValue) < 0.000000001 then
+        if not deque.IsSingle && abs(deque.SecondMinValue - newMinValue) < 0.000000001 then
             deque.CombineMin()
         else
             dataPoints 
             |> Deque.replaceMin (newMinValue, snd dataPoints.Head)
             |> DataDeque
     member deque.ChangeMaxValue(newMaxValue) =
-        if abs(deque.SecondMaxValue - newMaxValue) < 0.000000001 then
+        if not deque.IsSingle && abs(deque.SecondMaxValue - newMaxValue) < 0.000000001 then
             deque.CombineMax()
         else
             dataPoints 

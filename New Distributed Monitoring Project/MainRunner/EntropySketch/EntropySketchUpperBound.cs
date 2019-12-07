@@ -20,7 +20,7 @@ namespace EntropySketch
             Vector paramters = exps.Enumerate(Dimension).Select(exp => - exp / sum).ToVector();
             double constantPart = ComputeEntropySketch(reducedVector) - paramters * reducedVector;
             return LineHalfPlane.Create(paramters, constantPart, threshold, Dimension)
-                                .ToConvexUpperBound(MonitoredFunction.Function);
+                                .ToConvexUpperBound(MonitoredFunction.Function, threshold);
         }
     }
 }
