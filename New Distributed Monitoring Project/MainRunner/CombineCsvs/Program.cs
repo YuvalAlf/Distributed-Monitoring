@@ -40,7 +40,7 @@ namespace CombineCsvs
                 }
 
             }
-
+            
             Process.Start(resultPath);
         }
 

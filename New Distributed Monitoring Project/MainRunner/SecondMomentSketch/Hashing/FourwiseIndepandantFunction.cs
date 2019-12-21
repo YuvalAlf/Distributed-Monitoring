@@ -22,7 +22,12 @@ namespace SecondMomentSketch.Hashing
 
         public Func<int, int> GenerateHash(int nodeIndex, int amsVectorIndex)
         {
-            var rnd        = new Random((amsVectorIndex, nodeIndex).GetHashCode());
+            //var rnd        = new Random((amsVectorIndex, nodeIndex).GetHashCode());
+            var rnd        = new Random(amsVectorIndex);
+            //var rnd        = new MersenneTwister(amsVectorIndex);
+           // for (int i = 0; i < nodeIndex; i++)
+            //    rnd.Next();
+            //rnd = new MersenneTwister(rnd.Next());
             var randomNum0 = rnd.Next();
             var randomNum1 = rnd.Next();
             var randomNum2 = rnd.Next();

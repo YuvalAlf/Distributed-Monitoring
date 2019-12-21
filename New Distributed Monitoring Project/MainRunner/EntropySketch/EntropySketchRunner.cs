@@ -8,6 +8,7 @@ using MathNet.Numerics;
 using Monitoring.Data;
 using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
+using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
 using MoreLinq.Extensions;
 using Parsing;
@@ -39,6 +40,7 @@ namespace EntropySketch
                 var initProbabilityVectors = ctuProbabilityWindow.CurrentProbabilityVector().Map(entropySketch.CollapseProbabilityVector);
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, collapseDimension,
                                                       approximation, entropySketch.MonitoredFunction);
+
                 int i = 0;
                 
                 while (ctuProbabilityWindow.MoveNext() && (i++ < maxIterations))
@@ -74,7 +76,7 @@ namespace EntropySketch
                            .ToPath("csv");
             var entropySketch = new EntropySketchFunction(collapseDimension);
 
-            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes)))
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes) + ",Entropy"))
             using (var stocksProbabilityWindow = StocksProbabilityWindow.Init(stocksDirPath, startingDateTime, minAmountAtDay, numOfNodes, window, closestValueQuery))
             {
                 var initProbabilityVectors = stocksProbabilityWindow.CurrentProbabilityVector().Map(entropySketch.CollapseProbabilityVector);
@@ -85,9 +87,10 @@ namespace EntropySketch
                 {
                     var changeProbabilityVectors = stocksProbabilityWindow.CurrentChangeProbabilityVector()
                                                                           .Map(entropySketch.CollapseProbabilityVector);
-
+                    var entropy = Vector.AverageVector(stocksProbabilityWindow.CurrentProbabilityVector())
+                                        .IndexedValues.Values.Sum(p => -p * Math.Log(p));
                     multiRunner.Run(changeProbabilityVectors, rnd, false)
-                                .Select(r => r.AsCsvString())
+                                .Select(r => r.AsCsvString() + "," + entropy)
                                 .ForEach(resultCsvFile.WriteLine);
                 }
             }

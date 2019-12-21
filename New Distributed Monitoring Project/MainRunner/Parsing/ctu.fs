@@ -25,7 +25,7 @@ type CtuManager(binFilePath : string, numOfNodes : int) =
         let mutable addOperations =  new Dictionary<int, IndicesList>(numOfNodes)
         [0 .. numOfNodes - 1] |> List.iter (fun node -> addOperations.Add(node, new IndicesList()))
 
-        let rec fill10Minutes () : unit =
+        let rec fill1Minute () : unit =
             match pairsEnumerator.MoveNext() with
             | false ->
                 ctu.DidFinish <- true
@@ -35,8 +35,8 @@ type CtuManager(binFilePath : string, numOfNodes : int) =
                 let node = int(double(currentCaptue.SourceIP.Byte3) / denominator)
                 let index = currentCaptue.SourceIP.Address
                 addOperations.[node].AddLast(index) |> ignore
-                if currentCaptue.Timestamp.Minute / 10 = nextCapture.Timestamp.Minute / 10 then
-                    fill10Minutes ()
+                if currentCaptue.Timestamp.Minute = nextCapture.Timestamp.Minute then
+                    fill1Minute ()
                     
         let fillVectors () : unit =
             for node = 0 to numOfNodes - 1 do
@@ -53,7 +53,7 @@ type CtuManager(binFilePath : string, numOfNodes : int) =
                 maxList.RemoveLast() |> ignore
                 balance ()
 
-        fill10Minutes()
+        fill1Minute()
         balance()
         fillVectors()
         vectors

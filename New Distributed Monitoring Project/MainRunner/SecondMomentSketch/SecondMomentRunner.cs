@@ -151,11 +151,11 @@ namespace SecondMomentSketch
                 {
                     var shouldEnd = new StrongBox<bool>(false);
                     var changeVectors = phonesActivityWindowManger.GetChangeVector();
-                    var averageVector = Vector.AverageVector(phonesActivityWindowManger.Window.Value.CurrentNodesCountVectors());
-                    var f2Value = averageVector.IndexedValues.Values.Sum(x => x * x);
+                   // var sumVector = Vector.SumVector(phonesActivityWindowManger.Window.Value.CurrentNodesCountVectors());
+                    //var f2Value = sumVector.IndexedValues.Values.Sum(x => x * x);
                     multiRunner.Run(changeVectors, rnd, false)
                            //    .SideEffect(a => shouldEnd.Value = shouldEnd.Value || (a.MonitoringScheme is MonitoringScheme.Oracle && a.NumberOfFullSyncs > 0))
-                               .Select(r => r.AsCsvString() + "," + f2Value)
+                               .Select(r => r.AsCsvString()) //+ "," + f2Value)
                                .ForEach(resultCsvFile.WriteLine);
                     //if (shouldEnd.Value)
                       //  break;
