@@ -97,11 +97,12 @@ namespace MonitoringProject
 
         private static void RunCtuSketchEntropy(Random random)
         {
-            var numOfNodes             = 9;
-            var window                 = 60 * 60;
+            //var numOfNodes             = 12;
+            var window                 = 60 * 6;
             var approximation          = new AdditiveApproximation(1.5);
-            var maxIterations          = 1000 * 60;
-            for (var reducedSketchDimension = 50; reducedSketchDimension <= 50; reducedSketchDimension += 50)
+            var maxIterations          = 4000;
+            for (int numOfNodes = 12; numOfNodes <= 12; numOfNodes += 10)
+            for (var reducedSketchDimension = 5; reducedSketchDimension <= 150; reducedSketchDimension += 5)
                 EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
                                        ctuFilePath, resultDir);
         }
@@ -217,11 +218,11 @@ namespace MonitoringProject
            //  RunRandomEntropy(random);
            //  RunStocksEntropy(random);
 
-             //    RunCtuSketchEntropy(random);
+                 RunCtuSketchEntropy(random);
            //  RunStocksSketchEntropy(random);
 
             // RunRandomInnerProduct(random);
-              RunTaxiTripsInnerProduct(random);
+             // RunTaxiTripsInnerProduct(random);
 
            //  RunRandomAms(random);
            // RunMilanoPhonesSecondMomentSketch(random);

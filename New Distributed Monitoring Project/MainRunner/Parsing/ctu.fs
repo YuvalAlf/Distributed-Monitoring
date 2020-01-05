@@ -35,7 +35,7 @@ type CtuManager(binFilePath : string, numOfNodes : int) =
                 let node = int(double(currentCaptue.SourceIP.Byte3) / denominator)
                 let index = currentCaptue.SourceIP.Address
                 addOperations.[node].AddLast(index) |> ignore
-                if currentCaptue.Timestamp.Second = nextCapture.Timestamp.Second then
+                if currentCaptue.Timestamp.Second / 10 = nextCapture.Timestamp.Second / 10 then
                     fill1Second ()
                     
         let fillVectors () : unit =
