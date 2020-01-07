@@ -101,8 +101,8 @@ namespace MonitoringProject
             var window                 = 60 * 6;
             var approximation          = new AdditiveApproximation(1.5);
             var maxIterations          = 4000;
-            for (int numOfNodes = 12; numOfNodes <= 12; numOfNodes += 10)
-            for (var reducedSketchDimension = 5; reducedSketchDimension <= 150; reducedSketchDimension += 5)
+            for (int numOfNodes = 10; numOfNodes <= 10; numOfNodes += 10)
+            for (var reducedSketchDimension = 3; reducedSketchDimension <= 25; reducedSketchDimension += 1)
                 EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
                                        ctuFilePath, resultDir);
         }
