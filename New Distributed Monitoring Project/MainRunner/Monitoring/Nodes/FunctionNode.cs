@@ -76,7 +76,7 @@ namespace Monitoring.Nodes
                 if ((convexType == ConvexBound.Type.UpperBound && initialConvex + averageSlack > threshold) ||
                     (convexType == ConvexBound.Type.LoweBound && initialConvex + averageSlack < threshold))
                     return new Communication(bandwidth.Value, messages.Value);
-               messages.Value  += nodes.Length;
+                messages.Value  += nodes.Length;
                 bandwidth.Value += nodes.Length;
                 nodes
                    .SideEffect(n => n.LocalCounter = 0)

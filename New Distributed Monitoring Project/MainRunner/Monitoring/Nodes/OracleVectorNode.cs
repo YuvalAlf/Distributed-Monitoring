@@ -51,7 +51,7 @@ namespace Monitoring.Nodes
             {
                 var nextViolatedNode = nodesIndicesToPollNext.Pop();
                 //bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
-                bandwidth += nodes[nextViolatedNode].VectorLength;
+                bandwidth += nodes[nextViolatedNode].VectorLength + 1;
                 messages += 2;
                 violatedNodesIndices.Add(nextViolatedNode);
                 var averageChangeVector = Vector.AverageVector(violatedNodesIndices.Map(i => nodes[i].ChangeVector));

@@ -10,6 +10,7 @@ using Monitoring.GeometricMonitoring;
 using Monitoring.GeometricMonitoring.Approximation;
 using Monitoring.GeometricMonitoring.MonitoringType;
 using Monitoring.GeometricMonitoring.Running;
+using Monitoring.Servers;
 using MoreLinq.Extensions;
 using Parsing;
 using Utils.AiderTypes;
@@ -33,26 +34,32 @@ namespace EntropySketch
                            .AddProperty("Approximation", approximation.AsString())
                            .ToPath("csv");
             var entropySketch = new EntropySketchFunction(collapseDimension);
-
-            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes) + ",Entropy"))
+            var header = string.Join(",", Enumerable.Range(1, collapseDimension).Select(i => "y" + i)) + "," +
+                         string.Join(",", Enumerable.Range(1, numOfNodes).Select(i => "server_max_" + i));
+            using (var resultCsvFile = AutoFlushedTextFile.Create(resultPath, AccumaltedResult.Header(numOfNodes) + ",Entropy," + header))
             using (var ctuProbabilityWindow = CtuProbabilityWindow.Init(ctuBinaryPath, numOfNodes, window))
             {
                 var initProbabilityVectors = ctuProbabilityWindow.CurrentProbabilityVector().Map(entropySketch.CollapseProbabilityVector);
                 var multiRunner = MultiRunner.InitAll(initProbabilityVectors, numOfNodes, collapseDimension,
                                                       approximation, entropySketch.MonitoredFunction);
-
+                //multiRunner.OnlySchemes(new MonitoringScheme.Oracle());
                 int i = 0;
-                
                 while (ctuProbabilityWindow.MoveNext() && (i++ < maxIterations))
                 {
                     var entropy = Vector.AverageVector(ctuProbabilityWindow.CurrentProbabilityVector())
-                                        .IndexedValues.Select(p => p.Value).Sum(v => - v * Math.Log(v));
-
+                                        .IndexedValues.Select(p => p.Value).Sum(v => -v * Math.Log(v));
                     var changeProbabilityVectors = ctuProbabilityWindow.CurrentChangeProbabilityVector()
                                                                           .Map(entropySketch.CollapseProbabilityVector);
 
                     multiRunner.Run(changeProbabilityVectors, rnd, false)
-                                .Select(r => r.AsCsvString() + "," + entropy.ToString())
+                                .Select(r =>
+                                        {
+                                            return r.AsCsvString();
+                                            //var oracle = multiRunner.Runners.Values.OfType<MonitoringRunner<OracleServer>>().First().Server;
+                                            //var nodesMax = string.Join(",", oracle.NodesVectors.Select(v => v[v.MaximumIndex()]));
+                                            //var res = string.Join(",",oracle.GlobalVector.Enumerate(collapseDimension).Select(y => y.ToString()));
+                                            //return r.AsCsvString() + "," + entropy.ToString() + "," + res + "," + nodesMax;
+                                        })
                                 .ForEach(resultCsvFile.WriteLine);
                 }
             }

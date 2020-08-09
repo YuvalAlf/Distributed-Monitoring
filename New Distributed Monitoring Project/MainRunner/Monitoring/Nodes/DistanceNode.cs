@@ -50,7 +50,7 @@ namespace Monitoring.Nodes
             var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
             while (nodesIndicesToPollNext.Count > 0)
             {
-                bandwidth += 1;
+                bandwidth += 2;
                 messages += 2;
                 violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
                 var averageDistance = violatedNodesIndices.Average(i => nodes[i].UsedDistance);

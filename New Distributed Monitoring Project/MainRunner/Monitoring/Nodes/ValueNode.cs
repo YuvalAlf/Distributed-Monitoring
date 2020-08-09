@@ -52,7 +52,7 @@ namespace Monitoring.Nodes
             var messages  = violatedNodesIndices.Count;
             while (nodesIndicesToPollNext.Count > 0)
             {
-                bandwidth += 1;
+                bandwidth += 2;
                 messages  += 2;
                 violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
                 var averageValue = violatedNodesIndices.Average(i => nodes[i].ConvexValue);

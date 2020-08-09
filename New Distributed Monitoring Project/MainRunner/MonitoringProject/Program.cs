@@ -37,19 +37,25 @@ namespace MonitoringProject
            // var dimensions     = new[] { (9, 9)};
             var window         = 24;
             // foreach (var numOfNodes in ArrayUtils.Init(16, 36, 64, 100, 144, 13 * 13, 14 * 14))
-            foreach (var numOfNodes in ArrayUtils.Init(4, 6, 9, 10, 11, 12, 13, 14,15,16)
+            foreach (var numOfNodes in ArrayUtils.Init(7,8,10)//, 6, 9, 10, 11, 12, 13, 14,15,16)
                                                  .Select(x => x * x))
             {
                 var distributingMethod = new GridDistributing(1, 10000, numOfNodes);
                 //var approximation  = new MultiplicativeUpperLowerApproximation(0.3, 3.0);
                 //var approximation  = new ThresholdApproximation(2700000);
-                var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
-                                                              new AdditiveApproximation(100000));
-                    foreach (var (width, height) in ArrayUtils.Init(23).Select(x => (x, 11))) // ,3,5,11,21
+                //var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
+                //                                              new AdditiveApproximation(100000));
+              //  foreach (var approximation in ArrayUtils.Init(1.00E05, 2.00E05, 3.00E05, 4.00E05, 5.00E05, 6.00E05, 7.00E05, 8.00E05, 9.00E05, 1.00E06, 1.10E06, 1.20E06, 1.30E06, 1.40E06, 1.50E06, 1.60E06, 1.70E06, 1.80E06, 1.90E06, 2.00E06, 2.10E06, 2.20E06, 2.30E06, 2.40E06, 2.50E06, 2.60E06, 2.70E06, 2.80E06, 2.90E06, 3.00E06, 3.10E06, 3.20E06, 3.30E06, 3.40E06, 3.50E06, 3.60E06, 3.70E06, 3.80E06, 3.90E06, 4.00E06, 4.10E06, 4.20E06, 4.30E06, 4.40E06, 4.50E06, 4.60E06, 4.70E06, 4.80E06, 4.90E06, 5.00E06, 5.10E06, 5.20E06, 5.30E06, 5.40E06, 5.50E06, 5.60E06, 5.70E06, 5.80E06, 5.90E06, 6.00E06, 6.10E06, 6.20E06, 6.30E06, 6.40E06, 6.50E06, 6.60E06, 6.70E06, 6.80E06, 6.90E06, 7.00E06, 7.10E06, 7.20E06, 7.30E06, 7.40E06, 7.50E06, 7.60E06, 7.70E06, 7.80E06, 7.90E06, 8.00E06, 8.10E06, 8.20E06, 8.30E06, 8.40E06, 8.50E06, 8.60E06, 8.70E06, 8.80E06, 8.90E06, 9.00E06, 9.10E06, 9.20E06, 9.30E06, 9.40E06, 9.50E06, 9.60E06, 9.70E06, 9.80E06, 9.90E06, 1.00E07).Select(x => new AdditiveApproximation(x)))
+                { 
+                    var approximation = new AdditiveApproximation(1E06);
+                    foreach (var (width, height) in ArrayUtils
+                                                   .Init(14 /*4,5,6,9,14,18,23,27,32,36,37,41,45,50*/)
+                                                   .Select(x => (x, 11))) // ,3,5,11,21
                         SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width,
                                                                   height,
                                                                   distributingMethod, phoneActivitiesBaseFolder,
                                                                   resultDir);
+                }
             }
         }
         
@@ -99,10 +105,10 @@ namespace MonitoringProject
         {
             //var numOfNodes             = 12;
             var window                 = 60 * 6;
-            var approximation          = new AdditiveApproximation(1.5);
+            var approximation          = new AdditiveApproximation(0.5);
             var maxIterations          = 4000;
             for (int numOfNodes = 10; numOfNodes <= 10; numOfNodes += 10)
-            for (var reducedSketchDimension = 3; reducedSketchDimension <= 25; reducedSketchDimension += 1)
+            for (var reducedSketchDimension = 50; reducedSketchDimension <= 1000; reducedSketchDimension += 50)
                 EntropySketchRunner.RunCTU(random, maxIterations, numOfNodes, window, reducedSketchDimension, approximation,
                                        ctuFilePath, resultDir);
         }
@@ -199,12 +205,12 @@ namespace MonitoringProject
             var paymentSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.PaymentType == PaymentType.Cash, "PaymentType");
             var passangersSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.NumOfPassangers > 1, "Passangers");
             var splitters = ArrayUtils.Init(tipSplitter, vendorSplitter, paymentSplitter, passangersSplitter);
-            var approximation = new MultiplicativeUpperLowerApproximation(0.5, 2.0);
+            var approximation = new MultiplicativeUpperLowerApproximation(0.7, 1.3);
             var chosenSplitter = vendorSplitter;
 
 
            // foreach (var sqrtVectorLength in ArrayUtils.Init(101))
-            foreach (var sqrtVectorLength in ArrayUtils.Init(150, 158, 165, 173, 180, 187, 193, 200, 206, 212, 217, 223))
+            foreach (var sqrtVectorLength in ArrayUtils.Init(70))  //150, 158, 165, 173, 180, 187, 193, 200, 206, 212, 217, 223))
              //   foreach (var sqrtNumOfNodes in ArrayUtils.Init(/*2,4,*/ 6,8,9,10,11,12,13,14,15,16,17,18,19,20))
                 foreach (var sqrtNumOfNodes in ArrayUtils.Init(9))
                     InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
@@ -215,17 +221,17 @@ namespace MonitoringProject
         {
             var random = new Random(1631);
 
-           //  RunRandomEntropy(random);
-           //  RunStocksEntropy(random);
+            //  RunRandomEntropy(random);
+            // RunStocksEntropy(random);
+            //  RunStocksSketchEntropy(random);
+            //RunRandomInnerProduct(random);
+            //  RunRandomAms(random);
 
-                 RunCtuSketchEntropy(random);
-           //  RunStocksSketchEntropy(random);
+            RunCtuSketchEntropy(random);
 
-            // RunRandomInnerProduct(random);
-             // RunTaxiTripsInnerProduct(random);
+              //RunTaxiTripsInnerProduct(random);
 
-           //  RunRandomAms(random);
-           // RunMilanoPhonesSecondMomentSketch(random);
+           //   RunMilanoPhonesSecondMomentSketch(random);
         }
 
     }

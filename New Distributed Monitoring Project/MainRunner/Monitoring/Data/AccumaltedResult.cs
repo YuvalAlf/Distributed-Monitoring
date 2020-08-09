@@ -11,7 +11,7 @@ namespace Monitoring.Data
 {
     public sealed class AccumaltedResult
     {
-        public int Bandwidth { get; }
+        public long Bandwidth { get; }
         public int NumberOfMessages { get; }
         public int NumberOfFullSyncs { get; }
         public double FunctionValue { get; }
@@ -29,7 +29,7 @@ namespace Monitoring.Data
         public static AccumaltedResult Init(ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme) 
             => new AccumaltedResult(0, 0, 0, 0, 0, 0, new[]{0.0}, 0, approximation, numOfNodes, vectorLength, monitoringScheme);
 
-        public AccumaltedResult(int bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
+        public AccumaltedResult(long bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
         {
             Bandwidth = bandwidth;
             NumberOfMessages = numberOfMessages;
