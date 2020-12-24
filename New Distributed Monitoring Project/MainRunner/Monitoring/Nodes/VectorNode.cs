@@ -44,10 +44,16 @@ namespace Monitoring.Nodes
             var messages = violatedNodesIndices.Count;
            // var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.CountNonZero());
             var bandwidth = violatedNodesIndices.Sum(i => nodes[i].VectorLength);
+            var latency = violatedNodesIndices.Count > 0 ? Communication.OneWayLatencyMs : 0;
+            var (udpMessages, udpBandwidth) = violatedNodesIndices.Select(i => Communication.DataMessage(nodes[i].VectorLength)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAdd);
             while (nodesIndicesToPollNext.Count > 0)
             {
                 var nextViolatedNode = nodesIndicesToPollNext.Pop();
                 //bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
+                var (controlMessages, controlBandwidth) = TupleUtils.PointwiseAdd(Communication.ControlMessage(), Communication.DataMessage(nodes[nextViolatedNode].VectorLength));
+                udpBandwidth += controlBandwidth;
+                udpMessages += controlMessages;
+                latency += 2 * Communication.OneWayLatencyMs;
                 bandwidth += nodes[nextViolatedNode].VectorLength + 1;
                 messages += 2;
                 violatedNodesIndices.Add(nextViolatedNode);
@@ -58,16 +64,25 @@ namespace Monitoring.Nodes
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
 
                     messages  += violatedNodesIndices.Count;
+                    latency += Communication.OneWayLatencyMs;
+                    var (mes, band) = Communication.DataMessage(nodes[0].VectorLength);
+                    udpBandwidth += band * violatedNodesIndices.Count;
+                    udpMessages += mes * violatedNodesIndices.Count;
+
                     //bandwidth += violatedNodesIndices.Count * averageChangeVector.CountNonZero();
                     bandwidth += violatedNodesIndices.Count * nodes[0].VectorLength;
-                    return (server, new Communication(bandwidth, messages));
+                    return (server, new Communication(bandwidth, messages, udpBandwidth, udpMessages, latency));
                 }
             }
 
-            return new Communication(bandwidth, messages);
+            return new Communication(bandwidth, messages, udpBandwidth, udpMessages, latency);
         }
 
         public static Communication FullSyncAdditionalCost(VectorNode[] nodes)
-            => new Communication(nodes.Sum(n => n.VectorLength), nodes.Length);
+        {
+            var (udpMessages, udpBandwidth) = nodes.Select(n => Communication.DataMessage(n.VectorLength))
+                                                   .Aggregate(TupleUtils.PointwiseAdd);
+            return new Communication(nodes.Sum(n => n.VectorLength), nodes.Length, udpBandwidth, udpMessages, Communication.OneWayLatencyMs);
+        }
     }
 }

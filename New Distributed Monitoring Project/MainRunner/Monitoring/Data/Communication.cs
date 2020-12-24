@@ -8,18 +8,46 @@ namespace Monitoring.Data
 {
     public sealed class Communication
     {
-        public int Bandwidth { get; }
-        public int Messages { get; }
+        public long Bandwidth    { get; }
+        public long Messages     { get; }
+        public long UdpBandwidth { get; }
+        public long UdpMessages  { get; }
+        public long Latency      { get; }
 
-        public Communication(int bandwidth, int messages)
+        public const int OneWayLatencyMs = 4;
+        public const int PayloadDoublesLimit = 283;
+        public const int UdpHeaderSize = 40;
+
+        public static (int udpMessages, int udpBandwidth) DataMessage(int vectorSize)
         {
-            Bandwidth = bandwidth;
-            Messages = messages;
+            var numFullPackets = vectorSize / PayloadDoublesLimit;
+            var reminder = vectorSize % PayloadDoublesLimit;
+            var numMessages = numFullPackets + (reminder > 0 ? 1 : 0);
+
+            return (numMessages, vectorSize + UdpHeaderSize * numMessages);
         }
 
-        public static Communication Zero => new Communication(0, 0);
+        public static (int udpMessages, int UdpBandwidth) ControlMessage()
+        {
+            return (1, UdpHeaderSize);
+        }
 
-        public Communication Add(Communication priceToAdd)
-            => new Communication(Bandwidth + priceToAdd.Bandwidth, Messages + priceToAdd.Messages);
+        public Communication(long bandwidth, long messages, long udpBandwidth, long udpMessages, long latency)
+        {
+            Bandwidth    = bandwidth;
+            Messages     = messages;
+            UdpBandwidth = udpBandwidth;
+            UdpMessages  = udpMessages;
+            Latency      = latency;
+        }
+
+        public static Communication Zero => new Communication(0, 0, 0, 0, 0);
+
+        public Communication Add(Communication priceToAdd, bool setLatency)
+        {
+            var newLatency = setLatency ? priceToAdd.Latency : Latency + priceToAdd.Latency;
+            return new Communication(Bandwidth   + priceToAdd.Bandwidth, Messages  + priceToAdd.Messages, UdpBandwidth + priceToAdd.UdpBandwidth,
+                              UdpMessages + priceToAdd.UdpMessages, newLatency);
+        }
     }
 }

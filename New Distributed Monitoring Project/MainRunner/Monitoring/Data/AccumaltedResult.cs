@@ -11,8 +11,7 @@ namespace Monitoring.Data
 {
     public sealed class AccumaltedResult
     {
-        public long Bandwidth { get; }
-        public int NumberOfMessages { get; }
+        public Communication Communication { get; }
         public int NumberOfFullSyncs { get; }
         public double FunctionValue { get; }
         public double UpperBound { get; }
@@ -27,12 +26,11 @@ namespace Monitoring.Data
         public MonitoringScheme MonitoringScheme { get; }
 
         public static AccumaltedResult Init(ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme) 
-            => new AccumaltedResult(0, 0, 0, 0, 0, 0, new[]{0.0}, 0, approximation, numOfNodes, vectorLength, monitoringScheme);
+            => new AccumaltedResult(Communication.Zero, 0, 0, 0, 0, new[]{0.0}, 0, approximation, numOfNodes, vectorLength, monitoringScheme);
 
-        public AccumaltedResult(long bandwidth, int numberOfMessages, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
+        public AccumaltedResult(Communication communication, int numberOfFullSyncs, double functionValue, double upperBound, double lowerBound, double[] nodesFunctionValues, int loopIndex, ApproximationType approximation, int numOfNodes, int vectorLength, MonitoringScheme monitoringScheme)
         {
-            Bandwidth = bandwidth;
-            NumberOfMessages = numberOfMessages;
+            Communication = communication;
             NumberOfFullSyncs = numberOfFullSyncs;
             FunctionValue = functionValue;
             UpperBound = upperBound;
@@ -52,7 +50,10 @@ namespace Monitoring.Data
                .ConcatCsv("# Nodes")
                .ConcatCsv("Approximation")
                .ConcatCsv("Bandwidth")
+               .ConcatCsv("Udp Bandwidth")
                .ConcatCsv("# Messages")
+               .ConcatCsv("# Udp Messages")
+               .ConcatCsv("Latency")
                .ConcatCsv("# Full Syncs")
                .ConcatCsv("Lower-Bound")
                .ConcatCsv("Function's Value")
@@ -67,18 +68,20 @@ namespace Monitoring.Data
                 .ConcatCsv(VectorLength.ToString())
                 .ConcatCsv(NumOfNodes.ToString())
                 .ConcatCsv(Approximation.AsString())
-                .ConcatCsv(Bandwidth.ToString())
-                .ConcatCsv(NumberOfMessages.ToString())
+                .ConcatCsv(Communication.Bandwidth.ToString())
+                .ConcatCsv(Communication.UdpBandwidth.ToString())
+                .ConcatCsv(Communication.Messages.ToString())
+                .ConcatCsv(Communication.UdpMessages.ToString())
+                .ConcatCsv(Communication.Latency.ToString())
                 .ConcatCsv(NumberOfFullSyncs.ToString())
                 .ConcatCsv(LowerBound.AsCsvString())
                 .ConcatCsv(FunctionValue.ToString(CultureInfo.InvariantCulture))
                 .ConcatCsv(UpperBound.AsCsvString())
                 .ConcatCsv(NodesFunctionValues.Aggregate("", (csv, value) => csv.ConcatCsv(value.ToString(CultureInfo.InvariantCulture))));
 
-        public AccumaltedResult AddSingleRsult(SingleResult singleResult) =>
+        public AccumaltedResult AddSingleResult(SingleResult singleResult, bool setLatency) =>
             new AccumaltedResult(
-                this.Bandwidth + singleResult.Bandwidth,
-                this.NumberOfMessages + singleResult.NumberOfMessages,
+                this.Communication.Add(singleResult.Communication, setLatency),
                 this.NumberOfFullSyncs + (singleResult.IsFullSync ? 1 : 0),
                 singleResult.FunctionValue,
                 singleResult.UpperBound,

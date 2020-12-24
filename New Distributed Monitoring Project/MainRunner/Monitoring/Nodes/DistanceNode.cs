@@ -47,9 +47,18 @@ namespace Monitoring.Nodes
 
             var bandwidth = violatedNodesIndices.Count;
             var messages = violatedNodesIndices.Count;
+            var latency = violatedNodesIndices.Count > 0 ? Communication.OneWayLatencyMs : 0;
+            var (udpMessages, udpBandwidth) = violatedNodesIndices.Select(i => Communication.DataMessage(8)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAdd);
+
+
             var nodesIndicesToPollNext = new Stack<int>(Enumerable.Range(0, nodes.Length).Except(violatedNodesIndices).ToArray().ShuffleInPlace(rnd));
             while (nodesIndicesToPollNext.Count > 0)
             {
+                latency                                += 2 * Communication.OneWayLatencyMs;
+                var (controlMessage, controlBandwidth) =  Communication.DataMessage(8);
+                udpBandwidth                           += 2 * controlBandwidth;
+                udpMessages                            += 2 * controlMessage;
+
                 bandwidth += 2;
                 messages += 2;
                 violatedNodesIndices.Add(nodesIndicesToPollNext.Pop());
@@ -58,17 +67,32 @@ namespace Monitoring.Nodes
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].SlackDistance = averageDistance - nodes[nodeIndex].RealDistance;
+
+                    latency      += Communication.OneWayLatencyMs;
+                    udpBandwidth += violatedNodesIndices.Count * controlBandwidth;
+                    udpMessages  += violatedNodesIndices.Count * controlMessage;
+
                     bandwidth += violatedNodesIndices.Count;
                     messages += violatedNodesIndices.Count;
-                    return (server, new Communication(bandwidth, messages));
+                    return (server, new Communication(bandwidth, messages, udpBandwidth, udpMessages, latency));
                 }
             }
-            
-            return new Communication(bandwidth, messages);
+
+            return new Communication(bandwidth, messages, udpBandwidth, udpMessages, latency);
         }
 
         public static Communication FullSyncAdditionalCost(DistanceNode[] nodes)
+        {
+            var bandwidth = nodes.Sum(n => n.VectorLength) * 2;
+            var messages  = nodes.Length                   * 3;
+            var (dataUdpMessages, dataUdpBandwidth) = nodes.Select(n => Communication.DataMessage(n.VectorLength))
+                                                           .Aggregate(TupleUtils.PointwiseAdd);
+
+            var (controlUdpMessages, controlUdpBandwidth) = nodes.Select(n => Communication.ControlMessage())
+                                                                 .Aggregate(TupleUtils.PointwiseAdd);
+            var latency = Communication.OneWayLatencyMs * 3;
             //  => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
-            => new Communication(nodes.Sum(n => n.VectorLength) * 2, nodes.Length * 3);
+            return new Communication(bandwidth, messages, dataUdpBandwidth * 2 + controlUdpBandwidth, dataUdpMessages * 2 + controlUdpMessages, latency);
+        }
     }
 }

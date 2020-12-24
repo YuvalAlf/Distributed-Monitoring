@@ -29,7 +29,8 @@ namespace Monitoring.Nodes
         public static Either<(NodeServer<SketchedChangeDistanceNode>, Communication), Communication> ResolveNodes
             (NodeServer<SketchedChangeDistanceNode> server, SketchedChangeDistanceNode[] nodes, Random rnd)
         {
-            var messages = 0;
+            throw new Exception();
+            /*var messages = 0;
             var bandwidth = 0;
             var sketchFunction = nodes[0].Sketch;
             var convexBound = nodes[0].ConvexBound;
@@ -62,16 +63,17 @@ namespace Monitoring.Nodes
                     return (server, new Communication(bandwidth, messages));
             }
 
-            return new Communication(bandwidth, messages);
+            return new Communication(bandwidth, messages);*/
         }
 
         public static Communication FullSyncAdditionalCost(SketchedChangeDistanceNode[] nodes)
         {
-            var sketchFunction = nodes[0].Sketch;
+            throw new Exception();
+            /*var sketchFunction = nodes[0].Sketch;
             var vectorLength   = nodes[0].VectorLength;
             var numOfNodes     = nodes.Length;
             var (sketches, epsilons, invokedIndices) = nodes.Select(n => sketchFunction.Sketch(n.ChangeVector, vectorLength * 2)).UnZip();
-            return new Communication(2 * (invokedIndices.Sum(i => i.Dimension) + InvokedIndices.Combine(invokedIndices).Dimension * numOfNodes), numOfNodes * 3);
+            return new Communication(2 * (invokedIndices.Sum(i => i.Dimension) + InvokedIndices.Combine(invokedIndices).Dimension * numOfNodes), numOfNodes * 3);*/
         }
     }
 }

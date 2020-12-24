@@ -11,19 +11,25 @@ namespace CombineCsvs
 {
     public static class Program
     {
-        public const string SourceDir = @"C:\Users\Yuval\Desktop\Experiment Results\Epsilon\Entropy";
-        public const string DestinationDir = SourceDir;
 
         public static int GetIterationNumber(this string line) => new string(line.TakeWhile(char.IsDigit).ToArray()).TryParseInt().ValueOrElse(-1);
 
         public static void Main(string[] args)
         {
-            var sourceFiles = Directory.EnumerateFiles(SourceDir)
+            Console.Write("Enter source dir: ");
+            var sourceDir = Console.ReadLine();
+            if (!Directory.Exists(sourceDir))
+            {
+                Console.WriteLine("Directory doesnt exist");
+                return;
+            }
+
+            var sourceFiles = Directory.EnumerateFiles(sourceDir)
                                        .Where(f => f.EndsWith(".csv"))
                                        .ToArray();
 
             var header = File.ReadAllLines(sourceFiles.First()).First();
-            var resultPath = Path.Combine(DestinationDir, "combined.csv");
+            var resultPath = Path.Combine(sourceDir, "combined.csv");
             int i = 0;
             using (var resultFile = File.CreateText(resultPath))
             {

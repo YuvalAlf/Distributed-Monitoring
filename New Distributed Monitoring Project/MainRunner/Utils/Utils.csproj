@@ -110,6 +110,7 @@
     <Compile Include="TypeUtils\SortedSetUtils.cs" />
     <Compile Include="TypeUtils\StreamReaderUtils.cs" />
     <Compile Include="TypeUtils\StringUtils.cs" />
+    <Compile Include="TypeUtils\TupleUtils.cs" />
     <Compile Include="TypeUtils\ValueTupleUtils.cs" />
   </ItemGroup>
   <ItemGroup>

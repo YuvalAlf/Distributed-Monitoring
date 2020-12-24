@@ -28,7 +28,7 @@ namespace Monitoring.GeometricMonitoring.Running
         {
             var (newServer, singleResult) = Server.Change(change, rnd);
             Server = newServer;
-            AccumalatedResult = AccumalatedResult.AddSingleRsult(singleResult);
+            AccumalatedResult = AccumalatedResult.AddSingleResult(singleResult, setLatency: true);
             return AccumalatedResult;
         }
 
@@ -36,7 +36,7 @@ namespace Monitoring.GeometricMonitoring.Running
         {
             var (newServer, singleResult) = Server.Change(change, rnd);
             Server = newServer;
-            AccumalatedResult = AccumalatedResult.AddSingleRsult(singleResult);
+            AccumalatedResult = AccumalatedResult.AddSingleResult(singleResult, setLatency: true);
             return (AccumalatedResult, Server.NodesVectors);
         }
 

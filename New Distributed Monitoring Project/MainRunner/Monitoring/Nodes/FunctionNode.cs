@@ -56,6 +56,9 @@ namespace Monitoring.Nodes
         {
             var bandwidth = new StrongBox<int>(0);
             var messages = new StrongBox<int>(0);
+            var udpMessagesAndBandwidth = new StrongBox<(int, int)>((0, 0));
+            var latency = new StrongBox<int>(0);
+
             var threshold = nodes[0].ConvexBound.Threshold;
             var convexType = nodes[0].ConvexBound.ConvexBoundType;
             double quant = Math.Abs((threshold - nodes[0].InitialConvexValue) / 2);
@@ -63,6 +66,8 @@ namespace Monitoring.Nodes
             nodes.Where(n => n.QuantsOfSlackValue(quant) > n.LocalCounter)
                      .SideEffect(_ => bandwidth.Value += 1)
                      .SideEffect(_ => messages.Value += 1)
+                     .SideEffect(_ => latency.Value = Communication.OneWayLatencyMs)
+                     .SideEffect(_ => udpMessagesAndBandwidth.Value = TupleUtils.PointwiseAdd(udpMessagesAndBandwidth.Value, Communication.DataMessage(4)))
                      .ForEach(n => n.LocalCounter = n.QuantsOfSlackValue(quant));
 
             var counterSum = nodes.Sum(n => n.LocalCounter);
@@ -71,13 +76,21 @@ namespace Monitoring.Nodes
             {
                 var averageSlack = nodes.Average(n => n.SlackValue);
                 var initialConvex = nodes[0].InitialConvexValue;
-                messages.Value  += 2 * nodes.Length;
-                bandwidth.Value += 2 * nodes.Length;
+                messages.Value  += 2 * nodes.Length; //2 * nodes.Count(n => n.QuantsOfSlackValue(quant) <= n.LocalCounter);
+                bandwidth.Value += 2 * nodes.Length; //2 * nodes.Count(n => n.QuantsOfSlackValue(quant) <= n.LocalCounter);
+                latency.Value += Communication.OneWayLatencyMs * 2;
+                var additive = TupleUtils.PointwiseAdd(Communication.ControlMessage(), Communication.DataMessage(4)); // quantum
+                additive = TupleUtils.PointwiseMul(nodes.Length, additive);
+                udpMessagesAndBandwidth.Value = TupleUtils.PointwiseAdd(udpMessagesAndBandwidth.Value, additive);
+
                 if ((convexType == ConvexBound.Type.UpperBound && initialConvex + averageSlack > threshold) ||
                     (convexType == ConvexBound.Type.LoweBound && initialConvex + averageSlack < threshold))
-                    return new Communication(bandwidth.Value, messages.Value);
+                    return new Communication(bandwidth.Value, messages.Value, udpMessagesAndBandwidth.Value.Item2, udpMessagesAndBandwidth.Value.Item1, latency.Value);
                 messages.Value  += nodes.Length;
                 bandwidth.Value += nodes.Length;
+                latency.Value += Communication.OneWayLatencyMs;
+                var newAdditive = TupleUtils.PointwiseMul(nodes.Length, Communication.DataMessage(8));  // average of phi(v_i)
+                udpMessagesAndBandwidth.Value = TupleUtils.PointwiseAdd(udpMessagesAndBandwidth.Value, newAdditive);
                 nodes
                    .SideEffect(n => n.LocalCounter = 0)
                    .SideEffect(n => n.InitialConvexValue += averageSlack)
@@ -85,10 +98,21 @@ namespace Monitoring.Nodes
 
             }
 
-            return (server, new Communication(bandwidth.Value, messages.Value));
+            return (server, new Communication(bandwidth.Value, messages.Value, udpMessagesAndBandwidth.Value.Item2, udpMessagesAndBandwidth.Value.Item1, latency.Value));
         }
 
         public static Communication FullSyncAdditionalCost(FunctionNode[] nodes)
-            => new Communication(nodes.Sum(n => n.VectorLength) * 2, nodes.Length * 3);
+        {
+            var bandwidth = nodes.Sum(n => n.VectorLength) * 2;
+            var messages  = nodes.Length                   * 3;
+            var (dataUdpMessages, dataUdpBandwidth) = nodes.Select(n => Communication.DataMessage(n.VectorLength))
+                                                           .Aggregate(TupleUtils.PointwiseAdd);
+
+            var (controlUdpMessages, controlUdpBandwidth) = nodes.Select(n => Communication.ControlMessage())
+                                                                 .Aggregate(TupleUtils.PointwiseAdd);
+            var latency = Communication.OneWayLatencyMs * 3;
+            //  => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
+            return new Communication(bandwidth, messages, dataUdpBandwidth * 2 + controlUdpBandwidth, dataUdpMessages * 2 + controlUdpMessages, latency);
+        }
     }
 }

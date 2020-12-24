@@ -47,6 +47,6 @@ namespace Monitoring.Servers
         protected abstract (InheritedType, Communication, bool fullSync) LocalChange(Vector[] changeMatrix, Random rnd);
 
         private SingleResult CreateResult(Communication communication, bool isFullSync) 
-            => new SingleResult(communication.Bandwidth, communication.Messages, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
+            => new SingleResult(communication, isFullSync, FunctionValue, UpperBound, LowerBound, NodesFunctionValues);
     }
 }

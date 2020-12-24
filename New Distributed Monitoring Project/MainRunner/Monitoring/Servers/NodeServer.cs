@@ -53,7 +53,7 @@ namespace Monitoring.Servers
             if (newServerAllResolved.FunctionValue > newServerAllResolved.UpperBound)
                 newServerAllResolved = newServerLowerResolved;
 
-            return (newServerAllResolved, lowerCommunication.Add(upperCommunication), isFullSync1 || isFullSync2);
+            return (newServerAllResolved, lowerCommunication.Add(upperCommunication, setLatency: false), isFullSync1 || isFullSync2);
         }
 
         private readonly Lazy<MethodInfo> fullSyncCost = new Lazy<MethodInfo>(() => typeof(NodeType).GetMethod("FullSyncAdditionalCost"));
@@ -66,7 +66,7 @@ namespace Monitoring.Servers
             {
                 var parameters = new []{nodes as object};
                 var additionalCost = fullSyncCost.Value.Invoke(null, parameters) as Communication;
-                return (this.ReCreate(this.NodesVectors), additionalCost.Add(result.GetChoice2), true);
+                return (this.ReCreate(this.NodesVectors), additionalCost.Add(result.GetChoice2, setLatency:false), true);
             }
                 
 
