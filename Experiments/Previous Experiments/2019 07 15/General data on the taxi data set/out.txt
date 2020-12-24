@@ -1,3 +1,0 @@
-Count = 86783185
-Min Date = Tuesday, 1 January 2013 0:00:00
-Max Date = Sunday, 30 June 2013 23:59:56

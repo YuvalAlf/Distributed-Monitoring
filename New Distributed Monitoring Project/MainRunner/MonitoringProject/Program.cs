@@ -45,16 +45,13 @@ namespace MonitoringProject
                 //var approximation  = new ThresholdApproximation(2700000);
                 //var approximation = new CombinedApproximation(new MultiplicativeUpperLowerApproximation(0.5, 2.0),
                 //                                              new AdditiveApproximation(100000));
-              //  foreach (var approximation in ArrayUtils.Init(1.00E05, 2.00E05, 3.00E05, 4.00E05, 5.00E05, 6.00E05, 7.00E05, 8.00E05, 9.00E05, 1.00E06, 1.10E06, 1.20E06, 1.30E06, 1.40E06, 1.50E06, 1.60E06, 1.70E06, 1.80E06, 1.90E06, 2.00E06, 2.10E06, 2.20E06, 2.30E06, 2.40E06, 2.50E06, 2.60E06, 2.70E06, 2.80E06, 2.90E06, 3.00E06, 3.10E06, 3.20E06, 3.30E06, 3.40E06, 3.50E06, 3.60E06, 3.70E06, 3.80E06, 3.90E06, 4.00E06, 4.10E06, 4.20E06, 4.30E06, 4.40E06, 4.50E06, 4.60E06, 4.70E06, 4.80E06, 4.90E06, 5.00E06, 5.10E06, 5.20E06, 5.30E06, 5.40E06, 5.50E06, 5.60E06, 5.70E06, 5.80E06, 5.90E06, 6.00E06, 6.10E06, 6.20E06, 6.30E06, 6.40E06, 6.50E06, 6.60E06, 6.70E06, 6.80E06, 6.90E06, 7.00E06, 7.10E06, 7.20E06, 7.30E06, 7.40E06, 7.50E06, 7.60E06, 7.70E06, 7.80E06, 7.90E06, 8.00E06, 8.10E06, 8.20E06, 8.30E06, 8.40E06, 8.50E06, 8.60E06, 8.70E06, 8.80E06, 8.90E06, 9.00E06, 9.10E06, 9.20E06, 9.30E06, 9.40E06, 9.50E06, 9.60E06, 9.70E06, 9.80E06, 9.90E06, 1.00E07).Select(x => new AdditiveApproximation(x)))
+                //  foreach (var approximation in ArrayUtils.Init(100000, 200000, 300000, 400000, 500000, 700000, 900000, 1100000, 1300000, 1600000, 1900000, 2200000, 2500000).Select(x => new AdditiveApproximation(x)))
                 { 
                     var approximation = new AdditiveApproximation(0.5E06);
                     foreach (var (width, height) in ArrayUtils
                                                    .Init(2, 5, 10, 14, 18, 22, 27, 31, 36, 40, 45, 50, 54, 59, 63, 68, 72, 77, 81, 86, 90)
                                                    .Select(x => (14, x)))
-                        SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width,
-                                                                  height,
-                                                                  distributingMethod, phoneActivitiesBaseFolder,
-                                                                  resultDir);
+                        SecondMomentRunner.RunMilanoPhoneActivity(random, numOfNodes, window, approximation, width, height, distributingMethod, phoneActivitiesBaseFolder, resultDir);
                 }
             }
         }
@@ -199,8 +196,7 @@ namespace MonitoringProject
             //var          sqrtNumOfNodes   = 5;
             //var          sqrtVectorLength = 10;
             var          hoursInWindow    = 24;
-            //var          iterations       = 750;
-            var iterations = 300;
+            var          iterations       = 750;
             var tipSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.Tip > 0, "Tip");
             var vendorSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.TaxiVendor == TaxiVendor.CMT, "Vendor");
             var paymentSplitter = new DataSplitter<TaxiTripEntry>(entry => entry.PaymentType == PaymentType.Cash, "PaymentType");
@@ -211,9 +207,9 @@ namespace MonitoringProject
 
 
            // foreach (var sqrtVectorLength in ArrayUtils.Init(101))
-            foreach (var sqrtVectorLength in ArrayUtils.Init(30))  //150, 158, 165, 173, 180, 187, 193, 200, 206, 212, 217, 223))
-             //   foreach (var sqrtNumOfNodes in ArrayUtils.Init(/*2,4,*/ 6,8,9,10,11,12,13,14,15,16,17,18,19,20))
-                foreach (var sqrtNumOfNodes in ArrayUtils.Init(5, 10, 13, 15))
+            foreach (var sqrtVectorLength in ArrayUtils.Init(35, 61, 86, 100, 111, 122, 132, 141, 158, 173, 187, 200, 212, 223))
+             //   foreach (var sqrtNumOfNodes in ArrayUtils.Init(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20))
+                foreach (var sqrtNumOfNodes in ArrayUtils.Init(8))
                     InnerProductRunner.RunTaxiTrips(random, iterations, sqrtNumOfNodes, hoursInWindow, approximation,
                                             sqrtVectorLength, chosenSplitter, nycCityRegion, taxiBinDataPath, resultDir);
         }
