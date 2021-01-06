@@ -27,9 +27,9 @@ namespace Monitoring.Servers
             var numberOfMessages = NumOfNodes;
            // var bandwidth        = changeMatrix.Sum(v => v.CountNonZero());
             var bandwidth        = changeMatrix.Sum(v => VectorLength);
-            var (udpMessages, udpBandwidth) = changeMatrix.Select(v => Communication.DataMessage(VectorLength)).Aggregate(TupleUtils.PointwiseAdd);
+            var (udpMessages, udpBandwidth, latency) = changeMatrix.Select(v => Communication.DataMessageVectorSize(VectorLength)).Aggregate(TupleUtils.PointwiseAddKeepLast);
 
-            return (newNaiveServer, new Communication(bandwidth, numberOfMessages, udpBandwidth, udpMessages, Communication.OneWayLatencyMs), true);
+            return (newNaiveServer, new Communication(bandwidth, numberOfMessages, udpBandwidth, udpMessages, latency), true);
         }
 
         public static NaiveServer Create(

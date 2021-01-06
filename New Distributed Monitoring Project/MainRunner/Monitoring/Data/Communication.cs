@@ -12,27 +12,39 @@ namespace Monitoring.Data
         public long Messages     { get; }
         public long UdpBandwidth { get; }
         public long UdpMessages  { get; }
-        public long Latency      { get; }
+        public double Latency      { get; }
 
-        public const int OneWayLatencyMs = 4;
+        public const double ConstantOneWayBandwidthMs = 4;
+
+        // WIFI
         public const int PayloadDoublesLimit = 283;
-        public const int UdpHeaderSize = 40;
+        public const int UdpHeaderSize       = 40;
+        public const double NetworkBandwidthBytePerMs    = 7077.888;
 
-        public static (int udpMessages, int udpBandwidth) DataMessage(int vectorSize)
+        // Zigbee
+        //public const int PayloadDoublesLimit = 11;
+        //public const int UdpHeaderSize       = 36;
+        //public const double NetworkBandwidthBytePerMs    = 32;
+
+
+        public static (int udpMessages, int udpBandwidth, double latency) DataMessageVectorSize(int vectorSize)
         {
             var numFullPackets = vectorSize / PayloadDoublesLimit;
             var reminder = vectorSize % PayloadDoublesLimit;
             var numMessages = numFullPackets + (reminder > 0 ? 1 : 0);
-
-            return (numMessages, vectorSize + UdpHeaderSize * numMessages);
+            var totalBandwidth = vectorSize * 8 + UdpHeaderSize * numMessages;
+            var latency = ConstantOneWayBandwidthMs + totalBandwidth / NetworkBandwidthBytePerMs;
+            return (numMessages, totalBandwidth, latency);
         }
 
-        public static (int udpMessages, int UdpBandwidth) ControlMessage()
+        public static (int udpMessages, int UdpBandwidth, double latency) ControlMessage(int additionalBytes)
         {
-            return (1, UdpHeaderSize);
+            var totalBandwidth = UdpHeaderSize + additionalBytes;
+            var latency = ConstantOneWayBandwidthMs + totalBandwidth / NetworkBandwidthBytePerMs;
+            return (1, totalBandwidth, latency);
         }
 
-        public Communication(long bandwidth, long messages, long udpBandwidth, long udpMessages, long latency)
+        public Communication(long bandwidth, long messages, long udpBandwidth, long udpMessages, double latency)
         {
             Bandwidth    = bandwidth;
             Messages     = messages;

@@ -47,16 +47,15 @@ namespace Monitoring.Nodes
             var messages = violatedNodesIndices.Count;
             // var bandwidth = violatedNodesIndices.Sum(i => nodes[i].ChangeVector.CountNonZero());
             var bandwidth = violatedNodesIndices.Sum(i => nodes[i].VectorLength);
-            var latency = violatedNodesIndices.Count > 0 ? Communication.OneWayLatencyMs : 0;
-            var (udpMessages, udpBandwidth) = violatedNodesIndices.Select(i => Communication.DataMessage(nodes[i].VectorLength)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAdd);
+            var (udpMessages, udpBandwidth, latency) = violatedNodesIndices.Select(i => Communication.DataMessageVectorSize(nodes[i].VectorLength)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAddKeepLast);
             while (nodesIndicesToPollNext.Count > 0)
             {
                 var nextViolatedNode = nodesIndicesToPollNext.Pop();
                 //bandwidth += nodes[nextViolatedNode].ChangeVector.CountNonZero();
-                var (controlMessages, controlBandwidth) =  TupleUtils.PointwiseAdd(Communication.ControlMessage(), Communication.DataMessage(nodes[nextViolatedNode].VectorLength));
+                var (controlMessages, controlBandwidth, controlLatency) =  TupleUtils.PointwiseAdd(Communication.ControlMessage(0), Communication.DataMessageVectorSize(nodes[nextViolatedNode].VectorLength));
                 udpBandwidth                            += controlBandwidth;
                 udpMessages                             += controlMessages;
-                latency                                 += 2 * Communication.OneWayLatencyMs;
+                latency                                 += controlLatency;
                 bandwidth += nodes[nextViolatedNode].VectorLength + 1;
                 messages += 2;
                 violatedNodesIndices.Add(nextViolatedNode);
@@ -66,8 +65,8 @@ namespace Monitoring.Nodes
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].ChangeChangeVector(averageChangeVector.Clone());
 
-                    latency         += Communication.OneWayLatencyMs;
-                    var (mes, band) =  Communication.DataMessage(nodes[nextViolatedNode].VectorLength);
+                    var (mes, band, lat) =  Communication.DataMessageVectorSize(nodes[nextViolatedNode].VectorLength);
+                    latency += lat;
                     udpBandwidth    += band * violatedNodesIndices.Count;
                     udpMessages     += mes  * violatedNodesIndices.Count;
                     messages += violatedNodesIndices.Count;
@@ -82,9 +81,9 @@ namespace Monitoring.Nodes
 
         public static Communication FullSyncAdditionalCost(OracleVectorNode[] nodes)
         {
-            var (udpMessages, udpBandwidth) = nodes.Select(n => Communication.DataMessage(n.VectorLength))
-                                                   .Aggregate(TupleUtils.PointwiseAdd);
-            return new Communication(nodes.Sum(n => n.VectorLength), nodes.Length, udpBandwidth, udpMessages, Communication.OneWayLatencyMs);
+            var (udpMessages, udpBandwidth, latency) = nodes.Select(n => Communication.DataMessageVectorSize(n.VectorLength))
+                                                   .Aggregate(TupleUtils.PointwiseAddKeepLast);
+            return new Communication(nodes.Sum(n => n.VectorLength), nodes.Length, udpBandwidth, udpMessages, latency);
         }
 
     }

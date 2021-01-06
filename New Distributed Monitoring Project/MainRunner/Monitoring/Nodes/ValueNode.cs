@@ -50,13 +50,12 @@ namespace Monitoring.Nodes
 
             var bandwidth = violatedNodesIndices.Count;
             var messages  = violatedNodesIndices.Count;
-            var latency = violatedNodesIndices.Count > 0 ? Communication.OneWayLatencyMs : 0;
-            var (udpMessages, udpBandwidth) = violatedNodesIndices.Select(i => Communication.DataMessage(8)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAdd);
+            var (udpMessages, udpBandwidth, latency) = violatedNodesIndices.Select(i => Communication.ControlMessage(8)).Aggregate(TupleUtils.Zeros(), TupleUtils.PointwiseAddKeepLast);
 
             while (nodesIndicesToPollNext.Count > 0)
             {
-                latency += 2 * Communication.OneWayLatencyMs;
-                var (controlMessage, controlBandwidth) =  Communication.DataMessage(8);
+                var (controlMessage, controlBandwidth, controlLatency) =  Communication.ControlMessage(8);
+                latency                                 += 2 * controlLatency;
                 udpBandwidth                            += 2 * controlBandwidth;
                 udpMessages                             += 2 * controlMessage;
 
@@ -68,9 +67,9 @@ namespace Monitoring.Nodes
                 {
                     foreach (var nodeIndex in violatedNodesIndices)
                         nodes[nodeIndex].SlackValue = averageValue - nodes[nodeIndex].RealValue;
-                    latency += Communication.OneWayLatencyMs;
+                    latency      += controlLatency;
                     udpBandwidth += violatedNodesIndices.Count * controlBandwidth;
-                    udpMessages += violatedNodesIndices.Count * controlMessage;
+                    udpMessages  += violatedNodesIndices.Count * controlMessage;
 
                     messages  += violatedNodesIndices.Count;
                     bandwidth += violatedNodesIndices.Count;
@@ -85,12 +84,12 @@ namespace Monitoring.Nodes
         {
             var bandwidth = nodes.Sum(n => n.VectorLength) * 2;
             var messages = nodes.Length * 3;
-            var (dataUdpMessages, dataUdpBandwidth) = nodes.Select(n => Communication.DataMessage(n.VectorLength))
+            var (dataUdpMessages, dataUdpBandwidth, dataLatency) = nodes.Select(n => Communication.DataMessageVectorSize(n.VectorLength))
                                                    .Aggregate(TupleUtils.PointwiseAdd);
 
-            var (controlUdpMessages, controlUdpBandwidth) = nodes.Select(n => Communication.ControlMessage())
+            var (controlUdpMessages, controlUdpBandwidth, controlLatency) = nodes.Select(n => Communication.ControlMessage(0))
                                                             .Aggregate(TupleUtils.PointwiseAdd);
-            var latency = Communication.OneWayLatencyMs * 3;
+            var latency = controlLatency + 2 * dataLatency;
             //  => new Communication(nodes.Sum(n => n.ChangeVector.CountNonZero()) + nodes.Length * nodes.Map(n => n.ChangeVector).AverageVector().CountNonZero(), nodes.Length * 3);
             return new Communication(bandwidth, messages, dataUdpBandwidth * 2 + controlUdpBandwidth, dataUdpMessages * 2 + controlUdpMessages, latency);
         }

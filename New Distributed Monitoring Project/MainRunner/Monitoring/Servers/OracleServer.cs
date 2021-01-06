@@ -40,9 +40,9 @@ namespace Monitoring.Servers
             var messages  = 2 * NumOfNodes;
            // var bandwidth = CurrentChanges.Sum(c => c.CountNonZero()) + NumOfNodes * CurrentChanges.SumVector().CountNonZero();
             var bandwidth = CurrentChanges.Sum(c => VectorLength) * 2;
-            var (udpMessages, udpBandwidth) = changeMatrix.Select(v => Communication.DataMessage(VectorLength)).Aggregate(TupleUtils.PointwiseAdd);
+            var (udpMessages, udpBandwidth, latency) = changeMatrix.Select(v => Communication.DataMessageVectorSize(VectorLength)).Aggregate(TupleUtils.PointwiseAddKeepLast);
             Init();
-            return (newOracleServer, new Communication(bandwidth, messages, 2 * udpBandwidth, 2 * udpMessages, 2 * Communication.OneWayLatencyMs), true);
+            return (newOracleServer, new Communication(bandwidth, messages, 2 * udpBandwidth, 2 * udpMessages, 2 * latency), true);
         }
 
         public static OracleServer Create(
